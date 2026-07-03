@@ -133,12 +133,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
                 className="lg:col-span-7"
               >
-                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0A2E6F]/5 border border-[#0A2E6F]/10 text-xs font-bold uppercase tracking-wider text-[#0A2E6F]">
-                  <Sparkles size={12} className="text-blue-600 animate-pulse" />
-                  Our Legacy Blueprint
-                </span>
-
-                <h1 className="mt-6 text-5xl md:text-7xl xl:text-8xl font-black text-[#071224] tracking-tight leading-[0.95]">
+                <h1 className="mt-6 text-5xl md:text-6xl xl:text-7xl font-black text-[#071224] tracking-tight leading-[0.95]">
                   Creating <br />
                   Spaces That <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0A2E6F] via-[#1E4ED8] to-indigo-600">

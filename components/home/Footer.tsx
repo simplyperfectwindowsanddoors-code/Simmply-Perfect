@@ -42,9 +42,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-gray-400 leading-8">
-              Simmply Perfect Group delivers premium Windows & Doors,
-              Luxury Interiors and Renovation solutions crafted to elevate
-              residential and commercial spaces.
+              One trusted destination for premium Windows & Doors, Luxury Interiors, Custom Metal Fabrication, Home Renovations, and turnkey architectural solutions designed to elevate every space.
             </p>
 
             <div className="flex items-center gap-3 mt-8 whitespace-nowrap">

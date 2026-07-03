@@ -348,16 +348,7 @@ export default function Navbar() {
               </div>
               
               {/* Fixed Footer CTA */}
-              <div className="p-6 shrink-0 bg-slate-50 border-t border-slate-100 pb-8 sm:pb-6">
-                <Link 
-                  href="/contact" 
-                  onClick={() => setMobileMenuOpen(false)} 
-                  className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-[#0A2E6F] to-[#05183a] text-white py-4 rounded-xl font-bold text-sm tracking-widest uppercase shadow-xl hover:shadow-2xl transition-all duration-300"
-                >
-                  <PhoneCall size={16} />
-                  <span>Get In Touch</span>
-                </Link>
-              </div>
+              
             </motion.div>
           </>
         )}

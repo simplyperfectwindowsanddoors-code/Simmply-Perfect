@@ -256,10 +256,7 @@ export default function MetalWorksPage() {
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 className="relative z-10"
               >
-                <span className="inline-flex items-center gap-2 bg-[#0A2E6F]/5 border border-[#0A2E6F]/15 text-[#0A2E6F] px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-sm backdrop-blur-sm">
-                  <Sparkles size={14} className="text-[#0A2E6F]" />
-                  Premium Metal Works
-                </span>
+                
 
                 <h1 className="mt-8 text-5xl md:text-6xl xl:text-[76px] font-black leading-[1.05] tracking-tight text-[#071224]">
                   Precision <br />
