@@ -12,7 +12,8 @@ import {
   X,
   Tv,
   Clock,
-  ExternalLink
+  ExternalLink,
+  Wrench
 } from "lucide-react";
 
 // Clean config structure optimized to fetch graphics straight from YouTube assets
@@ -91,7 +92,7 @@ export default function Hero() {
                 transition={{ delay: 0.2, duration: 0.6 }}
                 className="mt-8 text-lg text-slate-600 leading-relaxed max-w-xl font-medium"
               >
-                Premium Windows & Doors, Luxury Interiors, and bespoke Renovation Solutions engineered gracefully to redefine modern residential and commercial landmarks.
+                One trusted destination for premium Windows & Doors, Luxury Interiors, Custom Metal Fabrication, Home Renovations, and turnkey architectural solutions designed to elevate every space.
               </motion.p>
 
               {/* SERVICE PILLS MODULE */}
@@ -105,6 +106,7 @@ export default function Hero() {
                   { label: "Windows & Doors", icon: Layers },
                   { label: "Luxury Interiors", icon: Sparkles },
                   { label: "Structural Renovation", icon: Hammer },
+                  {label: "Metal Fabrication", icon: Wrench},
                 ].map((service) => {
                   const IconComp = service.icon;
                   return (
@@ -150,9 +152,9 @@ export default function Hero() {
                 className="grid grid-cols-3 gap-4 sm:gap-8 mt-14 p-6 rounded-2xl bg-slate-50/60 border border-slate-100"
               >
                 {[
-                  { value: "500+", label: "Projects Delivered" },
-                  { value: "15+", label: "Years Operations" },
-                  { value: "100%", label: "Client Satisfaction" },
+                  { value: "3000+", label: "Projects Delivered" },
+                  { value: "8+ years", label: "Years Operations" },
+                  { value: "99.12%", label: "Client Satisfaction" },
                 ].map((stat, i) => (
                   <div key={i} className="flex flex-col">
                     <h3 className="text-2xl sm:text-3xl font-black text-[#0A2E6F] tracking-tight">

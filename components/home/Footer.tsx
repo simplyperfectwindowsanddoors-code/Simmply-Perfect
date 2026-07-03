@@ -9,7 +9,9 @@ import {
   FaFacebookF,
   FaInstagram,
   FaLinkedinIn,
-} from "react-icons/fa";
+  FaYoutube,
+  FaXTwitter,
+} from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -24,18 +26,19 @@ export default function Footer() {
           <div>
             <Link href="/">
               <img
-                src="/logo.png"
-                alt="Simmply Perfect"
-                className="
-                  h-16
-                  w-auto
-                  mb-6
-                  transition-all
-                  duration-300
-                  hover:scale-105
-                  cursor-pointer
-                "
-              />
+  src="/logo-white.png"
+  alt="Simmply Perfect"
+  className="
+    h-22
+    w-auto
+    mb-6
+    object-contain
+    transition-all
+    duration-300
+    hover:scale-105
+    cursor-pointer
+  "
+/>
             </Link>
 
             <p className="text-gray-400 leading-8">
@@ -44,63 +47,57 @@ export default function Footer() {
               residential and commercial spaces.
             </p>
 
-            <div className="flex gap-4 mt-8">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="
-                  w-11 h-11
-                  rounded-full
-                  bg-white/10
-                  hover:bg-[#1877F2]
-                  hover:-translate-y-1
-                  transition-all
-                  duration-300
-                  flex items-center justify-center
-                "
-              >
-                <FaFacebookF />
-              </a>
+            <div className="flex items-center gap-3 mt-8 whitespace-nowrap">
+  <a
+    href="https://www.facebook.com/profile.php?id=61575006093316"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Facebook"
+    className="w-11 h-11 rounded-full bg-white/10 hover:bg-[#1877F2] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center shrink-0"
+  >
+    <FaFacebookF size={18} />
+  </a>
 
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="
-                  w-11 h-11
-                  rounded-full
-                  bg-white/10
-                  hover:bg-gradient-to-r
-                  hover:from-pink-500
-                  hover:to-yellow-500
-                  hover:-translate-y-1
-                  transition-all
-                  duration-300
-                  flex items-center justify-center
-                "
-              >
-                <FaInstagram />
-              </a>
+  <a
+    href="https://www.instagram.com/thesimmply.perfect/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Instagram"
+    className="w-11 h-11 rounded-full bg-white/10 hover:bg-gradient-to-r hover:from-pink-500 hover:via-red-500 hover:to-yellow-500 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center shrink-0"
+  >
+    <FaInstagram size={18} />
+  </a>
 
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="
-                  w-11 h-11
-                  rounded-full
-                  bg-white/10
-                  hover:bg-[#0077B5]
-                  hover:-translate-y-1
-                  transition-all
-                  duration-300
-                  flex items-center justify-center
-                "
-              >
-                <FaLinkedinIn />
-              </a>
-            </div>
+  <a
+    href="https://x.com/simply1perfect"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="X"
+    className="w-11 h-11 rounded-full bg-white/10 hover:bg-black hover:-translate-y-1 transition-all duration-300 flex items-center justify-center shrink-0"
+  >
+    <FaXTwitter size={18} />
+  </a>
+
+  <a
+    href="https://www.youtube.com/@SimmplyPerfectWindowsandDoors"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="YouTube"
+    className="w-11 h-11 rounded-full bg-white/10 hover:bg-[#FF0000] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center shrink-0"
+  >
+    <FaYoutube size={18} />
+  </a>
+
+  <a
+    href="https://www.linkedin.com/company/simmply-perfect-windows-doors/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="LinkedIn"
+    className="w-11 h-11 rounded-full bg-white/10 hover:bg-[#0077B5] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center shrink-0"
+  >
+    <FaLinkedinIn size={18} />
+  </a>
+</div>
           </div>
 
           {/* Quick Links */}
@@ -146,6 +143,13 @@ export default function Footer() {
               </Link>
 
               <Link
+                href="/metal-works"
+                className="block hover:text-white transition-all duration-300"
+              >
+                Metal Works
+              </Link>
+
+              <Link
                 href="/contact"
                 className="block hover:text-white transition-all duration-300"
               >
@@ -183,10 +187,10 @@ export default function Footer() {
               </Link>
 
               <Link
-                href="/contact"
+                href="/metal-works"
                 className="block hover:text-white transition-all duration-300"
               >
-                Turnkey Projects
+                Metal Works
               </Link>
             </div>
           </div>

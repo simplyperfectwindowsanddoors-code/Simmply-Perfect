@@ -3,9 +3,9 @@
 import CountUp from "react-countup";
 
 const stats = [
-  { value: 500, suffix: "+", label: "Projects" },
-  { value: 15, suffix: "+", label: "Years Experience" },
-  { value: 100, suffix: "%", label: "Client Satisfaction" },
+  { value: 3000, suffix: "+", label: "Projects" },
+  { value: 8, suffix: "+ years", label: "Years Experience" },
+  { value: 99.12, suffix: "%", label: "Client Satisfaction", decimals: 2 },
   { value: 24, suffix: "/7", label: "Support" },
 ];
 
@@ -20,6 +20,7 @@ export default function StatsCounter() {
                 <CountUp
                   end={item.value}
                   duration={3}
+                  decimals={item.decimals ?? 0}
                 />
                 {item.suffix}
               </h2>

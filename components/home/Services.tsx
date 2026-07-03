@@ -146,7 +146,30 @@ const standardServices: ServiceItem[] = [
     image: "/services/extraction.jpg",
     desc: "Safe dismantling, removal, renovation, remodeling, and replacement services for existing doors, windows, and interior structures.",
     bullets: ["Old Structure Extraction", "Structural Modifications", "Wall Alterations", "Complete Home Renovation"]
-  }
+  },
+
+{
+  title: "Glass Installation & Repairs",
+  image: "/services/glass-repair.jpg",
+  desc: "Professional installation and repair services for residential and commercial glass systems, including safety, decorative, and architectural glazing.",
+  bullets: [
+    "Toughened Glass Installation",
+    "Glass Partition Repairs",
+    "Shower Enclosure Glass",
+    "Reflective & Tinted Glass"
+  ]
+},
+{
+  title: "Window Installation",
+  image: "/services/window-installation.jpg",
+  desc: "Expert installation of premium uPVC, aluminium, and glass windows designed for superior performance, durability, and modern aesthetics.",
+  bullets: [
+    "uPVC Window Installation",
+    "Aluminium Window Installation",
+    "Sliding & Casement Windows",
+    "Custom Window Solutions"
+  ]
+},
 ];
 
 // EXPANDED FAQ DATA
@@ -413,7 +436,7 @@ export default function Services() {
           <div className="flex flex-col items-center text-center pb-6 space-y-3">
             <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg border border-blue-500"><Layers size={20} /></div>
             <div className="space-y-1">
-              <h4 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight"> Interior & Restoration Services</h4>
+              <h4 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight"> Our Services</h4>
               <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto font-medium">End-to-end indoor masterplanning, comprehensive site renovations, maintenance, and expert installations.</p>
             </div>
           </div>
@@ -472,10 +495,10 @@ export default function Services() {
         </div>
       </section>
 
-      {/* MODAL - YOUTUBE IFRAMES & COMPACT INFO */}
+      {/* MODAL - YOUTUBE IFRAMES & COMPACT INFO - REDUCED SIZE */}
       <AnimatePresence>
         {selectedService && (
-          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
             
             <motion.div
               initial={{ opacity: 0 }}
@@ -486,20 +509,20 @@ export default function Services() {
             />
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.97, y: 25 }}
+              initial={{ opacity: 0, scale: 0.97, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.97, y: 25 }}
+              exit={{ opacity: 0, scale: 0.97, y: 20 }}
               transition={{ type: "spring", damping: 28, stiffness: 200 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative bg-white w-full max-w-5xl rounded-3xl shadow-[0_30px_90px_-15px_rgba(0,0,0,0.5)] overflow-hidden z-10 flex flex-col max-h-[95vh]"
+              className="relative bg-white w-full max-w-3xl rounded-2xl shadow-[0_30px_90px_-15px_rgba(0,0,0,0.5)] overflow-hidden z-10 flex flex-col max-h-[90vh] md:max-h-[85vh]"
             >
               
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedService(null)}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-950/50 hover:bg-slate-950 text-white/90 hover:text-white flex items-center justify-center transition-colors shadow-lg border border-white/10 z-30 backdrop-blur-md"
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-950/50 hover:bg-slate-950 text-white/90 hover:text-white flex items-center justify-center transition-colors shadow-lg border border-white/10 z-30 backdrop-blur-md"
               >
-                <X size={18} />
+                <X size={16} />
               </motion.button>
 
               {/* MEDIA HERO */}
@@ -527,30 +550,30 @@ export default function Services() {
               </div>
 
               {/* BOTTOM COMPACT INFO DECK */}
-              <div className="w-full p-6 sm:p-8 flex flex-col md:flex-row gap-6 overflow-y-auto bg-slate-50 border-t border-slate-200/50 items-center">
+              <div className="w-full p-4 sm:p-5 flex flex-col sm:flex-row gap-4 overflow-y-auto bg-slate-50 border-t border-slate-200/50 items-start">
                 
-                <div className="md:w-7/12 flex flex-col">
-                  <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                <div className="sm:w-3/5 flex flex-col pr-2">
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
                     {selectedService.title}
                   </h3>
-                  <p className="mt-2 text-sm text-slate-600 font-medium leading-relaxed">
+                  <p className="mt-1.5 text-[13px] sm:text-sm text-slate-600 font-medium leading-relaxed">
                     {selectedService.desc}
                   </p>
                 </div>
 
-                <div className="md:w-5/12 w-full flex flex-col border-l-0 md:border-l border-slate-200/80 md:pl-6">
-                  <div className="grid grid-cols-1 gap-2">
+                <div className="sm:w-2/5 w-full flex flex-col border-t sm:border-t-0 sm:border-l border-slate-200/80 pt-4 sm:pt-0 sm:pl-5">
+                  <div className="grid grid-cols-1 gap-1.5">
                     {selectedService.bullets.map((bullet, idx) => (
                       <div key={idx} className="flex items-center gap-2">
                         <ShieldCheck size={14} className="text-[#0A2E6F] shrink-0" />
-                        <span className="text-xs font-bold text-slate-700">{bullet}</span>
+                        <span className="text-[11px] sm:text-xs font-bold text-slate-700 leading-tight">{bullet}</span>
                       </div>
                     ))}
                   </div>
                   <Link
                     href="/contact"
                     onClick={() => setSelectedService(null)}
-                    className="mt-4 bg-[#0A2E6F] hover:bg-[#072456] text-white py-2.5 rounded-lg font-bold text-xs tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-2 group w-full"
+                    className="mt-4 bg-[#0A2E6F] hover:bg-[#072456] text-white py-2.5 rounded-lg font-bold text-[11px] sm:text-xs tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-2 group w-full"
                   >
                     <PhoneCall size={14} className="group-hover:scale-105 transition-transform" />
                     <span>Inquire Now</span>

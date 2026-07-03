@@ -54,7 +54,7 @@ export default function Companies() {
           <h2 className="mt-6 text-5xl md:text-7xl font-black text-[#0A1A35] leading-tight">
             One Group.
             <br />
-            Three Specialties.
+            Four Specialties.
           </h2>
 
           <p className="mt-8 max-w-3xl mx-auto text-lg text-slate-600 leading-8">
@@ -167,7 +167,7 @@ group-hover:scale-105
 
                   <div>
                     <h4 className="text-3xl font-bold text-[#0A2E6F]">
-                      500+
+                      3000+
                     </h4>
                     <p className="text-slate-500 mt-2">
                       Projects
@@ -176,7 +176,7 @@ group-hover:scale-105
 
                   <div>
                     <h4 className="text-3xl font-bold text-[#0A2E6F]">
-                      15+
+                      8+ years
                     </h4>
                     <p className="text-slate-500 mt-2">
                       Experience
@@ -185,7 +185,7 @@ group-hover:scale-105
 
                   <div>
                     <h4 className="text-3xl font-bold text-[#0A2E6F]">
-                      100%
+                      99.12%
                     </h4>
                     <p className="text-slate-500 mt-2">
                       Quality

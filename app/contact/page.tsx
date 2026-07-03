@@ -43,7 +43,7 @@ const contactInfo = [
     icon: Clock,
     title: "Working Hours",
     subtitle: "Operational schedule",
-    value: "Mon - Sat: 9 AM - 7 PM",
+    value: "Mon - Sat: 10:00 AM - 8:00 PM",
     href: "#business-hours",
   },
 ];
@@ -409,12 +409,12 @@ export default function ContactPage() {
 
                 <div className="mt-6 divide-y divide-slate-100">
                   {[
-                    ["Monday", "09:00 AM - 07:00 PM"],
-                    ["Tuesday", "09:00 AM - 07:00 PM"],
-                    ["Wednesday", "09:00 AM - 07:00 PM"],
-                    ["Thursday", "09:00 AM - 07:00 PM"],
-                    ["Friday", "09:00 AM - 07:00 PM"],
-                    ["Saturday", "09:00 AM - 06:00 PM"],
+                    ["Monday", "10:00 AM - 08:00 PM"],
+                    ["Tuesday", "10:00 AM - 08:00 PM"],
+                    ["Wednesday", "10:00 AM - 08:00 PM"],
+                    ["Thursday", "10:00 AM - 08:00 PM"],
+                    ["Friday", "10:00 AM - 08:00 PM"],
+                    ["Saturday", "10:00 AM - 08:00 PM"],
                     ["Sunday", "Closed Framework Office"],
                   ].map(([day, hours]) => (
                     <div key={day} className="flex justify-between items-center py-4 first:pt-0 last:pb-0">

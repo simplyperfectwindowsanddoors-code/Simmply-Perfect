@@ -397,15 +397,15 @@ export default function InteriorsPage() {
                 </div>
                 <div className="flex flex-wrap gap-8 lg:gap-14 mt-16 pt-8 border-t border-slate-200/60">
                   <div>
-                    <h3 className="text-4xl font-black text-[#071224]">700+</h3>
+                    <h3 className="text-4xl font-black text-[#071224]">3000+</h3>
                     <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">Interior Projects</p>
                   </div>
                   <div>
-                    <h3 className="text-4xl font-black text-[#071224]">15+</h3>
+                    <h3 className="text-4xl font-black text-[#071224]">8+ years</h3>
                     <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">Years Experience</p>
                   </div>
                   <div>
-                    <h3 className="text-4xl font-black text-[#071224]">100%</h3>
+                    <h3 className="text-4xl font-black text-[#071224]">99.12%</h3>
                     <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">Satisfaction</p>
                   </div>
                 </div>

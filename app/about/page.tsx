@@ -175,13 +175,13 @@ export default function AboutPage() {
                 {/* COUNTER TILES */}
                 <div className="grid grid-cols-3 gap-4 sm:grid-cols-3 sm:gap-6 mt-16 p-6 rounded-2xl bg-white border border-slate-200/60 shadow-[0_10px_30px_rgba(0,0,0,0.02)]">
                   {[
-                    { value: 1000, suffix: "+", label: "Projects Delivered" },
-                    { value: 17, suffix: "+", label: "Years Experience" },
-                    { value: 98, suffix: "%", label: "Satisfied Retainers" },
+                    { value: 3000, suffix: "+", label: "Projects Delivered" },
+                    { value: 8, suffix: "+ years", label: "Years Experience" },
+                    { value: 99.12, suffix: "%", label: "Satisfied Retainers", decimals: 2 },
                   ].map((item, index) => (
                     <div key={index} className="flex flex-col text-center sm:text-left">
                       <h3 className="text-2xl sm:text-4xl font-black text-[#0A2E6F] tracking-tight">
-                        <CountUp end={item.value} duration={3} delay={0.2} enableScrollSpy scrollSpyOnce />
+                        <CountUp end={item.value} duration={3} delay={0.2} decimals={item.decimals ?? 0} enableScrollSpy scrollSpyOnce />
                         {item.suffix}
                       </h3>
                       <p className="text-[9px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1 leading-tight">
@@ -236,7 +236,7 @@ export default function AboutPage() {
                     <p className="text-xs text-blue-400 font-black uppercase tracking-widest">Founder & Technical Director</p>
                     <div className="pt-2 flex items-center gap-2 text-xs text-slate-400">
                       <Briefcase size={14} className="text-blue-500 shrink-0" />
-                      <span className="font-medium">17+ Years Combined Experience</span>
+                      <span className="font-medium">8+ years Combined Experience</span>
                     </div>
                   </div>
                 </div>
@@ -439,9 +439,9 @@ export default function AboutPage() {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
               {[
-                { count: 1000, suffix: "+", desc: "Premium Projects Transmitted" },
-                { count: 13, suffix: "+", desc: "Years Experience Hierarchy" },
-                { count: 98, suffix: "%", desc: "Audited Retention & Satisfaction" },
+                { count: 3000, suffix: "+", desc: "Premium Projects Transmitted" },
+                { count: 8, suffix: "+ years", desc: "Years Experience Hierarchy" },
+                { count: 99.12, suffix: "%", desc: "Audited Retention & Satisfaction", decimals: 2 },
                 { count: 50, suffix: "+", desc: "In-House Subject Matter Experts" },
               ].map((item, index) => (
                 <motion.div
@@ -451,7 +451,7 @@ export default function AboutPage() {
                   className="bg-white rounded-2xl p-8 text-center border border-slate-200/60 shadow-[0_10px_30px_rgba(0,0,0,0.02)]"
                 >
                   <h3 className="text-5xl font-black text-[#0A2E6F] tracking-tight">
-                    <CountUp end={item.count} duration={2.5} enableScrollSpy scrollSpyOnce />
+                    <CountUp end={item.count} duration={2.5} decimals={item.decimals ?? 0} enableScrollSpy scrollSpyOnce />
                     {item.suffix}
                   </h3>
                   <p className="mt-3 text-xs font-bold text-slate-400 uppercase tracking-wider">{item.desc}</p>

@@ -31,6 +31,10 @@ interface Article {
   date: string;
   summary: string;
   fullScope?: string[];
+  comparisonTable?: {
+    headers: string[];
+    rows: string[][];
+  };
   time?: string;
   readTime?: string;
   excerpt?: string;
@@ -76,8 +80,8 @@ const cardAnimation = {
 const featuredArticle: Article = {
   title: "The Architecture of Light: Managing Thermal Break Profiles in Luxury Glazing",
   description: "An in-depth technical analysis on how premium multi-sliding insulated uPVC systems and structural aluminum glazing protect architectural configurations from heavy windloads, moisture bleeding, and acoustic degradation.",
-  image: "/services/featured-glazing.jpg",
-  date: "June 29, 2026",
+  image: "/articles/featured-glazing.jpg",
+  date: "July 03, 2026",
   readTime: "9 min read",
   category: "Engineering Log",
   summary: "This comprehensive structural diagnostic outline focuses on identifying the root causes of boundary insulation failures across ultra-luxury glass systems. By isolating thermal transmission vectors through mechanical profile breaks, modern frameworks balance internal space conditions flawlessly.",
@@ -95,130 +99,146 @@ const featuredArticle: Article = {
 
 const articlesData: Article[] = [
   {
-    title: "Thermal Efficiency Thresholds in Modern uPVC Profiling",
+    title: "Difference Between Tinted Glass and Reflective Glass",
     category: "Windows & Doors",
-    image: "/services/window-grills.jpg",
-    date: "June 24, 2026",
+    image: "/articles/tinted-vs-reflective.jpg",
+    date: "July 03, 2026",
     time: "6 min read",
-    excerpt: "Explore the structural performance metrics of multi-chambered uPVC framing profiles integrated with specialized weather seals and heavy-duty compound rubber gaskets.",
-    summary: "A core analysis of macro polymer configurations deployed under high ambient temperatures. This evaluation maps frame deformation limits, corner fusion-weld tolerances, and internal steel chamber reinforcement structures.",
+    excerpt: "Understanding the core differences in thermal absorption, visible light transmittance, and solar control between tinted and metallic reflective glass.",
+    summary: "Tinted glass absorbs solar energy to reduce glare and heat, offering a subtle aesthetic color change. Reflective glass, conversely, utilizes a metallic oxide sputter coating to act as a mirror, actively bouncing solar radiation away. This provides superior thermal insulation and enhanced daytime privacy compared to standard tinted variants.",
+    comparisonTable: {
+      headers: ["Parameter", "Tinted Glass", "Reflective Glass"],
+      rows: [
+        ["Thermal Mechanism", "Absorbs solar heat", "Reflects solar radiation"],
+        ["Daytime Privacy", "Low to Moderate", "High (Mirror effect outside)"],
+        ["Glare Reduction", "High", "High"],
+        ["Interior Lighting", "Subtly darkened depending on tint", "Significantly reduced natural light"],
+        ["Ideal Deployment", "Moderate climates, aesthetic matching", "Direct sun, high-exposure facades"]
+      ]
+    },
     fullScope: [
-      "Multi-Chambered Air Cavity Separation Logic",
-      "Convective Heat Transfer Attenuation Matrices",
-      "EPDM Continuous Perimeter Gasket Matching",
-      "Fusion-Welded Outer Frame Structural Seals",
-      "Long-Term Multi-Point Locking Integration Modules",
-      "Autodesk Moldflow Validation of Wall Thickness Uniformity",
-      "UV Stabilizer Polymer Compound Retention Audits",
-      "Worst-Case Scenario Structural Deflection Modeling"
+      "Solar Heat Gain Coefficient (SHGC) Evaluation",
+      "Visible Light Transmittance (VLT) Ratings",
+      "Metallic Oxide Sputter Coating Mechanics",
+      "Polymer Tinting Heat Absorption Dynamics"
     ]
   },
   {
-    title: "Metallurgical Integrity: Zinc-Chromate Priming in Window Grills",
-    category: "Metal Works",
-    image: "/services/iron-gates.jpg",
-    date: "June 21, 2026",
-    time: "5 min read",
-    excerpt: "A deep dive into anti-rust treatment systems, CNC laser slicing sheets, and manual arc welding parameters deployed across premium security gates.",
-    summary: "This log addresses long-term oxidation protection on heavy mild steel fabrication layers. Deploying strict industrial coatings eliminates corporate retention issues stemming from weather degradation on exposed architectural perimeters.",
-    fullScope: [
-      "Zinc-Chromate Anti-Oxidization Coating Frameworks",
-      "CNC High-Precision Laser Slicing Controls",
-      "Heavy-Duty MS Structural Arc Welding Deliveries",
-      "Duco Surface Sanding & Matte Paint Applications",
-      "Anti-Sag Heavy Bearing Hinge Calibration Pass",
-      "FMEA Root Cause Diagnosis of Weld Splatter Defect Nodes",
-      "TQM Tensile Load Evaluations for Balcony Enclosures",
-      "5S Controlled Workspace Structural Metal Assembly"
-    ]
-  },
-  {
-    title: "Ergonomic Fluid Dynamics in Luxury Modular Kitchens",
-    category: "Interiors",
-    image: "/services/interiors.jpg",
-    date: "June 18, 2026",
-    time: "8 min read",
-    excerpt: "Analyzing built-in appliance integration coordinates, quartz slab balancing properties, and soft-close mechanical channel alignments.",
-    summary: "An informative operational framework outlining modern millwork layout systems. We isolate kinetic kitchen workflows to ensure that structural weight storage scales nicely without adding strain to support hardware components.",
-    fullScope: [
-      "Triangle Layout Functional Efficiency Controls",
-      "Quartz and Heavy Granite Edge Calibration Pass",
-      "Soft-Close Mechanical Slide Profile Configurations",
-      "Moisture-Resistant Under-Sink Base Cabinet Layouts",
-      "Integrated Task & LED Warm Ambient Lighting Systems",
-      "Windchill Handled Modular Component Revision Tracking",
-      "Veneer PU Polish Finish Protection Layer Pass",
-      "Monte Carlo Weight Loading Analysis on Floating Storage"
-    ]
-  },
-  {
-    title: "Mitigating Fragmentation in Whole-Structure Restructuring",
-    category: "Renovation",
-    image: "/services/extraction.jpg",
-    date: "June 14, 2026",
-    time: "11 min read",
-    excerpt: "A comprehensive operational framework blueprint outlining baseline safety criteria for historical wall cutting and plumbing extensions.",
-    summary: "Whole-property modification demands strict execution sequencing to guarantee structural safety metrics. This paper delivers single-point accountability metrics that protect developer milestones against structural tracking delays.",
-    fullScope: [
-      "Single-umbrella Management Project Sequencing",
-      "Load-Bearing Structural Beam Parameter Maps",
-      "Advanced Historical Wall-Cutting Hydraulic Methods",
-      "Integrated Plumbing Line Extension Layouts",
-      "Fixed Fiscal Budgeting Allocation Blueprints",
-      "PFMEA Hazard Diagnosis for Foundation Underpinning Tasks",
-      "Acoustic Glass Partition Separation Fitting Rules",
-      "Timeline Milepost Clearance Tracking Controls"
-    ]
-  },
-  {
-    title: "Bespoke Joinery: Veneer Selection for Solid Timber Framing",
-    category: "Interiors",
-    image: "/services/painting.jpg",
-    date: "June 08, 2026",
-    time: "7 min read",
-    excerpt: "Mastering moisture-resistant wood polish finish coatings, melamine applications, and natural grain matching protocols for luxury main entries.",
-    summary: "Bespoke carpentry joinery serves as the primary visual representation of modern residential luxury. This manual evaluates timber moisture values, core bonding layout settings, and anti-scratch PU finish properties.",
-    fullScope: [
-      "Natural Wood Grain Matching Calibration Systems",
-      "Melamine and Protective PU Clear Coating Layers",
-      "Moisture-Resistant Multi-Layer Timber Bonding Paths",
-      "Solid Teak Hardwood Structural Joinery Fittings",
-      "High-Gloss/Satin Anti-Scratch Finish Specifications",
-      "Worst-Case Thermal Warping Environmental Simulation Maps",
-      "Concealed Pivot Hinge Anchor Alignment Tolerances",
-      "Agile Design Prototype Verification Pipelines"
-    ]
-  },
-  {
-    title: "Buying Guide: High-Tensile Stainless Steel vs Pleated Mesh",
+    title: "When to Choose Tinted vs. Reflective Glass for UPVC Windows",
     category: "Buying Guides",
-    image: "/services/pleated-mesh.jpg",
-    date: "May 28, 2026",
-    time: "9 min read",
-    excerpt: "Comparing SS 304 security-grade claws-proof screening networks with frictionless low-profile floor track accordion mosquito nets.",
-    summary: "An analytical guide assisting architectural procurers in isolating flyscreen meshes based on performance tolerances, child safety, pet resistance, and optical transmittance levels.",
+    image: "/articles/tinted-reflective-guide.jpg",
+    date: "July 02, 2026",
+    time: "7 min read",
+    excerpt: "A practical guide on selecting the right glazing formulation based on climate, facade exposure, and daytime privacy requirements.",
+    summary: "Opt for tinted glass in moderate climates where reducing glare and achieving a specific architectural aesthetic are the primary goals. Choose reflective glass for high-exposure facades facing direct sunlight; its metallic coating aggressively repels heat, drastically lowers HVAC loads, and ensures complete daytime privacy from the outside.",
     fullScope: [
-      "SS 304 Mechanical Claws-Proof Tension Controls",
-      "Low-Profile Frictionless Tracking Slide Operations",
-      "Insect Prevention Net Filtration Densities",
-      "Aluminium Extruded Frame Boundary Formulations",
-      "Weatherproof High-Transmittance Mesh Evaluations",
-      "Tolerance Stackup Analysis of Outer Box Tracking Seals",
-      "Bathtub Curve Depreciation Analysis Over 10 Years",
-      "Friction Brake Tension Spring Retraction Control Logs"
+      "Direct Sun High-Exposure Mitigation Strategies",
+      "Moderate Climate Glare Reduction Tactics",
+      "Daytime Privacy Requirement Scaling",
+      "HVAC Energy Consumption Reduction Metrics",
+      "Building Facade Aesthetic Color Matching",
+      "Nighttime Internal Reflection Considerations"
+    ]
+  },
+  {
+    title: "Difference Between UPVC Sliding Window and Casement Window",
+    category: "Windows & Doors",
+    image: "/articles/sliding-vs-casement.jpg",
+    date: "July 01, 2026",
+    time: "8 min read",
+    excerpt: "A mechanical and spatial comparison of track-guided horizontal slider systems versus compression-sealed hinged casement formulations.",
+    summary: "Casement windows operate on side hinges and compress tightly against EPDM seals, offering 100% ventilation and unmatched acoustic and thermal insulation. Sliding windows move horizontally on tracks, maximizing space efficiency with ~50% ventilation, making them the ideal choice for tight structural envelopes like balconies.",
+    comparisonTable: {
+      headers: ["Specification", "UPVC Sliding Window", "UPVC Casement Window"],
+      rows: [
+        ["Operation Mechanism", "Horizontal glide on nylon rollers", "Side/Top hinged opening"],
+        ["Ventilation Capacity", "50% max opening", "100% full opening"],
+        ["Acoustic/Thermal Seal", "Standard brush weather stripping", "EPDM continuous compression seal"],
+        ["Space Efficiency", "Zero external/internal clearance needed", "Requires swing radius clearance"],
+        ["Ideal Application", "Balconies, tight walkways, partitions", "Bedrooms, living rooms, main facades"]
+      ]
+    }
+  },
+  {
+    title: "Material Breakdown: Nylon, Glass Fiber, SS-304, & Zinc-Coated SS-304",
+    category: "Buying Guides",
+    image: "/articles/mesh-materials.jpg",
+    date: "June 29, 2026",
+    time: "9 min read",
+    excerpt: "Analyzing tensile strength, UV resistance, and anti-corrosion properties across our premium mosquito and security mesh options.",
+    summary: "Nylon offers flexible cost-efficiency, while Glass Fiber provides UV-stabilized longevity. SS-304 (Stainless Steel) delivers extreme high-tensile, claw-proof security. Upgrading to SS-304 coated with Zinc adds an impenetrable zero-oxidation layer, ensuring absolute rust resistance even in highly corrosive coastal environments.",
+    comparisonTable: {
+      headers: ["Mesh Material", "Tensile Strength", "Pet/Claw Proof", "Corrosion Resistance", "Primary Use Case"],
+      rows: [
+        ["Nylon", "Low", "No", "N/A (Non-metal)", "Budget temporary fixes"],
+        ["Glass Fiber", "Moderate", "No", "N/A (Non-metal)", "Standard residential bug protection"],
+        ["SS-304", "Extreme", "Yes", "High", "Security & severe pet environments"],
+        ["Zinc-Coated SS-304", "Extreme", "Yes", "Absolute (Zero-Oxidation)", "Coastal & highly corrosive zones"]
+      ]
+    }
+  },
+  {
+    title: "Why Choose Simmply Perfect for Your Next Project?",
+    category: "Corporate Log",
+    image: "/services/interiors.jpg",
+    date: "June 27, 2026",
+    time: "5 min read",
+    excerpt: "Discover the foundational principles of single-point accountability and precision engineering that drive our architectural success.",
+    summary: "Choosing Simmply Perfect means eliminating project fragmentation. We manage everything end-to-end—from initial parametric design to final factory-direct installation—ensuring complete accountability, strict milestone adherence, and uncompromising structural integrity without reliance on third-party contractors.",
+    fullScope: [
+      "Single-Umbrella Turnkey Accountability Protocols",
+      "Elimination of Third-Party Contractor Fragmentation",
+      "Certified Engineering & Laboratory Grade Testing",
+      "Strict Timeline Milestone Clearance Tracking",
+      "Cross-Disciplinary Integration (Civil, MEP, Glazing)",
+      "Dedicated Lifetime Structural Handover Support"
+    ]
+  },
+  {
+    title: "How Simmply Perfect Products are Unique",
+    category: "Corporate Log",
+    image: "/services/iron-gates.jpg",
+    date: "June 25, 2026",
+    time: "6 min read",
+    excerpt: "An inside look at our proprietary material formulations, multi-chamber uPVC profiles, and heavy steel fabrication tolerances.",
+    summary: "Our products stand out through rigorous material science. From proprietary multi-chamber uPVC profiles reinforced with structural aluminum to our zinc-chromate treated heavy steel, every component is factory-engineered to exceed standard market tolerances for extreme longevity and zero-maintenance performance.",
+    fullScope: [
+      "Proprietary High-Tolerance Component Formulations",
+      "Convective Cavity Multi-Chamber uPVC Profiling",
+      "Zinc-Treated Zero-Oxidation Heavy Steel",
+      "Frictionless Heavy-Duty Tracking Hardware",
+      "Autodesk Moldflow Optimized Profile Walls",
+      "Bespoke Parametric Design Flexibility"
+    ]
+  },
+  {
+    title: "Advantages of Buying from Simmply Perfect",
+    category: "Corporate Log",
+    image: "/services/painting.jpg",
+    date: "June 22, 2026",
+    time: "7 min read",
+    excerpt: "Review the direct benefits of our factory-direct supply chain, guaranteed fixed pricing, and comprehensive lifetime structural support models.",
+    summary: "Clients gain access to premium architectural solutions at factory-direct pricing without intermediary markups. Our guaranteed fixed-budget contracts protect against hidden cost overruns, while our 5S controlled assembly methods and lifetime structural support guarantee peace of mind long after project handover.",
+    fullScope: [
+      "Factory-Direct Pricing & Supply Chain Control",
+      "Zero Cost-Overrun Fixed Fiscal Budgeting",
+      "Rigorous 5S Controlled Workspace Assembly",
+      "Comprehensive Warranty and Lifetime Support",
+      "Transparent Material Grading and Sourcing",
+      "Dedicated Post-Installation Maintenance Crews"
     ]
   }
 ];
 
 const corporateNews = [
   {
-    title: "Simmply Perfect Reaches 1,000+ Completed Project Milestone",
+    title: "Simmply Perfect Reaches 3000+ Completed Project Milestone",
     desc: "Solidifying our operational authority market metrics across premium residential and turn-key development configurations with a verified 4.9★ satisfaction ranking.",
     tag: "Milestone Log"
   },
   {
     title: "Aakaash Deep Shrivastava Joins as Managing Technical Director",
-    desc: "Deploying 17+ years of macro polymer processing, injection molding matrix diagnostics, and Autodesk Moldflow optimization into our custom profile lines.",
+    desc: "Deploying 8+ years of macro polymer processing, injection molding matrix diagnostics, and Autodesk Moldflow optimization into our custom profile lines.",
     tag: "Leadership Executive"
   },
   {
@@ -230,20 +250,20 @@ const corporateNews = [
 
 const faqsData = [
   {
-    q: "What parameters govern the operational schedule of an interior project?",
-    a: "Standard multi-residential turnkey indoor designs require between 30 to 90 days. This timeline accounts for custom tool manufacturing milestones, component material sourcing, precise millwork layout execution, and rigorous structural quality checking phases.",
+    q: "Why choose Simmply Perfect over standard contractors?",
+    a: "We offer single-point accountability, meaning zero fragmentation between designers, fabricators, and installers. Our certified engineering crews handle site parameters end-to-end, utilizing proprietary high-tolerance materials. This factory-direct approach guarantees fixed pricing, unyielding quality control, and lifetime structural support.",
   },
   {
-    q: "How does Simmply Perfect manage whole-structure renovation risk?",
-    a: "We minimize developer fragmentation through single-point accountability. Our certified engineering crews handle site parameters end-to-end: detailed parametric space planning, initial safety demolition, civil foundations, uPVC glazing integration, electrical/plumbing syncing, and technical handovers.",
+    q: "When should I use Tinted vs. Reflective glass for my uPVC windows?",
+    a: "Use Tinted Glass when you want to absorb moderate heat, reduce glare, and achieve a specific aesthetic color for your facade without highly mirroring the outside. Opt for Reflective Glass in high-exposure, direct-sunlight zones. Its metallic coating bounces solar energy away, offering superior thermal insulation and excellent daytime privacy.",
   },
   {
-    q: "Why are multi-chambered uPVC windows optimized for thermal breaking?",
-    a: "Our uPVC profile frameworks contain separate insulating air chambers paired with double-layer insulated structural glass. This layout blocks extreme external convective heat and significantly reduces household HVAC energy utilization footprints.",
+    q: "What is the practical difference between Casement and Sliding uPVC windows?",
+    a: "Casement windows operate on side hinges, sealing via compression against EPDM rubber gaskets. This offers 100% ventilation and the highest tier of sound and heat insulation. Sliding windows operate on horizontal tracks, saving internal room space. While they only offer ~50% ventilation and use standard brush seals, they are perfect for spatially constrained areas like balconies or tight passages.",
   },
   {
-    q: "Are custom ironworks treated against atmospheric corrosion?",
-    a: "Absolutely. Every iron gate, balcony safety railing, window grill, and steel profile sheet undergoes deep surface sanding followed by an industrial zinc-chromate anti-rust priming pass before receiving its final premium matte coating.",
+    q: "How do Nylon, Glass Fiber, SS-304, and Zinc-coated meshes differ?",
+    a: "Nylon is cost-effective and flexible but prone to tearing. Glass Fiber is the industry standard—UV stabilized and highly durable for regular mosquito protection. SS-304 (Stainless Steel) provides extreme tensile strength, making it completely rat, pet, and claw-proof. Finally, SS-304 coated with Zinc adds a robust anti-oxidation layer, ensuring absolute zero-rust performance even in highly corrosive coastal environments.",
   }
 ];
 
@@ -255,15 +275,7 @@ const reviews = [
   { name: "Kiran Rao", role: "Apartment Owner", text: "Very happy with the mosquito mesh systems. Smooth operation and premium finish." },
   { name: "Rahul Verma", role: "Builder", text: "Professional execution with exceptional attention to detail." },
   { name: "Sneha Gupta", role: "Homeowner", text: "Beautiful interiors and excellent customer support throughout the project." },
-  { name: "Ashok Reddy", role: "Commercial Client", text: "Their team handled our office renovation with outstanding quality." },
-  { name: "Manoj Singh", role: "Property Developer", text: "Reliable company with excellent engineering standards." },
-  { name: "Priya Nair", role: "Architect", text: "Their custom fabrication quality exceeded all expectations." },
-  { name: "Deepak Kumar", role: "Villa Owner", text: "Premium products, premium installation and excellent finishing." },
-  { name: "Harsha Vardhan", role: "Engineer", text: "One of the best teams we've worked with for glazing systems." },
-  { name: "Arjun Mehta", role: "Luxury Homeowner", text: "Everything from consultation to delivery was handled professionally." },
-  { name: "Lakshmi Devi", role: "Interior Client", text: "Our modular kitchen looks stunning. Highly recommended." },
-  { name: "Naveen Kumar", role: "Contractor", text: "Excellent fabrication quality and on-time project completion." },
-  { name: "Meghana Rao", role: "Homeowner", text: "Very responsive team with beautiful design execution." }
+  { name: "Ashok Reddy", role: "Commercial Client", text: "Their team handled our office renovation with outstanding quality." }
 ];
 
 export default function ArticlesPage() {
@@ -301,7 +313,6 @@ export default function ArticlesPage() {
               >
                 <h1 className="text-5xl md:text-6xl xl:text-7xl font-black text-[#071224] tracking-tight leading-[0.95]">
                   Insights, Inspiration <br />
-                  Inspiration <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0A2E6F] via-[#1E4ED8] to-indigo-600">
                     & Tech Logic
                   </span>
@@ -333,7 +344,7 @@ export default function ArticlesPage() {
               >
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#0A2E6F]/10 to-transparent rounded-[32px] pointer-events-none z-10" />
                 <img
-                  src="/services/hero.jpg"
+                  src="/articles/hero.jpg"
                   alt="Simmply Perfect Architectural Frameworks"
                   className="w-full h-[450px] sm:h-[500px] lg:h-[650px] object-cover rounded-[32px] border border-slate-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.06)]"
                 />
@@ -352,7 +363,7 @@ export default function ArticlesPage() {
 
             <motion.div {...smoothFadeUp} className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
               <div className="lg:col-span-6 relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-100 group">
-                <img src="/services/featured-glazing.jpg" alt={featuredArticle.title} className="w-full h-[380px] sm:h-[450px] object-cover" />
+                <img src="/articles/featured-glazing.jpg" alt={featuredArticle.title} className="w-full h-[380px] sm:h-[450px] object-cover" />
               </div>
 
               <div className="lg:col-span-6 space-y-6">
@@ -497,9 +508,9 @@ export default function ArticlesPage() {
 
             <div className="grid lg:grid-cols-3 gap-6">
               {[
-                { name: "Luxury Villa Structural Glazing Transformation", tag: "Fenestration Log", img: "/services/featured-glazing.jpg" },
-                { name: "Complete Turnkey Apartment Restructuring", tag: "Whole Remodel", img: "/services/interiors.jpg" },
-                { name: "Premium Executive Workspace Fitout", tag: "Interior System", img: "/services/extraction.jpg" }
+                { name: "Luxury Villa Structural Glazing Transformation", tag: "Fenestration Log", img: "/articles/luxury-villa.jpg" },
+                { name: "Complete Turnkey Apartment Restructuring", tag: "Whole Remodel", img: "/articles/apartment-renovation.jpg" },
+                { name: "Premium Executive Workspace Fitout", tag: "Interior System", img: "/articles/office-fitout.jpg" }
               ].map((proj, idx) => (
                 <motion.div
                   key={idx}
@@ -795,11 +806,47 @@ export default function ArticlesPage() {
                     </p>
                   </div>
 
-                  {/* HIGH-DENSITY PARAMETRIC BLUEPRINT MATRIX */}
-                  {selectedArticle.fullScope && (
+                  {/* COMPARISON TABLE RENDERING (Conditional) */}
+                  {selectedArticle.comparisonTable && (
                     <div className="pt-4 border-t border-slate-100 space-y-3">
                       <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
                         <ShieldCheck size={14} className="text-[#0A2E6F]" />
+                        Comparison Matrix
+                      </h4>
+                      
+                      <div className="overflow-x-auto rounded-xl border border-slate-200/60 shadow-sm">
+                        <table className="w-full text-left text-xs whitespace-nowrap">
+                          <thead className="bg-slate-50/80 border-b border-slate-200/60 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                            <tr>
+                              {selectedArticle.comparisonTable.headers.map((header, idx) => (
+                                <th key={idx} className="px-4 py-3">{header}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {selectedArticle.comparisonTable.rows.map((row, rowIdx) => (
+                              <tr key={rowIdx} className="hover:bg-slate-50/50 transition-colors">
+                                {row.map((cell, cellIdx) => (
+                                  <td 
+                                    key={cellIdx} 
+                                    className={`px-4 py-3 ${cellIdx === 0 ? "font-bold text-slate-700" : "text-slate-600"}`}
+                                  >
+                                    {cell}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* HIGH-DENSITY PARAMETRIC BLUEPRINT MATRIX (Bullets) */}
+                  {selectedArticle.fullScope && (
+                    <div className="pt-4 border-t border-slate-100 space-y-3">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                        <Sparkles size={14} className="text-[#0A2E6F]" />
                         Full Parametric Capability Index
                       </h4>
                       
@@ -807,7 +854,9 @@ export default function ArticlesPage() {
                         {selectedArticle.fullScope.map((bullet, idx) => (
                           <div key={idx} className="flex items-center gap-2.5 py-2.5 px-3.5 rounded-xl bg-slate-50 border border-slate-200/40 hover:bg-slate-50/50 transition-colors">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#0A2E6F]/50 shrink-0" />
-                            <span className="text-[11px] font-bold leading-tight text-slate-700 tracking-tight truncate">{bullet}</span>
+                            <span className="text-[11px] font-bold leading-tight text-slate-700 tracking-tight truncate" title={bullet}>
+                              {bullet}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -823,14 +872,14 @@ export default function ArticlesPage() {
                     className="flex-1 bg-[#0A2E6F] hover:bg-[#072456] text-white py-4 rounded-xl font-bold text-xs tracking-widest uppercase shadow-xl transition-all flex items-center justify-center gap-2 group"
                   >
                     <PhoneCall size={14} className="group-hover:scale-105 transition-transform" />
-                    <span>Inquire Specifications Range</span>
+                    <span>Contact Us</span>
                   </Link>
 
                   <button
                     onClick={() => setSelectedArticle(null)}
                     className="flex-1 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 py-4 rounded-xl font-bold text-xs tracking-widest uppercase transition-colors"
                   >
-                    Close Log View
+                    Close
                   </button>
                 </div>
 

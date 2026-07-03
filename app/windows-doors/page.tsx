@@ -42,7 +42,7 @@ const fadeRight = {
 
 const stats = [
   {
-    number: 500,
+    number: 3000,
     suffix: "+",
     label: "Projects Completed",
   },
@@ -52,9 +52,10 @@ const stats = [
     label: "Warranty Coverage",
   },
   {
-    number: 98,
+    number: 99.12,
     suffix: "%",
     label: "Client Satisfaction",
+    decimals: 2,
   },
 ];
 
@@ -954,7 +955,7 @@ export default function WindowsDoorsPage() {
                   className="bg-white rounded-[32px] p-10 text-center shadow-[0_20px_60px_rgba(0,0,0,0.06)]"
                 >
                   <h3 className="text-6xl font-black text-[#0A2E6F]">
-                    <CountUp end={item.number} duration={3} />
+                    <CountUp end={item.number} duration={3} decimals={item.decimals ?? 0} />
                     {item.suffix}
                   </h3>
                   <p className="mt-4 text-slate-600">{item.label}</p>

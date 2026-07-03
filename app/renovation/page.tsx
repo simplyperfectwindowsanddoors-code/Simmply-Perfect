@@ -134,21 +134,21 @@ export default function RenovationPage() {
                 <div className="flex flex-wrap gap-12 mt-14">
                   <div>
                     <h3 className="text-4xl font-black text-[#0A2E6F]">
-                      800+
+                      3000+
                     </h3>
                     <p className="text-slate-500 font-medium">Renovation Projects</p>
                   </div>
 
                   <div>
                     <h3 className="text-4xl font-black text-[#0A2E6F]">
-                      15+
+                      8+ years
                     </h3>
                     <p className="text-slate-500 font-medium">Years Experience</p>
                   </div>
 
                   <div>
                     <h3 className="text-4xl font-black text-[#0A2E6F]">
-                      100%
+                      99.12%
                     </h3>
                     <p className="text-slate-500 font-medium">Satisfaction</p>
                   </div>
@@ -540,12 +540,12 @@ export default function RenovationPage() {
 
                 <div className="grid grid-cols-2 gap-6 mt-12">
                   {[
-                    "800+ Projects",
-                    "15+ Years Experience",
+                    "3000+ Projects",
+                    "8+ years Experience",
                     "Premium Materials",
                     "Certified Team",
                     "On-Time Delivery",
-                    "100% Satisfaction",
+                    "99.12% Satisfaction",
                   ].map((item) => (
                     <div key={item} className="flex items-center gap-3">
                       <CheckCircle2 size={22} className="text-emerald-500 shrink-0" />
@@ -558,15 +558,15 @@ export default function RenovationPage() {
 
                 <div className="grid sm:grid-cols-3 gap-6 mt-14">
                   <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6 text-center shadow-sm">
-                    <h3 className="text-3xl font-black text-[#0A2E6F]">800+</h3>
+                    <h3 className="text-3xl font-black text-[#0A2E6F]">3000+</h3>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Projects</p>
                   </div>
                   <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6 text-center shadow-sm">
-                    <h3 className="text-3xl font-black text-[#0A2E6F]">15+</h3>
+                    <h3 className="text-3xl font-black text-[#0A2E6F]">8+ years</h3>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Years Exp</p>
                   </div>
                   <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6 text-center shadow-sm">
-                    <h3 className="text-3xl font-black text-[#0A2E6F]">100%</h3>
+                    <h3 className="text-3xl font-black text-[#0A2E6F]">99.12%</h3>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Satisfaction</p>
                   </div>
                 </div>

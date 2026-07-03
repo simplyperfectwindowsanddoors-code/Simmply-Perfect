@@ -307,8 +307,7 @@ export default function MetalWorksPage() {
                 <div className="absolute inset-0 rounded-[40px] bg-gradient-to-tr from-[#0A2E6F]/20 to-cyan-400/20 blur-3xl transform -rotate-6" />
                 
                 <motion.div {...floatAnimation} className="relative h-full">
-                  <img
-                
+                  <img             
   src="/metalworks/iron-gates.jpg" 
   alt="Premium Metal Works and Iron Gates Fabrication" 
                     className="relative rounded-[40px] h-full w-full object-cover border border-white/50 shadow-[0_40px_100px_rgba(0,0,0,0.1)] z-10 cursor-zoom-in"
@@ -689,8 +688,8 @@ export default function MetalWorksPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                { number: "1,000+", title: "Projects Completed", desc: "Successfully delivered fabrication projects." },
-                { number: "15+", title: "Years Experience", desc: "Industry expertise and engineering excellence." },
+                { number: "3000+", title: "Projects Completed", desc: "Successfully delivered fabrication projects." },
+                { number: "8+ years", title: "Years Experience", desc: "Industry expertise and engineering excellence." },
                 { number: "500+", title: "Happy Clients", desc: "Satisfied homeowners, builders and architects." },
                 { number: "25+", title: "Expert Team", desc: "Dedicated designers, fabricators and installers." },
               ].map((item, index) => (

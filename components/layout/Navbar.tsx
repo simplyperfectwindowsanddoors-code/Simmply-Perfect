@@ -107,11 +107,21 @@ const categoriesData = [
     ]
   },
   {
+    id: "wpc-doors",
+    name: "WPC Doors",
+    desc: "Wood Polymer Composite structural doors",
+    icon: DoorOpen,
+    color: "from-emerald-500/10 to-green-500/10 border-emerald-100/60 text-emerald-700",
+    files: [
+      { name: "WPC Doors Catalogue", size: "4.5 MB", url: "/catalogs/WPC-doors/WPC Doors Catalogue.pdf" }
+    ]
+  },
+  {
     id: "wpvc-doors",
     name: "WPVC Doors",
     desc: "Waterproof structural luxury frameworks",
     icon: DoorOpen,
-    color: "from-teal-500/10 to-emerald-500/10 border-teal-100/60 text-teal-700",
+    color: "from-teal-500/10 to-cyan-500/10 border-teal-100/60 text-teal-700",
     files: [
       { name: "Simmply Perfect WPVC Exterior Designs", size: "6.2 MB", url: "/catalogs/WPVC-doors/Simmply Perfect Exterior Designs.pdf" },
       { name: "Simmply Perfect WPVC Interior Designs", size: "5.9 MB", url: "/catalogs/WPVC-doors/Simmply Perfect Interior Designs.pdf" }
@@ -284,54 +294,70 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* MOBILE SIDE PANEL DRAWER */}
+      {/* MOBILE SIDE PANEL DRAWER (UPDATED UI) */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileMenuOpen(false)} className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" />
-            <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ duration: 0.35, ease: "easeInOut" }} className="fixed top-0 right-0 h-screen w-[90%] max-w-[380px] bg-white z-[60] shadow-2xl p-8 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-12">
-                  <div className="flex items-center gap-3">
-                    <Image src="/logo.png" alt="Logo" width={40} height={40} className="w-auto h-12" />
-                    <span className="font-bold text-[#0A2E6F]">SIMMPLY PERFECT</span>
-                  </div>
-                  <motion.button whileTap={{ scale: 0.9 }} whileHover={{ rotate: 90 }} onClick={() => setMobileMenuOpen(false)} className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                    <X size={18} />
-                  </motion.button>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileMenuOpen(false)} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" />
+            <motion.div 
+              initial={{ x: "100%" }} 
+              animate={{ x: 0 }} 
+              exit={{ x: "100%" }} 
+              transition={{ duration: 0.35, ease: "easeInOut" }} 
+              className="fixed top-0 right-0 h-[100dvh] w-[90%] max-w-[380px] bg-white z-[60] shadow-2xl flex flex-col"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-slate-100 shrink-0">
+                <div className="flex items-center gap-3">
+                  <Image src="/logo.png" alt="Logo" width={40} height={40} className="w-auto h-10" />
+                  <span className="font-bold text-[#0A2E6F] text-sm tracking-wide">SIMMPLY PERFECT</span>
                 </div>
-
-                {/* Mobile List Navigation matching order logic perfectly */}
-                <div className="flex flex-col gap-5">
-                  {menuItems.map((item) => {
-                    const isActive = pathname === item.href && !item.isCatalog;
-
-                    return item.isCatalog ? (
-                      <button 
-                        key={item.label}
-                        onClick={() => { setMobileMenuOpen(false); setCatalogsOpen(true); }} 
-                        className="text-xl font-medium text-slate-700 hover:text-[#0A2E6F] text-left transition-all"
-                      >
-                        {item.label}
-                      </button>
-                    ) : (
-                      <Link 
-                        key={item.label}
-                        href={item.href} 
-                        onClick={() => setMobileMenuOpen(false)} 
-                        className={`text-xl transition-all ${
-                          isActive ? "font-bold text-[#0A2E6F]" : "font-medium text-slate-700 hover:text-[#0A2E6F]"
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                    );
-                  })}
-                </div>
+                <motion.button whileTap={{ scale: 0.9 }} whileHover={{ rotate: 90 }} onClick={() => setMobileMenuOpen(false)} className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors">
+                  <X size={18} />
+                </motion.button>
               </div>
-              <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="mt-8 bg-[#0A2E6F] text-white py-4 rounded-2xl font-semibold text-center hover:shadow-lg transition-all duration-300">
-                Get In Touch
-              </Link>
+
+              {/* Scrollable Links (Fixes cropping issue) */}
+              <div className="flex-1 overflow-y-auto p-6 sm:p-8 flex flex-col gap-6 custom-scrollbar">
+                {menuItems.map((item) => {
+                  const isActive = pathname === item.href && !item.isCatalog;
+
+                  return item.isCatalog ? (
+                    <button 
+                      key={item.label}
+                      onClick={() => { setMobileMenuOpen(false); setCatalogsOpen(true); }} 
+                      className="text-lg font-bold text-slate-600 hover:text-[#0A2E6F] text-left transition-all flex items-center justify-between group"
+                    >
+                      <span>{item.label}</span>
+                      <ChevronRight size={16} className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all" />
+                    </button>
+                  ) : (
+                    <Link 
+                      key={item.label}
+                      href={item.href} 
+                      onClick={() => setMobileMenuOpen(false)} 
+                      className={`text-lg transition-all flex items-center justify-between group ${
+                        isActive ? "font-black text-[#0A2E6F]" : "font-bold text-slate-600 hover:text-[#0A2E6F]"
+                      }`}
+                    >
+                      <span>{item.label}</span>
+                      {isActive && <div className="w-2 h-2 rounded-full bg-[#0A2E6F]" />}
+                    </Link>
+                  );
+                })}
+              </div>
+              
+              {/* Fixed Footer CTA */}
+              <div className="p-6 shrink-0 bg-slate-50 border-t border-slate-100 pb-8 sm:pb-6">
+                <Link 
+                  href="/contact" 
+                  onClick={() => setMobileMenuOpen(false)} 
+                  className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-[#0A2E6F] to-[#05183a] text-white py-4 rounded-xl font-bold text-sm tracking-widest uppercase shadow-xl hover:shadow-2xl transition-all duration-300"
+                >
+                  <PhoneCall size={16} />
+                  <span>Get In Touch</span>
+                </Link>
+              </div>
             </motion.div>
           </>
         )}
