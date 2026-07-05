@@ -1,115 +1,79 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 export default function Stats() {
-
   const stats = [
-
-    { value: "3000+", label: "Projects Delivered" },
-
-    { value: "8+", suffix: "Years", label: "Industry Experience" },
-
-    { value: "99.12%", label: "Client Satisfaction" },
-
-    { value: "4", suffix: "+", label: "Business Divisions" },
-
+    {
+      value: "3000+",
+      label: "Projects Delivered",
+    },
+    {
+      value: "18+",
+      label: "Years Experience",
+    },
+    {
+      value: "99.12%",
+      label: "Client Satisfaction",
+    },
+    {
+      value: "4",
+      label: "Business Divisions",
+    },
   ];
 
   return (
+    <section className="py-12 lg:py-16">
+      <div className="max-w-6xl mx-auto px-6">
 
-    <section className="bg-[#F8FAFC] py-20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
 
-      <div className="max-w-7xl mx-auto px-6">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.6,
+                delay: index * 0.12,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              whileHover={{
+                y: -8,
+                scale: 1.04,
+              }}
+              className="group relative text-center cursor-default rounded-xl py-6 transition-all duration-300"
+            >
+              {/* Background Glow */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-blue-50/0 to-blue-50 opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10" />
 
-        <div className="overflow-hidden rounded-[32px] bg-white border border-slate-200 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-slate-200">
-
-            {stats.map((item) => (
-
-              <div
-
-                key={item.label}
-
-                className="
-
-                  group
-
-                  relative
-
-                  px-8
-
-                  py-12
-
-                  flex
-
-                  flex-col
-
-                  items-center
-
-                  justify-center
-
-                  text-center
-
-                  transition-all
-
-                  duration-500
-
-                  hover:bg-gradient-to-br
-
-                  hover:from-[#0A2E6F]
-
-                  hover:to-[#123C8F]
-
-                "
-
+              {/* Number */}
+              <motion.h2
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.25 }}
+                className="text-4xl lg:text-5xl font-black tracking-tight text-[#0A2E6F]"
               >
+                {stat.value}
+              </motion.h2>
 
-                {/* Decorative Glow */}
+              {/* Animated Divider */}
+              <motion.div
+                className="h-[3px] bg-[#0A2E6F] rounded-full mx-auto mt-4 mb-4"
+                initial={{ width: 32 }}
+                whileHover={{ width: 64 }}
+                transition={{ duration: 0.3 }}
+              />
 
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-
-                  <div className="absolute -top-10 -right-10 w-28 h-28 bg-white/10 rounded-full blur-3xl" />
-
-                </div>
-
-                <div className="relative z-10">
-
-                  <h3 className="text-5xl lg:text-6xl font-black tracking-tight text-[#0A2E6F] group-hover:text-white transition-colors duration-300">
-
-                    {item.value}
-
-                    {item.suffix && (
-
-                      <span className="text-3xl ml-1">
-
-                        {item.suffix}
-
-                      </span>
-
-                    )}
-
-                  </h3>
-
-                  <div className="w-14 h-1 rounded-full bg-[#0A2E6F] mx-auto mt-5 group-hover:bg-white transition-colors duration-300" />
-
-                  <p className="mt-5 text-sm lg:text-base uppercase tracking-[0.18em] font-semibold text-slate-500 group-hover:text-blue-100 transition-colors duration-300">
-
-                    {item.label}
-
-                  </p>
-
-                </div>
-
-              </div>
-
-            ))}
-
-          </div>
+              {/* Label */}
+              <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-600 group-hover:text-[#0A2E6F] transition-colors duration-300">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
 
         </div>
-
       </div>
-
     </section>
-
   );
-
 }

@@ -124,16 +124,16 @@ export default function AboutPage() {
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_0%,#000_70%,transparent_100%)]" />
 
           <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="grid lg:grid-cols-12 gap-16 items-center">
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
               
-              {/* LEFT INTEL */}
+              {/* LEFT INTEL (Reduced Span & Padding) */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
-                className="lg:col-span-7"
+                className="lg:col-span-5 xl:col-span-5 z-10"
               >
-                <h1 className="mt-6 text-5xl md:text-6xl xl:text-7xl font-black text-[#071224] tracking-tight leading-[0.95]">
+                <h1 className="mt-6 text-5xl md:text-6xl font-black text-[#071224] tracking-tight leading-[0.95]">
                   Creating <br />
                   Spaces That <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0A2E6F] via-[#1E4ED8] to-indigo-600">
@@ -141,45 +141,47 @@ export default function AboutPage() {
                   </span>
                 </h1>
 
-                <p className="mt-8 text-base md:text-lg text-slate-600 leading-relaxed max-w-xl font-medium">
+                <p className="mt-6 text-sm md:text-base text-slate-600 leading-relaxed max-w-md font-medium">
                   Simmply Perfect Group delivers premium Windows & Doors, luxury interiors, and turn-key structural innovations engineered gracefully to elevate modern living architectures.
                 </p>
 
                 {/* FUNCTIONAL ENHANCED CTAs */}
-                <div className="flex flex-wrap sm:flex-nowrap gap-4 mt-10">
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row gap-3 mt-8 max-w-md">
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full">
                     <Link
                       href="/contact"
-                      className="group w-full sm:w-auto bg-[#0A2E6F] hover:bg-[#072456] text-white px-8 py-4 rounded-2xl font-bold text-sm tracking-wide flex items-center justify-center gap-2 shadow-[0_10px_25px_rgba(10,46,111,0.15)] hover:shadow-[0_15px_30px_rgba(10,46,111,0.25)] transition-all duration-300"
+                      className="group w-full bg-[#1A3673] hover:bg-[#072456] text-white px-6 py-3.5 rounded-full font-bold text-[14px] tracking-wide flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(26,54,115,0.2)] transition-all duration-300"
                     >
                       Get In Touch
                       <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
                     </Link>
                   </motion.div>
 
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full">
                     <Link
                       href="/windows-doors"
-                      className="w-full border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-[#071224] px-8 py-4 rounded-2xl transition-all duration-300 font-bold text-sm tracking-wide flex items-center justify-center"
+                      className="w-full border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-[#071224] px-6 py-3.5 rounded-full transition-all duration-300 font-bold text-[14px] tracking-wide flex items-center justify-center"
                     >
                       Explore Services
                     </Link>
                   </motion.div>
                 </div>
 
-                {/* COUNTER TILES */}
-                <div className="grid grid-cols-3 gap-4 sm:grid-cols-3 sm:gap-6 mt-16 p-6 rounded-2xl bg-white border border-slate-200/60 shadow-[0_10px_30px_rgba(0,0,0,0.02)]">
+                {/* EXACT SCREENSHOT MATCH: COUNTER TILES (Scaled Down for Composition) */}
+                <div className="grid grid-cols-3 mt-10 sm:mt-12 py-5 sm:py-6 rounded-[1.5rem] bg-white border border-slate-200/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] divide-x divide-slate-200">
                   {[
-                    { value: 3000, suffix: "+", label: "Projects Delivered" },
-                    { value: 8, suffix: "+ years", label: "Years Experience" },
-                    { value: 99.12, suffix: "%", label: "Satisfied Retainers", decimals: 2 },
+                    { value: 5000, suffix: "+", label: "PROJECTS\nDELIVERED" },
+                    { value: 20, suffix: "+", label: "YEARS\nEXPERIENCE" },
+                    { value: 99.12, suffix: "%", label: "CLIENT\nSATISFACTION", decimals: 2 },
                   ].map((item, index) => (
-                    <div key={index} className="flex flex-col text-center sm:text-left">
-                      <h3 className="text-2xl sm:text-4xl font-black text-[#0A2E6F] tracking-tight">
-                        <CountUp end={item.value} duration={3} delay={0.2} decimals={item.decimals ?? 0} enableScrollSpy scrollSpyOnce />
-                        {item.suffix}
+                    <div key={index} className="flex flex-col items-center text-center justify-start px-2 sm:px-3">
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#1A2E6F] tracking-tight flex items-baseline justify-center">
+                        <CountUp end={item.value} duration={3} delay={0.2} decimals={item.decimals ?? 0} enableScrollSpy scrollSpyOnce separator="," />
+                        <span className="ml-0.5">{item.suffix}</span>
                       </h3>
-                      <p className="text-[9px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1 leading-tight">
+                      {/* Sub-divider line matching screenshot */}
+                      <div className="w-6 h-[2px] bg-slate-300 rounded-full my-2 sm:my-3" />
+                      <p className="text-[8px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed whitespace-pre-line">
                         {item.label}
                       </p>
                     </div>
@@ -187,18 +189,18 @@ export default function AboutPage() {
                 </div>
               </motion.div>
 
-              {/* RIGHT HERO IMAGERY */}
+              {/* RIGHT HERO IMAGERY (Expanded Span & Height) */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.96, x: 30 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
-                className="lg:col-span-5 relative"
+                className="lg:col-span-7 xl:col-span-7 relative"
               >
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#0A2E6F]/10 to-transparent rounded-[32px] pointer-events-none z-10" />
                 <img
                   src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2200"
                   alt="Simmply Perfect Architecture Look"
-                  className="w-full h-[450px] sm:h-[500px] lg:h-[650px] object-cover rounded-[32px] border border-slate-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.06)]"
+                  className="w-full h-[450px] sm:h-[500px] lg:h-[750px] object-cover rounded-[32px] border border-slate-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.06)]"
                 />
               </motion.div>
             </div>
@@ -231,7 +233,7 @@ export default function AboutPage() {
                     <p className="text-xs text-blue-400 font-black uppercase tracking-widest">Founder & Technical Director</p>
                     <div className="pt-2 flex items-center gap-2 text-xs text-slate-400">
                       <Briefcase size={14} className="text-blue-500 shrink-0" />
-                      <span className="font-medium">8+ years Combined Experience</span>
+                      <span className="font-medium">18+ years Experience</span>
                     </div>
                   </div>
                 </div>
@@ -434,8 +436,8 @@ export default function AboutPage() {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
               {[
-                { count: 3000, suffix: "+", desc: "Premium Projects Transmitted" },
-                { count: 8, suffix: "+ years", desc: "Years Experience Hierarchy" },
+                { count: 5000, suffix: "+", desc: "Premium Projects Transmitted" },
+                { count: 20, suffix: "+ years", desc: "Years Experience" },
                 { count: 99.12, suffix: "%", desc: "Audited Retention & Satisfaction", decimals: 2 },
                 { count: 50, suffix: "+", desc: "In-House Subject Matter Experts" },
               ].map((item, index) => (

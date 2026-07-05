@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { ArrowRight, CheckCircle2, Quote, Plus } from "lucide-react";
+import CountUp from "react-countup";
 
 // --- ANIMATION VARIANTS ---
 const fadeUp = {
@@ -382,33 +383,48 @@ export default function InteriorsPage() {
                   We create luxurious interiors that blend functionality, elegance and modern design. From modular kitchens to complete home transformations, every detail is crafted to perfection.
                 </p>
                 <div className="flex flex-wrap gap-4 mt-10">
-                  <Link
-                    href="#designs"
-                    className="bg-[#0A2E6F] text-white px-8 py-4 rounded-full font-semibold shadow-lg shadow-blue-900/20 hover:shadow-xl hover:bg-blue-900 hover:-translate-y-0.5 transition-all duration-300"
-                  >
-                    Explore Designs
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-full font-semibold shadow-sm hover:border-[#0A2E6F] hover:text-[#0A2E6F] hover:-translate-y-0.5 transition-all duration-300"
-                  >
-                    Book Consultation
-                  </Link>
-                </div>
-                <div className="flex flex-wrap gap-8 lg:gap-14 mt-16 pt-8 border-t border-slate-200/60">
-                  <div>
-                    <h3 className="text-4xl font-black text-[#071224]">3000+</h3>
-                    <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">Interior Projects</p>
-                  </div>
-                  <div>
-                    <h3 className="text-4xl font-black text-[#071224]">8+ years</h3>
-                    <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">Years Experience</p>
-                  </div>
-                  <div>
-                    <h3 className="text-4xl font-black text-[#071224]">99.12%</h3>
-                    <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">Satisfaction</p>
-                  </div>
-                </div>
+  <Link
+    href="#designs"
+    className="w-56 flex items-center justify-center bg-[#0A2E6F] text-white px-8 py-4 rounded-full font-semibold shadow-lg shadow-blue-900/20 hover:shadow-xl hover:bg-blue-900 hover:-translate-y-0.5 transition-all duration-300"
+  >
+    Explore Designs
+  </Link>
+
+  <Link
+    href="/contact"
+    className="w-56 flex items-center justify-center bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-full font-semibold shadow-sm hover:border-[#0A2E6F] hover:text-[#0A2E6F] hover:-translate-y-0.5 transition-all duration-300"
+  >
+    Book Consultation
+  </Link>
+</div>
+                <div className="grid grid-cols-3 mt-14 sm:mt-16 py-8 rounded-[2rem] bg-white border border-slate-200/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] divide-x divide-slate-200">
+  {[
+    { value:1200, suffix: "+", label: "PROJECTS\nDELIVERED" },
+    { value: 10, suffix: "+", label: "YEARS\nEXPERIENCE" },
+    { value: 98.2, suffix: "%", label: "CLIENT\nSATISFACTION", decimals: 2 },
+  ].map((item, index) => (
+    <div key={index} className="flex flex-col items-center text-center justify-start px-2 sm:px-4">
+      <h3 className="text-3xl sm:text-2xl lg:text-3xl font-black text-[#1A2E6F] tracking-tight flex items-baseline justify-center">
+        <CountUp 
+          end={item.value} 
+          duration={3} 
+          delay={0.2} 
+          decimals={item.decimals ?? 0} 
+          enableScrollSpy 
+          scrollSpyOnce 
+          separator="," 
+        />
+        <span className="ml-0.5">{item.suffix}</span>
+      </h3>
+      
+      <div className="w-8 h-[2px] bg-slate-300 rounded-full my-4" />
+      
+      <p className="text-[9px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed whitespace-pre-line">
+        {item.label}
+      </p>
+    </div>
+  ))}
+</div>
               </motion.div>
 
               {/* FLOATING HERO GRAPHIC */}

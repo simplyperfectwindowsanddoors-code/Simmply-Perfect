@@ -13,7 +13,7 @@ import {
   PlaySquare, 
   Play, 
   Plus, 
-  Quote 
+  Quote
 } from "lucide-react";
 
 interface ServiceItem {
@@ -42,7 +42,7 @@ const generateMetadata = (title: string) => {
   };
 };
 
-// SECTION 1 DATA: WORKING FUNCTIONALITY VIDEOS (YouTube Embeds)
+// SECTION 1 DATA: WORKING FUNCTIONALITY VIDEOS
 const videoServices: ServiceItem[] = [
   { id: "m9_7m-sdtaI", title: "4 track Sliding Window- Golden oak" },
   { id: "FmOSK2IOK5E", title: "Bay / Bow Window - Golden oak Laminated" },
@@ -91,7 +91,6 @@ const videoServices: ServiceItem[] = [
   videoUrl: `https://www.youtube.com/embed/${item.id}?autoplay=1`,
   ...generateMetadata(item.title)
 }));
-
 
 // SECTION 2 DATA: MOSQUITO MESH SYSTEMS
 const meshServices: ServiceItem[] = [
@@ -147,29 +146,28 @@ const standardServices: ServiceItem[] = [
     desc: "Safe dismantling, removal, renovation, remodeling, and replacement services for existing doors, windows, and interior structures.",
     bullets: ["Old Structure Extraction", "Structural Modifications", "Wall Alterations", "Complete Home Renovation"]
   },
-
-{
-  title: "Glass Installation & Repairs",
-  image: "/services/glass-repair.jpg",
-  desc: "Professional installation and repair services for residential and commercial glass systems, including safety, decorative, and architectural glazing.",
-  bullets: [
-    "Toughened Glass Installation",
-    "Glass Partition Repairs",
-    "Shower Enclosure Glass",
-    "Reflective & Tinted Glass"
-  ]
-},
-{
-  title: "Window Installation",
-  image: "/services/window-installation.jpg",
-  desc: "Expert installation of premium uPVC, aluminium, and glass windows designed for superior performance, durability, and modern aesthetics.",
-  bullets: [
-    "uPVC Window Installation",
-    "Aluminium Window Installation",
-    "Sliding & Casement Windows",
-    "Custom Window Solutions"
-  ]
-},
+  {
+    title: "Glass Installation & Repairs",
+    image: "/services/glass-repair.jpg",
+    desc: "Professional installation and repair services for residential and commercial glass systems, including safety, decorative, and architectural glazing.",
+    bullets: [
+      "Toughened Glass Installation",
+      "Glass Partition Repairs",
+      "Shower Enclosure Glass",
+      "Reflective & Tinted Glass"
+    ]
+  },
+  {
+    title: "Window Installation",
+    image: "/services/window-installation.jpg",
+    desc: "Expert installation of premium uPVC, aluminium, and glass windows designed for superior performance, durability, and modern aesthetics.",
+    bullets: [
+      "uPVC Window Installation",
+      "Aluminium Window Installation",
+      "Sliding & Casement Windows",
+      "Custom Window Solutions"
+    ]
+  },
 ];
 
 // EXPANDED FAQ DATA
@@ -254,7 +252,6 @@ function CarouselRow({ data, onSelectItem }: CarouselRowProps) {
   const isHovered = useRef(false);
   const dragDistance = useRef(0);
 
-  // INCREASED REPEAT COUNT TO 6: Guarantees enough overflow to prevent the browser from hitting the max physical scroll boundary
   const REPEAT_COUNT = 6;
   const extendedData = Array(REPEAT_COUNT).fill(data).flat();
 
@@ -262,7 +259,6 @@ function CarouselRow({ data, onSelectItem }: CarouselRowProps) {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    // Small delay ensures DOM paints completely and scrollWidth is accurate
     const timeoutId = setTimeout(() => {
       if (container) {
         const singleSetWidth = container.scrollWidth / REPEAT_COUNT;
@@ -272,11 +268,9 @@ function CarouselRow({ data, onSelectItem }: CarouselRowProps) {
 
     const continuousScrollUpdate = () => {
       if (!isDown.current && !isHovered.current && container) {
-        // Calculate dynamically to handle window resizes safely
         const singleSetWidth = container.scrollWidth / REPEAT_COUNT;
         container.scrollLeft += 1.2; 
         
-        // Loop conditions adapted for 6 sets
         if (container.scrollLeft >= singleSetWidth * 3) {
           container.scrollLeft = singleSetWidth * 2;
         } else if (container.scrollLeft <= singleSetWidth) {
@@ -309,7 +303,6 @@ function CarouselRow({ data, onSelectItem }: CarouselRowProps) {
     dragDistance.current = Math.abs(x - startX.current);
     scrollContainerRef.current.scrollLeft = scrollLeft.current - currentWalkDistance;
 
-    // Keep dragging within infinite bounds as well
     const singleSetWidth = scrollContainerRef.current.scrollWidth / REPEAT_COUNT;
     if (scrollContainerRef.current.scrollLeft >= singleSetWidth * 4) {
       scrollContainerRef.current.scrollLeft = singleSetWidth * 2;
@@ -432,7 +425,7 @@ export default function Services() {
         </div>
 
         {/* SECTION 3: COMPREHENSIVE ARCHITECTURAL SERVICES */}
-        <div className="max-w-7xl mx-auto px-6 pt-32">
+        <div className="max-w-7xl mx-auto px-6 pt-32 pb-8">
           <div className="flex flex-col items-center text-center pb-6 space-y-3">
             <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg border border-blue-500"><Layers size={20} /></div>
             <div className="space-y-1">
@@ -442,11 +435,10 @@ export default function Services() {
           </div>
           <CarouselRow data={standardServices} onSelectItem={setSelectedService} />
         </div>
-
       </section>
 
       {/* FAQ SECTION */}
-      <section className="py-24 lg:py-32 bg-white">
+      <section className="py-24 lg:py-32 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="uppercase tracking-[3px] text-sm font-semibold text-[#0A2E6F]">Got Questions?</span>
@@ -454,10 +446,10 @@ export default function Services() {
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             {faqData.map((faq, i) => (
-              <div key={i} className="group bg-slate-50 rounded-2xl p-6 md:p-8 hover:bg-blue-50/50 transition-colors border border-transparent hover:border-blue-100 shadow-sm flex flex-col justify-start">
+              <div key={i} className="group bg-white rounded-2xl p-6 md:p-8 hover:bg-blue-50/50 transition-colors border border-slate-200 hover:border-blue-100 shadow-sm flex flex-col justify-start">
                 <div className="flex justify-between items-start gap-4">
                   <h3 className="text-lg font-bold text-[#071224] leading-snug">{faq.q}</h3>
-                  <div className="bg-white rounded-full p-1.5 shrink-0 text-slate-400 group-hover:text-[#0A2E6F] shadow-sm"><Plus size={18} /></div>
+                  <div className="bg-slate-50 rounded-full p-1.5 shrink-0 text-slate-400 group-hover:text-[#0A2E6F] shadow-sm"><Plus size={18} /></div>
                 </div>
                 <p className="mt-3 text-slate-600 leading-relaxed text-sm md:text-base pr-8">{faq.a}</p>
               </div>
@@ -467,24 +459,24 @@ export default function Services() {
       </section>
 
       {/* REVIEWS SECTION */}
-      <section className="py-24 lg:py-32 bg-slate-50 overflow-hidden">
+      <section className="py-24 lg:py-32 bg-white overflow-hidden border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6 mb-16 text-center">
           <span className="uppercase tracking-[3px] text-sm font-semibold text-[#0A2E6F]">Client Testimonials</span>
           <h2 className="mt-4 text-4xl md:text-5xl font-black tracking-tight text-[#071224]">What Our Clients Say</h2>
         </div>
         
         <div className="relative w-full overflow-hidden">
-          <div className="absolute top-0 bottom-0 left-0 w-24 md:w-48 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
-          <div className="absolute top-0 bottom-0 right-0 w-24 md:w-48 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
+          <div className="absolute top-0 bottom-0 left-0 w-24 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute top-0 bottom-0 right-0 w-24 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
           <div className="flex w-max gap-8 animate-marquee pl-8">
             {infiniteReviews.map((item, i) => (
-              <div key={i} className="w-[320px] md:w-[420px] shrink-0 bg-white rounded-3xl p-8 shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
-                <Quote className="absolute top-6 right-6 text-slate-50 w-24 h-24 -z-0 rotate-12 transition-transform duration-500 group-hover:rotate-0 group-hover:text-blue-50/50" />
+              <div key={i} className="w-[320px] md:w-[420px] shrink-0 bg-slate-50 rounded-3xl p-8 shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+                <Quote className="absolute top-6 right-6 text-white w-24 h-24 -z-0 rotate-12 transition-transform duration-500 group-hover:rotate-0 group-hover:text-blue-50/50" />
                 <div className="relative z-10">
                   <div className="text-amber-400 text-lg tracking-widest flex gap-1">★★★★★</div>
                   <p className="mt-6 text-slate-700 leading-relaxed font-medium italic text-[15px]">"{item.review}"</p>
-                  <div className="mt-8 pt-6 border-t border-slate-100">
+                  <div className="mt-8 pt-6 border-t border-slate-200/60">
                     <h4 className="font-bold text-[#071224]">{item.name}</h4>
                     <p className="text-sm text-slate-500">{item.role}</p>
                   </div>
@@ -495,7 +487,7 @@ export default function Services() {
         </div>
       </section>
 
-      {/* MODAL - YOUTUBE IFRAMES & COMPACT INFO - REDUCED SIZE */}
+      {/* MODAL - YOUTUBE IFRAMES & COMPACT INFO */}
       <AnimatePresence>
         {selectedService && (
           <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 overflow-hidden">

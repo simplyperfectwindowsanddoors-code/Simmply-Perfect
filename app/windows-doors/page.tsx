@@ -47,9 +47,9 @@ const stats = [
     label: "Projects Completed",
   },
   {
-    number: 20,
-    suffix: "Y",
-    label: "Warranty Coverage",
+    number: 18,
+    suffix: "+",
+    label: "Years Experience",
   },
   {
     number: 99.12,
@@ -935,7 +935,7 @@ export default function WindowsDoorsPage() {
               </motion.div>
               <motion.div {...fadeRight} className="relative">
                 <img
-                  src="https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=2000"
+                  src="/about/hero.jpg"
                   alt="Luxury Home"
                   className="w-full rounded-[40px] shadow-[0_40px_120px_rgba(0,0,0,0.15)]"
                 />

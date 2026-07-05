@@ -104,9 +104,9 @@ export default function Hero() {
               >
                 {[
                   { label: "Windows & Doors", icon: Layers },
-                  { label: "Luxury Interiors", icon: Sparkles },
-                  { label: "Structural Renovation", icon: Hammer },
-                  {label: "Metal Fabrication", icon: Wrench},
+                  { label: "Interiors", icon: Sparkles },
+                  { label: "Renovation", icon: Hammer },
+                  {label: "Metal Works", icon: Wrench},
                 ].map((service) => {
                   const IconComp = service.icon;
                   return (
@@ -145,27 +145,53 @@ export default function Hero() {
               </motion.div>
 
               {/* CREDIBILITY PERFORMANCE ARCHITECTURE */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-                className="grid grid-cols-3 gap-4 sm:gap-8 mt-14 p-6 rounded-2xl bg-slate-50/60 border border-slate-100"
-              >
-                {[
-                  { value: "3000+", label: "Projects Delivered" },
-                  { value: "8+ years", label: "Years Operations" },
-                  { value: "99.12%", label: "Client Satisfaction" },
-                ].map((stat, i) => (
-                  <div key={i} className="flex flex-col">
-                    <h3 className="text-2xl sm:text-3xl font-black text-[#0A2E6F] tracking-tight">
-                      {stat.value}
-                    </h3>
-                    <p className="text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1.5 leading-none">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </motion.div>
+              <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.45, duration: 0.6 }}
+  className="mt-10"
+>
+  <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.06)]">
+
+    {[
+      { value: "3000+", label: "Projects Delivered" },
+      { value: "18+", label: "Years Experience" },
+      { value: "99.12%", label: "Client Satisfaction" },
+    ].map((stat, i) => (
+      <motion.div
+        key={i}
+        whileHover={{
+          y: -4,
+          scale: 1.02,
+        }}
+        transition={{ duration: 0.25 }}
+        className={`group relative flex flex-col items-center justify-center py-5 px-3 text-center ${
+          i !== 2 ? "border-r border-slate-200" : ""
+        }`}
+      >
+        {/* Top Accent */}
+        <div className="absolute top-0 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-full bg-[#0A2E6F] transition-all duration-300 group-hover:w-12" />
+
+        {/* Value */}
+        <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0A2E6F] transition-transform duration-300 group-hover:scale-105">
+          {stat.value}
+        </h3>
+
+        {/* Divider */}
+        <div className="w-7 h-[2px] rounded-full bg-[#0A2E6F]/20 my-2 transition-all duration-300 group-hover:w-10 group-hover:bg-[#0A2E6F]" />
+
+        {/* Label */}
+        <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-500 leading-tight group-hover:text-[#0A2E6F] transition-colors duration-300">
+          {stat.label}
+        </p>
+
+        {/* Soft Background Glow */}
+        <div className="absolute inset-0 bg-blue-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 rounded-xl" />
+      </motion.div>
+    ))}
+
+  </div>
+</motion.div>
             </div>
 
             {/* RIGHT COLUMN: BACKGROUND INTRO LOOP VIDEO */}

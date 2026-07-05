@@ -89,7 +89,7 @@ const services = [
     desc: "Luxury indoor & outdoor staircase systems.",
   },
   {
-    title: "Iron Gates",
+    title: "Main Gates",
     image: "/metalworks/iron-gates.jpg",
     desc: "Heavy-duty designer gates for villas and apartments.",
   },
@@ -685,10 +685,10 @@ export default function MetalWorksPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                { number: "3000+", title: "Projects Completed", desc: "Successfully delivered fabrication projects." },
-                { number: "8+ years", title: "Years Experience", desc: "Industry expertise and engineering excellence." },
-                { number: "500+", title: "Happy Clients", desc: "Satisfied homeowners, builders and architects." },
-                { number: "25+", title: "Expert Team", desc: "Dedicated designers, fabricators and installers." },
+                { number: "1500+", title: "Projects Completed", desc: "Successfully delivered fabrication projects." },
+                { number: "10+ years", title: "Years Experience", desc: "Industry expertise and engineering excellence." },
+                { number: "97.5%", title: "Satisfaction", desc: "Satisfied homeowners, builders and architects." },
+                { number: "20+", title: "Expert Team", desc: "Dedicated designers, fabricators and installers." },
               ].map((item, index) => (
                 <motion.div
                   key={index}

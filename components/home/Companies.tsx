@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 const companies = [
   {
@@ -82,44 +81,34 @@ export default function Companies() {
             >
 
               {/* Image Side */}
-
-<Link href={company.href}>
-
-  <div className="group relative overflow-hidden rounded-[36px] cursor-pointer">
-
-    <img
-      src={company.image}
-      alt={company.title}
-      className="
-        w-full
-        h-[600px]
-        object-cover
-        transition-all
-        transform-gpu
-transition-transform
-duration-1000
-ease-out
-group-hover:scale-105
-      "
-    />
-
-    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
-
-    <div className="absolute bottom-8 left-8">
-      <span className="text-white text-sm tracking-[4px] uppercase">
-        SIMMPLY PERFECT GROUP
-      </span>
-    </div>
-
-  </div>
-
-</Link>
-
-{/* Content Side */}
+              <Link href={company.href}>
+                <div className="group relative overflow-hidden rounded-[36px] cursor-pointer">
+                  <img
+                    src={company.image}
+                    alt={company.title}
+                    className="
+                      w-full
+                      h-[600px]
+                      object-cover
+                      transition-all
+                      transform-gpu
+                      transition-transform
+                      duration-1000
+                      ease-out
+                      group-hover:scale-105
+                    "
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
+                  <div className="absolute bottom-8 left-8">
+                    <span className="text-white text-sm tracking-[4px] uppercase">
+                      SIMMPLY PERFECT GROUP
+                    </span>
+                  </div>
+                </div>
+              </Link>
 
               {/* Content Side */}
               <div>
-
                 <span className="text-[120px] md:text-[150px] font-black text-slate-100 leading-none">
                   {company.number}
                 </span>
@@ -137,65 +126,76 @@ group-hover:scale-105
                 </p>
 
                 <div className="mt-10 flex gap-6">
-
-  <Link href={company.href}>
-
-    <button
-      className="
-        bg-[#0A2E6F]
-        text-white
-        px-8
-        py-4
-        rounded-2xl
-        flex
-        items-center
-        gap-2
-        hover:gap-4
-        transition-all
-      "
-    >
-      Explore Division
-      <ArrowRight size={18} />
-    </button>
-
-  </Link>
-
-</div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-8 mt-14 pt-10 border-t border-slate-200">
-
-                  <div>
-                    <h4 className="text-3xl font-bold text-[#0A2E6F]">
-                      3000+
-                    </h4>
-                    <p className="text-slate-500 mt-2">
-                      Projects
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-3xl font-bold text-[#0A2E6F]">
-                      8+ years
-                    </h4>
-                    <p className="text-slate-500 mt-2">
-                      Experience
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-3xl font-bold text-[#0A2E6F]">
-                      99.12%
-                    </h4>
-                    <p className="text-slate-500 mt-2">
-                      Quality
-                    </p>
-                  </div>
-
+                  <Link href={company.href}>
+                    <button
+                      className="
+                        bg-[#0A2E6F]
+                        text-white
+                        px-8
+                        py-4
+                        rounded-2xl
+                        flex
+                        items-center
+                        gap-2
+                        hover:gap-4
+                        transition-all
+                      "
+                    >
+                      Explore Division
+                      <ArrowRight size={18} />
+                    </button>
+                  </Link>
                 </div>
 
-              </div>
+                {/* Styled Stats Component */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.45, duration: 0.6 }}
+                  className="mt-12"
+                >
+                  <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.06)]">
+                    {[
+                      { value: "3000+", label: "Projects Delivered" },
+                      { value: "18+", label: "Years Experience" },
+                      { value: "99.12%", label: "Client Satisfaction" },
+                    ].map((stat, i) => (
+                      <motion.div
+                        key={i}
+                        whileHover={{
+                          y: -4,
+                          scale: 1.02,
+                        }}
+                        transition={{ duration: 0.25 }}
+                        className={`group relative flex flex-col items-center justify-center py-5 px-3 text-center ${
+                          i !== 2 ? "border-r border-slate-200" : ""
+                        }`}
+                      >
+                        {/* Soft Background Glow */}
+                        <div className="absolute inset-0 bg-blue-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0 rounded-xl" />
 
+                        {/* Top Accent */}
+                        <div className="absolute top-0 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-full bg-[#0A2E6F] transition-all duration-300 group-hover:w-12 z-10" />
+
+                        {/* Value */}
+                        <h3 className="relative z-10 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0A2E6F] transition-transform duration-300 group-hover:scale-105">
+                          {stat.value}
+                        </h3>
+
+                        {/* Divider */}
+                        <div className="relative z-10 w-7 h-[2px] rounded-full bg-[#0A2E6F]/20 my-2 transition-all duration-300 group-hover:w-10 group-hover:bg-[#0A2E6F]" />
+
+                        {/* Label */}
+                        <p className="relative z-10 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-500 leading-tight group-hover:text-[#0A2E6F] transition-colors duration-300">
+                          {stat.label}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+
+              </div>
             </motion.div>
           ))}
 
