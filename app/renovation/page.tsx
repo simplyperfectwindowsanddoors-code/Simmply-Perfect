@@ -371,7 +371,7 @@ export default function RenovationPage() {
                   Whether it’s a single-room makeover or a complete residential or commercial renovation, our team delivers comprehensive renovation solutions designed to enhance functionality, aesthetics, and long-term value.
                 </p>
                 <div className="flex flex-wrap gap-4 mt-10">
-                  <Link href="#services" className="inline-flex items-center justify-center bg-[#0A2E6F] text-white px-8 py-4 rounded-full font-semibold hover:scale-105 transition-all shadow-lg shadow-blue-900/20">Explore Renovations</Link>
+                  <Link href="#infrastructure" className="inline-flex items-center justify-center bg-[#0A2E6F] text-white px-8 py-4 rounded-full font-semibold hover:scale-105 transition-all shadow-lg shadow-blue-900/20">Explore Renovations</Link>
                   <Link href="/contact" className="inline-flex items-center justify-center border border-slate-300 px-8 py-4 rounded-full font-semibold hover:border-[#0A2E6F] hover:text-[#0A2E6F] transition-all bg-white">Get Consultation</Link>
                 </div>
                 <div className="grid grid-cols-3 mt-14 sm:mt-16 py-8 rounded-[2rem] bg-white border border-slate-200/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] divide-x divide-slate-200">
@@ -431,22 +431,6 @@ export default function RenovationPage() {
                       className="absolute inset-0 w-full h-full object-cover"
                     />
                   </motion.div>
-
-                  {/* 3. ANIMATED DRAG LINE */}
-                  <motion.div
-                    className="absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_15px_rgba(0,0,0,0.5)] z-10"
-                    initial={{ left: "0%" }}
-                    animate={{ left: "50%" }}
-                    transition={{ duration: 2.5, ease: "easeOut", delay: 0.5 }}
-                  >
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border border-slate-200">
-                      <div className="flex gap-1">
-                        <div className="w-0.5 h-3 bg-slate-300 rounded-full" />
-                        <div className="w-0.5 h-3 bg-slate-300 rounded-full" />
-                      </div>
-                    </div>
-                  </motion.div>
-
                   {/* 4. STATIC BADGES */}
                   <div className="absolute top-6 left-6 bg-red-500 text-white px-5 py-2 rounded-full font-bold text-sm z-20 shadow-lg shadow-red-500/20">
                     BEFORE
@@ -546,7 +530,7 @@ export default function RenovationPage() {
         </section>
 
         {/* INFRASTRUCTURE UPGRADES */}
-        <section className="py-32 bg-slate-50 relative overflow-hidden">
+        <section id="infrastructure" className="py-32 bg-slate-50 relative overflow-hidden">
           {/* Decorative background blur */}
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
@@ -646,12 +630,7 @@ export default function RenovationPage() {
                       />
                     </motion.div>
 
-                    <div className="absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_15px_rgba(0,0,0,0.5)] z-10"
-                      animate={{ left: ["0%", "100%", "0%"] }}
-                      transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: index * 0.5 }}
-                    />
-
-                    <div className="absolute top-6 left-6 bg-red-500/90 backdrop-blur text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-widest shadow-lg z-20">
+                      <div className="absolute top-6 left-6 bg-red-500/90 backdrop-blur text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-widest shadow-lg z-20">
                       BEFORE
                     </div>
                     <div className="absolute top-6 right-6 bg-emerald-500/90 backdrop-blur text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-widest shadow-lg z-20">

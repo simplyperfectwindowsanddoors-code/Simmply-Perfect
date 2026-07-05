@@ -287,10 +287,10 @@ export default function MetalWorksPage() {
                   </Link>
 
                   <Link
-                    href="/articles"
+                    href="#services"
                     className="group border border-slate-300 bg-white/80 backdrop-blur-md px-8 py-4 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-400 hover:text-slate-900 transition-all duration-300 flex items-center gap-2"
                   >
-                    View Projects
+                    Explore Services
                   </Link>
                 </div>
               </motion.div>
@@ -385,7 +385,7 @@ export default function MetalWorksPage() {
         {/* ========================================= */}
         {/* OUR SERVICES */}
         {/* ========================================= */}
-        <section className="py-28 bg-[#FAFBFD] relative border-t border-slate-100">
+        <section id="services" className="py-28 bg-[#FAFBFD] relative border-t border-slate-100">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             
             <motion.div {...smoothFadeUp} className="text-center max-w-3xl mx-auto mb-20">
