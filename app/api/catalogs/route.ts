@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     // Transmit vault transaction message records
     await transporter.sendMail({
       from: `"Simmply Perfect Vault" <${process.env.SMTP_USER}>`,
-      to: "saggidik@gmail.com",
+      to: "simplyperfectwindowsanddoors@gmail.com",
       replyTo: email,
       subject: `📚 New Catalog Access Request - ${name}`,
       html: `

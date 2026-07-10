@@ -13,6 +13,11 @@ const companies = [
     description:
       "Premium aluminium windows, designer doors, facade systems and customized architectural solutions built for modern living.",
     image: "/windows-doors.jpg",
+    stats: [
+      { value: "3000+", label: "Projects Delivered" },
+      { value: "18+", label: "Years Experience" },
+      { value: "99.12%", label: "Client Satisfaction" },
+    ],
   },
   {
     number: "02",
@@ -22,6 +27,11 @@ const companies = [
     description:
       "Luxury interiors crafted with elegance, functionality and timeless design, transforming ordinary spaces into extraordinary experiences.",
     image: "/interiors.jpg",
+    stats: [
+      { value: "1200+", label: "Spaces Designed" },
+      { value: "10+", label: "Years Experience" },
+      { value: "98.20%", label: "Client Satisfaction" },
+    ],
   },
   {
     number: "03",
@@ -31,6 +41,11 @@ const companies = [
     description:
       "Expert renovation services that modernize homes and commercial spaces with superior craftsmanship and innovative solutions.",
     image: "/renovation.jpg",
+    stats: [
+      { value: "1000+", label: "Properties Restored" },
+      { value: "10+", label: "Years Experience" },
+      { value: "97.57%", label: "Client Satisfaction" },
+    ],
   },
 ];
 
@@ -38,7 +53,6 @@ export default function Companies() {
   return (
     <section className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -57,15 +71,14 @@ export default function Companies() {
           </h2>
 
           <p className="mt-8 max-w-3xl mx-auto text-lg text-slate-600 leading-8">
-            Simmply Perfect Group brings together premium expertise in
-            Windows & Doors, Luxury Interiors and Renovation to create
-            exceptional residential and commercial spaces.
+            Simmply Perfect Group brings together premium expertise in Windows &
+            Doors, Luxury Interiors and Renovation to create exceptional
+            residential and commercial spaces.
           </p>
         </motion.div>
 
         {/* Companies Showcase */}
         <div className="space-y-36">
-
           {companies.map((company, index) => (
             <motion.div
               key={company.title}
@@ -74,12 +87,9 @@ export default function Companies() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
               className={`grid lg:grid-cols-2 gap-16 items-center ${
-                index % 2 !== 0
-                  ? "lg:[&>*:first-child]:order-2"
-                  : ""
+                index % 2 !== 0 ? "lg:[&>*:first-child]:order-2" : ""
               }`}
             >
-
               {/* Image Side */}
               <Link href={company.href}>
                 <div className="group relative overflow-hidden rounded-[36px] cursor-pointer">
@@ -156,11 +166,7 @@ export default function Companies() {
                   className="mt-12"
                 >
                   <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.06)]">
-                    {[
-                      { value: "3000+", label: "Projects Delivered" },
-                      { value: "18+", label: "Years Experience" },
-                      { value: "99.12%", label: "Client Satisfaction" },
-                    ].map((stat, i) => (
+                    {company.stats.map((stat, i) => (
                       <motion.div
                         key={i}
                         whileHover={{
@@ -194,13 +200,10 @@ export default function Companies() {
                     ))}
                   </div>
                 </motion.div>
-
               </div>
             </motion.div>
           ))}
-
         </div>
-
       </div>
     </section>
   );

@@ -209,11 +209,11 @@ export default function Footer() {
               </a>
 
               <a
-                href="mailto:info@simmplyperfect.com"
+                href="mailto:simplyperfectwindowsanddoors@gmail.com"
                 className="flex items-center gap-4 hover:text-white transition-all duration-300"
               >
                 <Mail size={18} />
-                <span>info@simmplyperfect.com</span>
+                <span>simplyperfectwindowsanddoors@gmail.com</span>
               </a>
 
               <a

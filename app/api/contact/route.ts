@@ -45,7 +45,7 @@ export async function POST(req: Request) {
 
     await transporter.sendMail({
       from: `"Simmply Perfect Website" <${process.env.SMTP_USER}>`,
-      to: "saggidik@gmail.com",
+      to: "simplyperfectwindowsanddoors@gmail.com",
 
       replyTo: email,
 

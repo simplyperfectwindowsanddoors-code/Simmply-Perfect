@@ -29,8 +29,8 @@ const contactInfo = [
     icon: Mail,
     title: "Email Us",
     subtitle: "Online consultations",
-    value: "info@simmplyperfect.com",
-    href: "mailto:info@simmplyperfect.com",
+    value: "simplyperfectwindowsanddoors@gmail.com",
+    href: "mailto:simplyperfectwindowsanddoors@gmail.com",
   },
   {
     icon: MapPin,
@@ -384,7 +384,7 @@ export default function ContactPage() {
                   {[
                     { label: "HQ Spatial Address", val: "Simmply Perfect Windows & Doors, India", link: "https://www.google.com/maps/place/Simmply+Perfect+Windows+%26+Doors" },
                     { label: "Secure Phone Grid", val: "+91 93907 19623", link: "tel:+919390719623" },
-                    { label: "Data Communications", val: "info@simmplyperfect.com", link: "mailto:info@simmplyperfect.com" },
+                    { label: "Data Communications", val: "simplyperfectwindowsanddoors@gmail.com", link: "mailto:simplyperfectwindowsanddoors@gmail.com" },
                   ].map((info) => (
                     <div key={info.label} className="p-5 rounded-2xl bg-slate-50/60 border border-slate-100">
                       <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{info.label}</p>
