@@ -15,18 +15,17 @@ import {
   DoorOpen,
   Layout,
   Construction,
+  Hammer,
   Layers,
   Eye,
   ArrowLeft,
   Loader2,
   Sparkles,
   FileText,
-  ArrowUpRight,
   Folder,
   FolderOpen,
   ChevronRight,
   ChevronDown,
-  PhoneCall,
 } from "lucide-react";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -53,6 +52,12 @@ const companyItems = [
     href: "/renovation",
     description: "Professional renovation services",
     icon: Construction,
+  },
+  {
+    label: "Metal Works",
+    href: "/metal-works",
+    description: "Professional architectural metal work solutions",
+    icon: Hammer,
   },
 ];
 
@@ -496,6 +501,7 @@ export default function Navbar() {
     pathname === "/windows-doors" ||
     pathname === "/interiors" ||
     pathname === "/renovation";
+    pathname === "/metal-works";
 
   return (
   <>
