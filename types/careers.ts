@@ -6,7 +6,6 @@ import type { LucideIcon } from "lucide-react";
 
 export type Job = {
   id: number;
-  slug: string;
 
   title: string;
   department: string;
@@ -17,24 +16,12 @@ export type Job = {
   ctc: string;
 
   description: string;
-
-  /*
-   * Some job data uses "overview"
-   * and some uses "role".
-   */
-  overview?: string;
-  role?: string;
+  role: string;
 
   skills: string[];
   responsibilities: string[];
-  qualifications: string[];
-
-  /*
-   * Optional because some job entries may not contain
-   * policy and terms.
-   */
-  policy?: string[];
-  terms?: string[];
+  policy: string[];
+  terms: string[];
 
   icon: LucideIcon;
 };
@@ -44,12 +31,17 @@ export type Job = {
 ========================================================= */
 
 export type CareerBenefit = {
-  number?: string;
-
   title: string;
   description: string;
-
   icon: LucideIcon;
+
+  /*
+   * Optional compatibility field.
+   *
+   * This allows components to use benefit.number
+   * without requiring it inside data/jobs.ts.
+   */
+  number?: string;
 };
 
 /* =========================================================
@@ -76,6 +68,7 @@ export type JobApplicationData = {
   gender: string;
 
   role: string;
+
   experience: string;
 
   currentCtc: string;
@@ -90,14 +83,21 @@ export type JobApplicationData = {
 };
 
 /* =========================================================
-   COMPATIBILITY TYPE
+   JOB APPLICATION FORM DATA
+
+   Compatibility alias for components that import:
+
+   JobApplicationFormData
+
+   instead of:
+
+   JobApplicationData
 ========================================================= */
 
-export type JobApplicationFormData =
-  JobApplicationData;
+export type JobApplicationFormData = JobApplicationData;
 
 /* =========================================================
-   APPLICATION ERRORS TYPE
+   JOB APPLICATION ERRORS
 ========================================================= */
 
 export type JobApplicationErrors = Partial<

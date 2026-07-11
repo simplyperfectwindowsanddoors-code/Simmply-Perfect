@@ -8,7 +8,6 @@ import {
   Check,
   Clock3,
   FileCheck2,
-  GraduationCap,
   IndianRupee,
   MapPin,
   ShieldCheck,
@@ -58,15 +57,9 @@ export default function JobDetails({
   onApply,
   onClose,
 }: JobDetailsProps) {
-  /*
-   * SAFE FALLBACK VALUES
-   *
-   * These prevent:
-   *
-   * Cannot read properties of undefined (reading 'map')
-   *
-   * even when some properties are missing from jobs.ts.
-   */
+  /* =========================================================
+     SAFE VALUES
+  ========================================================= */
 
   const responsibilities = Array.isArray(job.responsibilities)
     ? job.responsibilities
@@ -74,10 +67,6 @@ export default function JobDetails({
 
   const skills = Array.isArray(job.skills)
     ? job.skills
-    : [];
-
-  const qualifications = Array.isArray(job.qualifications)
-    ? job.qualifications
     : [];
 
   const policy = Array.isArray(job.policy)
@@ -88,38 +77,40 @@ export default function JobDetails({
     ? job.terms
     : [];
 
-  /*
-   * SAFE ICON FALLBACK
-   *
-   * If a job does not contain an icon,
-   * BriefcaseBusiness will be displayed.
-   */
-
   const Icon = job.icon ?? BriefcaseBusiness;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col bg-white">
       {/* =====================================================
           SCROLLABLE CONTENT
       ===================================================== */}
 
-      <div className="flex-1 overflow-y-auto overscroll-contain">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {/* ===================================================
-            HERO
+            HERO SECTION
         =================================================== */}
 
         <div className="relative overflow-hidden border-b border-slate-200 bg-[#F8FAFC] px-5 py-7 sm:px-8 sm:py-9 lg:px-10">
           {/* BACKGROUND DECORATION */}
 
-          <div className="pointer-events-none absolute inset-0">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
             <div className="absolute -right-24 -top-28 h-72 w-72 rounded-full bg-blue-100/70 blur-[90px]" />
 
             <div className="absolute -bottom-32 left-1/3 h-64 w-64 rounded-full bg-white blur-[80px]" />
+
+            <div
+              className="absolute inset-0 opacity-[0.025]"
+              style={{
+                backgroundImage:
+                  "radial-gradient(#0A2E6F 1px, transparent 1px)",
+                backgroundSize: "24px 24px",
+              }}
+            />
           </div>
 
           <motion.div
             {...sectionAnimation}
-            className="relative"
+            className="relative mx-auto max-w-5xl"
           >
             {/* ICON + DEPARTMENT */}
 
@@ -182,7 +173,9 @@ export default function JobDetails({
               <JobMeta
                 icon={IndianRupee}
                 label="Compensation"
-                value={job.ctc || "As per company standards"}
+                value={
+                  job.ctc || "As per company standards"
+                }
               />
             </div>
           </motion.div>
@@ -195,10 +188,10 @@ export default function JobDetails({
         <div className="px-5 py-7 sm:px-8 sm:py-9 lg:px-10">
           <div className="mx-auto max-w-5xl">
             {/* ===============================================
-                JOB OVERVIEW
+                ROLE OVERVIEW
             =============================================== */}
 
-            {job.overview && (
+            {job.role && (
               <motion.section
                 {...sectionAnimation}
                 transition={{
@@ -212,9 +205,9 @@ export default function JobDetails({
                   title="Role Overview"
                 />
 
-                <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+                <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_35px_-25px_rgba(15,23,42,0.2)] sm:p-6">
                   <p className="text-sm leading-7 text-slate-600 sm:text-[15px] sm:leading-8">
-                    {job.overview}
+                    {job.role}
                   </p>
                 </div>
               </motion.section>
@@ -228,7 +221,7 @@ export default function JobDetails({
               skills.length > 0) && (
               <div
                 className={`grid gap-6 ${
-                  job.overview ? "mt-8" : ""
+                  job.role ? "mt-8" : ""
                 } lg:grid-cols-2`}
               >
                 {/* RESPONSIBILITIES */}
@@ -240,7 +233,7 @@ export default function JobDetails({
                       ...sectionAnimation.transition,
                       delay: 0.1,
                     }}
-                    className="rounded-[24px] border border-slate-200 bg-white p-5 sm:p-6"
+                    className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_35px_-25px_rgba(15,23,42,0.2)] sm:p-6"
                   >
                     <SectionHeader
                       icon={Target}
@@ -308,39 +301,6 @@ export default function JobDetails({
             )}
 
             {/* ===============================================
-                QUALIFICATIONS
-            =============================================== */}
-
-            {qualifications.length > 0 && (
-              <motion.section
-                {...sectionAnimation}
-                transition={{
-                  ...sectionAnimation.transition,
-                  delay: 0.2,
-                }}
-                className="mt-6 rounded-[24px] border border-slate-200 bg-white p-5 sm:p-6"
-              >
-                <SectionHeader
-                  icon={GraduationCap}
-                  eyebrow="Eligibility"
-                  title="Qualifications"
-                />
-
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  {qualifications.map(
-                    (item, index) => (
-                      <DetailListItem
-                        key={`${item}-${index}`}
-                        text={item}
-                        index={index}
-                      />
-                    ),
-                  )}
-                </div>
-              </motion.section>
-            )}
-
-            {/* ===============================================
                 POLICY + TERMS
             =============================================== */}
 
@@ -354,7 +314,7 @@ export default function JobDetails({
                     {...sectionAnimation}
                     transition={{
                       ...sectionAnimation.transition,
-                      delay: 0.25,
+                      delay: 0.2,
                     }}
                     className="rounded-[24px] border border-blue-100 bg-blue-50/40 p-5 sm:p-6"
                   >
@@ -383,7 +343,7 @@ export default function JobDetails({
                     {...sectionAnimation}
                     transition={{
                       ...sectionAnimation.transition,
-                      delay: 0.3,
+                      delay: 0.25,
                     }}
                     className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 sm:p-6"
                   >
@@ -468,16 +428,16 @@ function JobMeta({
   value,
 }: JobMetaProps) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm sm:p-4">
+    <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm sm:p-4">
       <div className="flex items-center gap-2">
         <Icon className="h-3.5 w-3.5 shrink-0 text-[#0A2E6F]" />
 
-        <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">
+        <span className="truncate text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">
           {label}
         </span>
       </div>
 
-      <p className="mt-2 truncate text-xs font-bold text-[#071224] sm:text-sm">
+      <p className="mt-2 break-words text-xs font-bold leading-5 text-[#071224] sm:text-sm">
         {value}
       </p>
     </div>
@@ -505,7 +465,7 @@ function SectionHeader({
         <Icon className="h-4 w-4" />
       </div>
 
-      <div>
+      <div className="min-w-0">
         <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
           {eyebrow}
         </p>
@@ -551,7 +511,7 @@ function DetailListItem({
         <Check className="h-3 w-3 text-[#0A2E6F]" />
       </div>
 
-      <p className="text-sm leading-6 text-slate-600">
+      <p className="min-w-0 text-sm leading-6 text-slate-600">
         {text}
       </p>
     </motion.div>
