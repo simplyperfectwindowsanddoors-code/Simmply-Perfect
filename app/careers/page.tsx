@@ -120,9 +120,9 @@ export default function CareersPage() {
         =================================================== */}
 
         <JobOpenings
-          onViewDetails={handleViewDetails}
-          onApply={handleApply}
-        />
+  onViewDetails={handleViewDetails}
+  onApply={handleApply}
+/>
 
         {/* ===================================================
             WHY SIMMPLY PERFECT
