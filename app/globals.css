@@ -860,3 +860,70 @@ select:focus {
 }
 
 
+
+
+/* =====================================================
+   HIDE SCROLLBAR
+===================================================== */
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+/* =========================================================
+   CAREERS MODAL SCROLLBAR
+========================================================= */
+
+.career-modal-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.career-modal-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.career-modal-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.career-modal-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.career-modal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+
+
+
+/* =====================================================
+   TRANSPARENT INPUT AUTOFILL
+===================================================== */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #1e293b !important;
+
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  box-shadow: 0 0 0 1000px transparent inset !important;
+
+  background-color: transparent !important;
+  background-image: none !important;
+
+  caret-color: #1e293b !important;
+
+  transition: background-color 9999s ease-out 0s !important;
+}
