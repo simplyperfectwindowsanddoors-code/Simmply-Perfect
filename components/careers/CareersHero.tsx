@@ -12,6 +12,18 @@ import {
   Users,
 } from "lucide-react";
 
+/* =========================================================
+   TYPES
+========================================================= */
+
+type CareersHeroProps = {
+  onExploreOpenings: () => void;
+};
+
+/* =========================================================
+   STATS
+========================================================= */
+
 const stats = [
   {
     value: "16+",
@@ -30,10 +42,19 @@ const stats = [
   },
 ];
 
-export default function CareersHero() {
+/* =========================================================
+   CAREERS HERO
+========================================================= */
+
+export default function CareersHero({
+  onExploreOpenings,
+}: CareersHeroProps) {
   return (
     <section className="relative overflow-hidden bg-white pt-28 sm:pt-32 lg:pt-36">
-      {/* Background decorations */}
+      {/* =====================================================
+          BACKGROUND DECORATIONS
+      ===================================================== */}
+
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -left-32 top-20 h-[420px] w-[420px] rounded-full bg-blue-100/50 blur-[120px]" />
 
@@ -49,17 +70,31 @@ export default function CareersHero() {
         />
       </div>
 
+      {/* =====================================================
+          MAIN CONTAINER
+      ===================================================== */}
+
       <div className="relative mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <div className="grid min-h-[680px] items-center gap-14 pb-20 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:pb-24">
-          {/* =====================================================
+          {/* =================================================
               LEFT CONTENT
-          ===================================================== */}
+          ================================================= */}
 
           <div>
+            {/* LABEL */}
+
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              initial={{
+                opacity: 0,
+                y: 16,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 0.6,
+              }}
               className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/70 px-4 py-2"
             >
               <Sparkles className="h-4 w-4 text-[#0A2E6F]" />
@@ -69,9 +104,17 @@ export default function CareersHero() {
               </span>
             </motion.div>
 
+            {/* HEADING */}
+
             <motion.h1
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{
+                opacity: 0,
+                y: 25,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
               transition={{
                 duration: 0.7,
                 delay: 0.1,
@@ -79,14 +122,23 @@ export default function CareersHero() {
               className="mt-7 max-w-3xl text-4xl font-bold leading-[1.08] tracking-[-0.04em] text-[#071224] sm:text-5xl lg:text-[64px]"
             >
               Build your career.
+
               <span className="block text-[#0A2E6F]">
                 Shape better spaces.
               </span>
             </motion.h1>
 
+            {/* DESCRIPTION */}
+
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
               transition={{
                 duration: 0.7,
                 delay: 0.2,
@@ -98,11 +150,15 @@ export default function CareersHero() {
               to transform residential and commercial spaces.
             </motion.p>
 
-            {/* Location */}
+            {/* LOCATION */}
 
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
               transition={{
                 duration: 0.6,
                 delay: 0.3,
@@ -114,25 +170,38 @@ export default function CareersHero() {
               <span>Career opportunities in Hyderabad</span>
             </motion.div>
 
-            {/* Buttons */}
+            {/* =================================================
+                BUTTONS
+            ================================================= */}
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
               transition={{
                 duration: 0.7,
                 delay: 0.35,
               }}
               className="mt-9 flex flex-col gap-3 sm:flex-row"
             >
-              <Link
-                href="#openings"
-                className="group inline-flex h-14 min-w-[190px] items-center justify-center gap-2 rounded-full bg-[#0A2E6F] px-7 text-sm font-semibold text-white shadow-[0_14px_35px_rgba(10,46,111,0.22)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#08265d] hover:shadow-[0_18px_45px_rgba(10,46,111,0.3)]"
+              {/* EXPLORE OPENINGS */}
+
+              <button
+                type="button"
+                onClick={onExploreOpenings}
+                className="group inline-flex h-14 min-w-[190px] cursor-pointer items-center justify-center gap-2 rounded-full bg-[#0A2E6F] px-7 text-sm font-semibold text-white shadow-[0_14px_35px_rgba(10,46,111,0.22)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#08265d] hover:shadow-[0_18px_45px_rgba(10,46,111,0.3)]"
               >
                 Explore Openings
 
                 <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" />
-              </Link>
+              </button>
+
+              {/* ABOUT COMPANY */}
 
               <Link
                 href="/about"
@@ -144,11 +213,19 @@ export default function CareersHero() {
               </Link>
             </motion.div>
 
-            {/* Stats */}
+            {/* =================================================
+                STATS
+            ================================================= */}
 
             <motion.div
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{
+                opacity: 0,
+                y: 25,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
               transition={{
                 duration: 0.7,
                 delay: 0.5,
@@ -165,7 +242,11 @@ export default function CareersHero() {
                       index !== stats.length - 1
                         ? "border-r border-slate-200"
                         : ""
-                    } ${index !== 0 ? "pl-4 sm:pl-7" : "pr-4 sm:pr-7"}`}
+                    } ${
+                      index !== 0
+                        ? "pl-4 sm:pl-7"
+                        : "pr-4 sm:pr-7"
+                    }`}
                   >
                     <div className="flex items-center gap-2">
                       <Icon className="hidden h-4 w-4 text-[#0A2E6F] sm:block" />
@@ -184,9 +265,9 @@ export default function CareersHero() {
             </motion.div>
           </div>
 
-          {/* =====================================================
+          {/* =================================================
               RIGHT VISUAL
-          ===================================================== */}
+          ================================================= */}
 
           <motion.div
             initial={{
@@ -206,11 +287,11 @@ export default function CareersHero() {
             }}
             className="relative hidden lg:block"
           >
-            {/* Main Card */}
+            {/* MAIN CARD */}
 
             <div className="relative overflow-hidden rounded-[36px] bg-[#071224] p-3 shadow-[0_35px_90px_rgba(7,18,36,0.2)]">
               <div className="relative min-h-[520px] overflow-hidden rounded-[28px] bg-gradient-to-br from-[#0A2E6F] via-[#0b347c] to-[#071224] p-9">
-                {/* Grid Pattern */}
+                {/* GRID PATTERN */}
 
                 <div
                   className="absolute inset-0 opacity-[0.07]"
@@ -221,13 +302,13 @@ export default function CareersHero() {
                   }}
                 />
 
-                {/* Glow */}
+                {/* GLOWS */}
 
                 <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-blue-400/20 blur-[90px]" />
 
                 <div className="absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-white/10 blur-[100px]" />
 
-                {/* Content */}
+                {/* CARD CONTENT */}
 
                 <div className="relative flex h-full min-h-[440px] flex-col justify-between">
                   <div>
@@ -246,7 +327,9 @@ export default function CareersHero() {
                     </p>
                   </div>
 
-                  {/* Job Categories */}
+                  {/* =============================================
+                      JOB CATEGORIES
+                  ============================================= */}
 
                   <div className="space-y-3">
                     {[
@@ -275,7 +358,10 @@ export default function CareersHero() {
                       >
                         <div className="flex items-center gap-3">
                           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-sm font-bold text-white">
-                            {String(index + 1).padStart(2, "0")}
+                            {String(index + 1).padStart(
+                              2,
+                              "0",
+                            )}
                           </div>
 
                           <span className="text-sm font-semibold text-white">
@@ -291,7 +377,9 @@ export default function CareersHero() {
               </div>
             </div>
 
-            {/* Floating Badge */}
+            {/* =================================================
+                FLOATING BADGE
+            ================================================= */}
 
             <motion.div
               animate={{
