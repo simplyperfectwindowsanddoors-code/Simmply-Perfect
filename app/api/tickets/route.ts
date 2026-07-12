@@ -14,7 +14,7 @@ type TicketRequestBody = {
 };
 
 /* =========================================================
-   GENERATE UNIQUE TICKET ID
+   GENERATE TICKET ID
 ========================================================= */
 
 function generateTicketId() {
@@ -29,6 +29,9 @@ function generateTicketId() {
 
 /* =========================================================
    ESCAPE HTML
+
+   Prevents user-entered HTML from being inserted directly
+   into the support email.
 ========================================================= */
 
 function escapeHtml(value: string) {
@@ -62,7 +65,7 @@ export async function POST(req: Request) {
     } = body;
 
     /* =====================================================
-       VALIDATE REQUIRED FIELDS
+       REQUIRED FIELD VALIDATION
     ===================================================== */
 
     if (
@@ -84,12 +87,12 @@ export async function POST(req: Request) {
     }
 
     /* =====================================================
-       VALIDATE CONTACT NUMBER
+       CONTACT NUMBER VALIDATION
     ===================================================== */
 
     const cleanContact = contact.replace(/\D/g, "");
 
-    if (cleanContact.length !== 10) {
+    if (!/^\d{10}$/.test(cleanContact)) {
       return NextResponse.json(
         {
           success: false,
@@ -103,13 +106,20 @@ export async function POST(req: Request) {
     }
 
     /* =====================================================
-       CHECK SMTP ENVIRONMENT VARIABLES
+       SMTP ENVIRONMENT VARIABLES
     ===================================================== */
 
     const smtpHost = process.env.SMTP_HOST;
+
     const smtpPort = process.env.SMTP_PORT;
+
     const smtpUser = process.env.SMTP_USER;
+
     const smtpPass = process.env.SMTP_PASS;
+
+    /* =====================================================
+       CHECK SMTP CONFIGURATION
+    ===================================================== */
 
     if (
       !smtpHost ||
@@ -118,14 +128,20 @@ export async function POST(req: Request) {
       !smtpPass
     ) {
       console.error(
-        "TICKETS API ERROR: Missing SMTP environment variables",
+        "TICKETS API ERROR: Missing SMTP environment variables.",
+        {
+          SMTP_HOST: Boolean(smtpHost),
+          SMTP_PORT: Boolean(smtpPort),
+          SMTP_USER: Boolean(smtpUser),
+          SMTP_PASS: Boolean(smtpPass),
+        },
       );
 
       return NextResponse.json(
         {
           success: false,
           message:
-            "Email service is currently unavailable.",
+            "Email service is not configured.",
         },
         {
           status: 500,
@@ -134,7 +150,7 @@ export async function POST(req: Request) {
     }
 
     /* =====================================================
-       GENERATE TICKET INFORMATION
+       GENERATE TICKET DETAILS
     ===================================================== */
 
     const ticketId = generateTicketId();
@@ -149,23 +165,37 @@ export async function POST(req: Request) {
     );
 
     /* =====================================================
-       SANITIZE VALUES FOR EMAIL HTML
+       CLEAN USER DATA
     ===================================================== */
 
-    const safeFullName = escapeHtml(fullName.trim());
+    const cleanFullName = fullName.trim();
+
+    const cleanOrderId = orderId.trim();
+
+    const cleanItem = item.trim();
+
+    const cleanComplaint = complaint.trim();
+
+    /* =====================================================
+       SANITIZE DATA FOR HTML EMAIL
+    ===================================================== */
+
+    const safeFullName = escapeHtml(cleanFullName);
 
     const safeContact = escapeHtml(cleanContact);
 
-    const safeOrderId = escapeHtml(orderId.trim());
+    const safeOrderId = escapeHtml(cleanOrderId);
 
-    const safeItem = escapeHtml(item.trim());
+    const safeItem = escapeHtml(cleanItem);
 
     const safeComplaint = escapeHtml(
-      complaint.trim(),
+      cleanComplaint,
     ).replace(/\n/g, "<br />");
 
     /* =====================================================
        CREATE SMTP TRANSPORTER
+
+       Uses the same SMTP settings as the Catalog API.
     ===================================================== */
 
     const transporter = nodemailer.createTransport({
@@ -188,49 +218,61 @@ export async function POST(req: Request) {
     await transporter.verify();
 
     /* =====================================================
-       SEND SUPPORT TICKET EMAIL
+       SEND SUPPORT EMAIL
     ===================================================== */
 
-    await transporter.sendMail({
+    const mailResult = await transporter.sendMail({
       from: `"Simmply Perfect Support" <${smtpUser}>`,
 
       to: "simplyperfectwindowsanddoors@gmail.com",
 
-      subject: `🎫 New Support Ticket ${ticketId} - ${safeOrderId}`,
+      subject: `New Support Ticket ${ticketId} - ${cleanOrderId}`,
 
       text: `
-NEW SUPPORT TICKET
+SIMMPLY PERFECT GROUP
+NEW CUSTOMER SUPPORT TICKET
+
+----------------------------------------
+
+TICKET INFORMATION
 
 Ticket ID: ${ticketId}
+Status: OPEN
+Submitted At: ${submittedAt}
+
+----------------------------------------
 
 CUSTOMER DETAILS
 
-Full Name: ${fullName.trim()}
+Full Name: ${cleanFullName}
 Contact Number: ${cleanContact}
+
+----------------------------------------
 
 ORDER DETAILS
 
-Order ID: ${orderId.trim()}
-Item: ${item.trim()}
+Order ID: ${cleanOrderId}
+Item: ${cleanItem}
 
-COMPLAINT
+----------------------------------------
 
-${complaint.trim()}
+CUSTOMER COMPLAINT
 
-STATUS
+${cleanComplaint}
 
-Open
+----------------------------------------
 
-SUBMITTED AT
-
-${submittedAt}
+This is an automated support notification from the
+Simmply Perfect Group website.
       `,
 
       html: `
         <!DOCTYPE html>
 
         <html lang="en">
+
           <head>
+
             <meta charset="UTF-8" />
 
             <meta
@@ -238,9 +280,8 @@ ${submittedAt}
               content="width=device-width, initial-scale=1.0"
             />
 
-            <title>
-              New Support Ticket
-            </title>
+            <title>New Support Ticket</title>
+
           </head>
 
           <body
@@ -251,13 +292,23 @@ ${submittedAt}
               font-family: Arial, Helvetica, sans-serif;
             "
           >
+
+            <!-- ============================================
+                 EMAIL WRAPPER
+            ============================================= -->
+
             <div
               style="
                 width: 100%;
-                padding: 30px 15px;
+                padding: 32px 15px;
                 box-sizing: border-box;
               "
             >
+
+              <!-- ==========================================
+                   EMAIL CONTAINER
+              =========================================== -->
+
               <div
                 style="
                   width: 100%;
@@ -270,21 +321,23 @@ ${submittedAt}
                   box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
                 "
               >
+
                 <!-- ========================================
                      HEADER
                 ========================================= -->
 
                 <div
                   style="
-                    background-color: #071224;
                     padding: 28px 30px;
+                    background-color: #071224;
                   "
                 >
+
                   <p
                     style="
-                      margin: 0 0 8px 0;
+                      margin: 0 0 8px;
                       color: #93c5fd;
-                      font-size: 11px;
+                      font-size: 10px;
                       font-weight: 700;
                       letter-spacing: 2px;
                       text-transform: uppercase;
@@ -306,20 +359,20 @@ ${submittedAt}
 
                   <p
                     style="
-                      margin: 10px 0 0 0;
+                      margin: 10px 0 0;
                       color: #94a3b8;
                       font-size: 13px;
                       line-height: 1.6;
                     "
                   >
-                    A customer has submitted a new support
-                    request through the Simmply Perfect
-                    website.
+                    A customer has submitted a support request
+                    through the Simmply Perfect Group website.
                   </p>
+
                 </div>
 
                 <!-- ========================================
-                     EMAIL CONTENT
+                     CONTENT
                 ========================================= -->
 
                 <div
@@ -327,6 +380,7 @@ ${submittedAt}
                     padding: 28px 30px;
                   "
                 >
+
                   <!-- ======================================
                        TICKET ID
                   ======================================= -->
@@ -334,15 +388,16 @@ ${submittedAt}
                   <div
                     style="
                       margin-bottom: 26px;
-                      padding: 16px 18px;
+                      padding: 17px 18px;
                       background-color: #eff6ff;
                       border: 1px solid #dbeafe;
                       border-radius: 10px;
                     "
                   >
+
                     <p
                       style="
-                        margin: 0 0 5px 0;
+                        margin: 0 0 6px;
                         color: #64748b;
                         font-size: 10px;
                         font-weight: 700;
@@ -363,6 +418,7 @@ ${submittedAt}
                     >
                       ${ticketId}
                     </p>
+
                   </div>
 
                   <!-- ======================================
@@ -371,7 +427,7 @@ ${submittedAt}
 
                   <h2
                     style="
-                      margin: 0 0 14px 0;
+                      margin: 0 0 14px;
                       color: #071224;
                       font-size: 16px;
                     "
@@ -385,15 +441,17 @@ ${submittedAt}
                     cellspacing="0"
                     style="
                       width: 100%;
-                      margin-bottom: 26px;
+                      margin-bottom: 28px;
                       border-collapse: collapse;
                     "
                   >
+
                     <tr>
+
                       <td
                         style="
                           width: 40%;
-                          padding: 10px 0;
+                          padding: 11px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #64748b;
                           font-size: 13px;
@@ -404,7 +462,7 @@ ${submittedAt}
 
                       <td
                         style="
-                          padding: 10px 0;
+                          padding: 11px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #071224;
                           font-size: 13px;
@@ -413,13 +471,15 @@ ${submittedAt}
                       >
                         ${safeFullName}
                       </td>
+
                     </tr>
 
                     <tr>
+
                       <td
                         style="
                           width: 40%;
-                          padding: 10px 0;
+                          padding: 11px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #64748b;
                           font-size: 13px;
@@ -430,7 +490,7 @@ ${submittedAt}
 
                       <td
                         style="
-                          padding: 10px 0;
+                          padding: 11px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #071224;
                           font-size: 13px;
@@ -439,7 +499,9 @@ ${submittedAt}
                       >
                         ${safeContact}
                       </td>
+
                     </tr>
+
                   </table>
 
                   <!-- ======================================
@@ -448,7 +510,7 @@ ${submittedAt}
 
                   <h2
                     style="
-                      margin: 0 0 14px 0;
+                      margin: 0 0 14px;
                       color: #071224;
                       font-size: 16px;
                     "
@@ -462,15 +524,17 @@ ${submittedAt}
                     cellspacing="0"
                     style="
                       width: 100%;
-                      margin-bottom: 26px;
+                      margin-bottom: 28px;
                       border-collapse: collapse;
                     "
                   >
+
                     <tr>
+
                       <td
                         style="
                           width: 40%;
-                          padding: 10px 0;
+                          padding: 11px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #64748b;
                           font-size: 13px;
@@ -481,7 +545,7 @@ ${submittedAt}
 
                       <td
                         style="
-                          padding: 10px 0;
+                          padding: 11px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #071224;
                           font-size: 13px;
@@ -490,13 +554,15 @@ ${submittedAt}
                       >
                         ${safeOrderId}
                       </td>
+
                     </tr>
 
                     <tr>
+
                       <td
                         style="
                           width: 40%;
-                          padding: 10px 0;
+                          padding: 11px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #64748b;
                           font-size: 13px;
@@ -507,7 +573,7 @@ ${submittedAt}
 
                       <td
                         style="
-                          padding: 10px 0;
+                          padding: 11px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #071224;
                           font-size: 13px;
@@ -516,7 +582,9 @@ ${submittedAt}
                       >
                         ${safeItem}
                       </td>
+
                     </tr>
+
                   </table>
 
                   <!-- ======================================
@@ -525,7 +593,7 @@ ${submittedAt}
 
                   <h2
                     style="
-                      margin: 0 0 12px 0;
+                      margin: 0 0 12px;
                       color: #071224;
                       font-size: 16px;
                     "
@@ -549,18 +617,19 @@ ${submittedAt}
                   </div>
 
                   <!-- ======================================
-                       TICKET STATUS
+                       STATUS
                   ======================================= -->
 
                   <div
                     style="
                       margin-top: 26px;
-                      padding: 16px;
+                      padding: 15px 16px;
                       background-color: #fff7ed;
                       border: 1px solid #fed7aa;
                       border-radius: 8px;
                     "
                   >
+
                     <table
                       role="presentation"
                       cellpadding="0"
@@ -570,7 +639,9 @@ ${submittedAt}
                         border-collapse: collapse;
                       "
                     >
+
                       <tr>
+
                         <td
                           style="
                             color: #9a3412;
@@ -591,12 +662,15 @@ ${submittedAt}
                         >
                           OPEN
                         </td>
+
                       </tr>
+
                     </table>
+
                   </div>
 
                   <!-- ======================================
-                       SUBMISSION DATE
+                       DATE
                   ======================================= -->
 
                   <div
@@ -606,6 +680,7 @@ ${submittedAt}
                       border-top: 1px solid #e2e8f0;
                     "
                   >
+
                     <p
                       style="
                         margin: 0;
@@ -616,7 +691,9 @@ ${submittedAt}
                     >
                       Submitted on ${submittedAt}
                     </p>
+
                   </div>
+
                 </div>
 
                 <!-- ========================================
@@ -631,6 +708,7 @@ ${submittedAt}
                     text-align: center;
                   "
                 >
+
                   <p
                     style="
                       margin: 0;
@@ -642,13 +720,37 @@ ${submittedAt}
                     Automated support notification from
                     Simmply Perfect Group.
                   </p>
+
                 </div>
+
               </div>
+
             </div>
+
           </body>
+
         </html>
       `,
     });
+
+    /* =====================================================
+       SERVER LOG
+    ===================================================== */
+
+    console.log("====================================");
+
+    console.log("SUPPORT TICKET EMAIL SENT");
+
+    console.log("Ticket ID:", ticketId);
+
+    console.log("Message ID:", mailResult.messageId);
+
+    console.log(
+      "Receiver:",
+      "simplyperfectwindowsanddoors@gmail.com",
+    );
+
+    console.log("====================================");
 
     /* =====================================================
        SUCCESS RESPONSE
@@ -669,7 +771,7 @@ ${submittedAt}
     );
   } catch (error: unknown) {
     /* =====================================================
-       ERROR HANDLING
+       ERROR LOG
     ===================================================== */
 
     console.error(
@@ -677,14 +779,23 @@ ${submittedAt}
       error,
     );
 
+    /* =====================================================
+       ERROR MESSAGE
+    ===================================================== */
+
     const message =
       error instanceof Error
         ? error.message
         : "Failed to submit support ticket.";
 
+    /* =====================================================
+       ERROR RESPONSE
+    ===================================================== */
+
     return NextResponse.json(
       {
         success: false,
+
         message,
       },
       {
