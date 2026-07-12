@@ -287,6 +287,7 @@ export default function ContactPage() {
                           <option value="Windows & Doors">Windows & Doors </option>
                           <option value="Interior Design">Interior Design</option>
                           <option value="Renovation">Renovation</option>
+                          <option value="Metal-Works">Metal-Works</option>
                         </select>
                       </div>
                     </div>
