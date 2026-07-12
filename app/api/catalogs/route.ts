@@ -2,30 +2,17 @@ import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
 
 /* =========================================================
-   TICKET REQUEST TYPE
+   CATALOG REQUEST TYPE
 ========================================================= */
 
-type TicketRequestBody = {
-  fullName: string;
-  contact: string;
-  orderId: string;
-  item: string;
-  complaint: string;
+type CatalogRequestBody = {
+  name?: string;
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  contact?: string;
+  message?: string;
 };
-
-/* =========================================================
-   GENERATE UNIQUE TICKET ID
-========================================================= */
-
-function generateTicketId() {
-  const timestamp = Date.now().toString().slice(-6);
-
-  const randomNumber = Math.floor(
-    1000 + Math.random() * 9000,
-  );
-
-  return `SP-${timestamp}-${randomNumber}`;
-}
 
 /* =========================================================
    ESCAPE HTML
@@ -41,7 +28,7 @@ function escapeHtml(value: string) {
 }
 
 /* =========================================================
-   POST /api/tickets
+   POST /api/catalogs
 ========================================================= */
 
 export async function POST(req: Request) {
@@ -50,51 +37,38 @@ export async function POST(req: Request) {
        READ REQUEST BODY
     ===================================================== */
 
-    const body =
-      (await req.json()) as TicketRequestBody;
+    const body = (await req.json()) as CatalogRequestBody;
 
-    const {
-      fullName,
-      contact,
-      orderId,
-      item,
-      complaint,
-    } = body;
+    /*
+     * Supports both naming formats:
+     *
+     * name / fullName
+     * phone / contact
+     *
+     * This prevents frontend/backend naming mismatch.
+     */
+
+    const name = body.name || body.fullName || "";
+    const email = body.email || "";
+    const phone = body.phone || body.contact || "";
+    const message =
+      body.message ||
+      "Customer requested access to the Simmply Perfect digital catalogue library.";
 
     /* =====================================================
        VALIDATE REQUIRED FIELDS
     ===================================================== */
 
-    if (
-      !fullName?.trim() ||
-      !contact?.trim() ||
-      !orderId?.trim() ||
-      !item?.trim() ||
-      !complaint?.trim()
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Please complete all required fields.",
-        },
-        {
-          status: 400,
-        },
-      );
-    }
+    if (!name.trim() || !email.trim() || !phone.trim()) {
+      console.error("CATALOG API VALIDATION ERROR:", {
+        receivedBody: body,
+      });
 
-    /* =====================================================
-       VALIDATE CONTACT NUMBER
-    ===================================================== */
-
-    const cleanContact = contact.replace(/\D/g, "");
-
-    if (cleanContact.length !== 10) {
       return NextResponse.json(
         {
           success: false,
           message:
-            "Please enter a valid 10-digit contact number.",
+            "Please provide your full name, email address, and mobile number.",
         },
         {
           status: 400,
@@ -103,7 +77,50 @@ export async function POST(req: Request) {
     }
 
     /* =====================================================
-       CHECK SMTP ENVIRONMENT VARIABLES
+       VALIDATE EMAIL
+    ===================================================== */
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email.trim())) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Please enter a valid email address.",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    /* =====================================================
+       VALIDATE PHONE
+    ===================================================== */
+
+    const cleanPhone = phone.replace(/\D/g, "");
+
+    /*
+     * Supports:
+     *
+     * 10-digit Indian mobile number
+     * 12-digit number containing country code 91
+     */
+
+    if (cleanPhone.length < 10 || cleanPhone.length > 12) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Please enter a valid mobile number.",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    /* =====================================================
+       GET SMTP ENVIRONMENT VARIABLES
     ===================================================== */
 
     const smtpHost = process.env.SMTP_HOST;
@@ -111,21 +128,19 @@ export async function POST(req: Request) {
     const smtpUser = process.env.SMTP_USER;
     const smtpPass = process.env.SMTP_PASS;
 
-    if (
-      !smtpHost ||
-      !smtpPort ||
-      !smtpUser ||
-      !smtpPass
-    ) {
+    /* =====================================================
+       CHECK SMTP CONFIGURATION
+    ===================================================== */
+
+    if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
       console.error(
-        "TICKETS API ERROR: Missing SMTP environment variables",
+        "CATALOG API ERROR: Missing SMTP environment variables",
       );
 
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Email service is currently unavailable.",
+          message: "Email service is not configured.",
         },
         {
           status: 500,
@@ -134,35 +149,27 @@ export async function POST(req: Request) {
     }
 
     /* =====================================================
-       GENERATE TICKET INFORMATION
+       CREATE SUBMISSION DATE
     ===================================================== */
 
-    const ticketId = generateTicketId();
-
-    const submittedAt = new Date().toLocaleString(
-      "en-IN",
-      {
-        timeZone: "Asia/Kolkata",
-        dateStyle: "medium",
-        timeStyle: "short",
-      },
-    );
+    const submittedAt = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
 
     /* =====================================================
-       SANITIZE VALUES FOR EMAIL HTML
+       SANITIZE VALUES
     ===================================================== */
 
-    const safeFullName = escapeHtml(fullName.trim());
+    const safeName = escapeHtml(name.trim());
+    const safeEmail = escapeHtml(email.trim());
+    const safePhone = escapeHtml(phone.trim());
 
-    const safeContact = escapeHtml(cleanContact);
-
-    const safeOrderId = escapeHtml(orderId.trim());
-
-    const safeItem = escapeHtml(item.trim());
-
-    const safeComplaint = escapeHtml(
-      complaint.trim(),
-    ).replace(/\n/g, "<br />");
+    const safeMessage = escapeHtml(message.trim()).replace(
+      /\n/g,
+      "<br />",
+    );
 
     /* =====================================================
        CREATE SMTP TRANSPORTER
@@ -182,44 +189,30 @@ export async function POST(req: Request) {
     });
 
     /* =====================================================
-       VERIFY SMTP CONNECTION
+       SEND EMAIL
     ===================================================== */
 
-    await transporter.verify();
+    const mailResult = await transporter.sendMail({
+      from: `"Simmply Perfect Catalogues" <${smtpUser}>`,
 
-    /* =====================================================
-       SEND SUPPORT TICKET EMAIL
-    ===================================================== */
+      to: smtpUser,
 
-    await transporter.sendMail({
-      from: `"Simmply Perfect Support" <${smtpUser}>`,
+      replyTo: email.trim(),
 
-      to: "simplyperfectwindowsanddoors@gmail.com",
-
-      subject: `🎫 New Support Ticket ${ticketId} - ${safeOrderId}`,
+      subject: `New Catalogue Access Request - ${name.trim()}`,
 
       text: `
-NEW SUPPORT TICKET
-
-Ticket ID: ${ticketId}
+NEW CATALOGUE ACCESS REQUEST
 
 CUSTOMER DETAILS
 
-Full Name: ${fullName.trim()}
-Contact Number: ${cleanContact}
+Full Name: ${name.trim()}
+Email Address: ${email.trim()}
+Mobile Number: ${phone.trim()}
 
-ORDER DETAILS
+REQUEST DETAILS
 
-Order ID: ${orderId.trim()}
-Item: ${item.trim()}
-
-COMPLAINT
-
-${complaint.trim()}
-
-STATUS
-
-Open
+${message.trim()}
 
 SUBMITTED AT
 
@@ -239,7 +232,7 @@ ${submittedAt}
             />
 
             <title>
-              New Support Ticket
+              New Catalogue Access Request
             </title>
           </head>
 
@@ -270,9 +263,8 @@ ${submittedAt}
                   box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
                 "
               >
-                <!-- ========================================
-                     HEADER
-                ========================================= -->
+
+                <!-- HEADER -->
 
                 <div
                   style="
@@ -301,7 +293,7 @@ ${submittedAt}
                       line-height: 1.3;
                     "
                   >
-                    New Customer Support Ticket
+                    New Catalogue Access Request
                   </h1>
 
                   <p
@@ -312,68 +304,24 @@ ${submittedAt}
                       line-height: 1.6;
                     "
                   >
-                    A customer has submitted a new support
-                    request through the Simmply Perfect
-                    website.
+                    A visitor has requested access to the
+                    Simmply Perfect digital catalogue library.
                   </p>
                 </div>
 
-                <!-- ========================================
-                     EMAIL CONTENT
-                ========================================= -->
+                <!-- CONTENT -->
 
                 <div
                   style="
                     padding: 28px 30px;
                   "
                 >
-                  <!-- ======================================
-                       TICKET ID
-                  ======================================= -->
-
-                  <div
-                    style="
-                      margin-bottom: 26px;
-                      padding: 16px 18px;
-                      background-color: #eff6ff;
-                      border: 1px solid #dbeafe;
-                      border-radius: 10px;
-                    "
-                  >
-                    <p
-                      style="
-                        margin: 0 0 5px 0;
-                        color: #64748b;
-                        font-size: 10px;
-                        font-weight: 700;
-                        letter-spacing: 1.5px;
-                        text-transform: uppercase;
-                      "
-                    >
-                      Ticket ID
-                    </p>
-
-                    <p
-                      style="
-                        margin: 0;
-                        color: #0A2E6F;
-                        font-size: 20px;
-                        font-weight: 700;
-                      "
-                    >
-                      ${ticketId}
-                    </p>
-                  </div>
-
-                  <!-- ======================================
-                       CUSTOMER DETAILS
-                  ======================================= -->
 
                   <h2
                     style="
-                      margin: 0 0 14px 0;
+                      margin: 0 0 16px 0;
                       color: #071224;
-                      font-size: 16px;
+                      font-size: 17px;
                     "
                   >
                     Customer Details
@@ -385,15 +333,15 @@ ${submittedAt}
                     cellspacing="0"
                     style="
                       width: 100%;
-                      margin-bottom: 26px;
                       border-collapse: collapse;
                     "
                   >
+
                     <tr>
                       <td
                         style="
-                          width: 40%;
-                          padding: 10px 0;
+                          width: 38%;
+                          padding: 12px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #64748b;
                           font-size: 13px;
@@ -404,133 +352,81 @@ ${submittedAt}
 
                       <td
                         style="
-                          padding: 10px 0;
+                          padding: 12px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #071224;
                           font-size: 13px;
                           font-weight: 700;
                         "
                       >
-                        ${safeFullName}
+                        ${safeName}
                       </td>
                     </tr>
 
                     <tr>
                       <td
                         style="
-                          width: 40%;
-                          padding: 10px 0;
+                          width: 38%;
+                          padding: 12px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #64748b;
                           font-size: 13px;
                         "
                       >
-                        Contact Number
+                        Email Address
                       </td>
 
                       <td
                         style="
-                          padding: 10px 0;
+                          padding: 12px 0;
                           border-bottom: 1px solid #f1f5f9;
                           color: #071224;
                           font-size: 13px;
                           font-weight: 700;
                         "
                       >
-                        ${safeContact}
+                        ${safeEmail}
                       </td>
                     </tr>
+
+                    <tr>
+                      <td
+                        style="
+                          width: 38%;
+                          padding: 12px 0;
+                          border-bottom: 1px solid #f1f5f9;
+                          color: #64748b;
+                          font-size: 13px;
+                        "
+                      >
+                        Mobile Number
+                      </td>
+
+                      <td
+                        style="
+                          padding: 12px 0;
+                          border-bottom: 1px solid #f1f5f9;
+                          color: #071224;
+                          font-size: 13px;
+                          font-weight: 700;
+                        "
+                      >
+                        ${safePhone}
+                      </td>
+                    </tr>
+
                   </table>
 
-                  <!-- ======================================
-                       ORDER DETAILS
-                  ======================================= -->
+                  <!-- REQUEST INFORMATION -->
 
                   <h2
                     style="
-                      margin: 0 0 14px 0;
+                      margin: 28px 0 12px 0;
                       color: #071224;
-                      font-size: 16px;
+                      font-size: 17px;
                     "
                   >
-                    Order Details
-                  </h2>
-
-                  <table
-                    role="presentation"
-                    cellpadding="0"
-                    cellspacing="0"
-                    style="
-                      width: 100%;
-                      margin-bottom: 26px;
-                      border-collapse: collapse;
-                    "
-                  >
-                    <tr>
-                      <td
-                        style="
-                          width: 40%;
-                          padding: 10px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #64748b;
-                          font-size: 13px;
-                        "
-                      >
-                        Order ID
-                      </td>
-
-                      <td
-                        style="
-                          padding: 10px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #071224;
-                          font-size: 13px;
-                          font-weight: 700;
-                        "
-                      >
-                        ${safeOrderId}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td
-                        style="
-                          width: 40%;
-                          padding: 10px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #64748b;
-                          font-size: 13px;
-                        "
-                      >
-                        Item
-                      </td>
-
-                      <td
-                        style="
-                          padding: 10px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #071224;
-                          font-size: 13px;
-                          font-weight: 700;
-                        "
-                      >
-                        ${safeItem}
-                      </td>
-                    </tr>
-                  </table>
-
-                  <!-- ======================================
-                       COMPLAINT
-                  ======================================= -->
-
-                  <h2
-                    style="
-                      margin: 0 0 12px 0;
-                      color: #071224;
-                      font-size: 16px;
-                    "
-                  >
-                    Customer Complaint
+                    Request Information
                   </h2>
 
                   <div
@@ -545,63 +441,14 @@ ${submittedAt}
                       line-height: 1.7;
                     "
                   >
-                    ${safeComplaint}
+                    ${safeMessage}
                   </div>
 
-                  <!-- ======================================
-                       TICKET STATUS
-                  ======================================= -->
+                  <!-- SUBMISSION DATE -->
 
                   <div
                     style="
                       margin-top: 26px;
-                      padding: 16px;
-                      background-color: #fff7ed;
-                      border: 1px solid #fed7aa;
-                      border-radius: 8px;
-                    "
-                  >
-                    <table
-                      role="presentation"
-                      cellpadding="0"
-                      cellspacing="0"
-                      style="
-                        width: 100%;
-                        border-collapse: collapse;
-                      "
-                    >
-                      <tr>
-                        <td
-                          style="
-                            color: #9a3412;
-                            font-size: 12px;
-                            font-weight: 700;
-                          "
-                        >
-                          Ticket Status
-                        </td>
-
-                        <td
-                          align="right"
-                          style="
-                            color: #c2410c;
-                            font-size: 12px;
-                            font-weight: 700;
-                          "
-                        >
-                          OPEN
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-
-                  <!-- ======================================
-                       SUBMISSION DATE
-                  ======================================= -->
-
-                  <div
-                    style="
-                      margin-top: 24px;
                       padding-top: 20px;
                       border-top: 1px solid #e2e8f0;
                     "
@@ -617,11 +464,10 @@ ${submittedAt}
                       Submitted on ${submittedAt}
                     </p>
                   </div>
+
                 </div>
 
-                <!-- ========================================
-                     FOOTER
-                ========================================= -->
+                <!-- FOOTER -->
 
                 <div
                   style="
@@ -639,15 +485,26 @@ ${submittedAt}
                       line-height: 1.6;
                     "
                   >
-                    Automated support notification from
-                    Simmply Perfect Group.
+                    Automated catalogue access notification
+                    from Simmply Perfect Group.
                   </p>
                 </div>
+
               </div>
             </div>
           </body>
         </html>
       `,
+    });
+
+    /* =====================================================
+       LOG SUCCESS
+    ===================================================== */
+
+    console.log("CATALOG EMAIL SENT SUCCESSFULLY:", {
+      messageId: mailResult.messageId,
+      customer: name.trim(),
+      email: email.trim(),
     });
 
     /* =====================================================
@@ -659,12 +516,10 @@ ${submittedAt}
         success: true,
 
         message:
-          "Your support ticket has been submitted successfully.",
-
-        ticketId,
+          "Your details have been registered successfully.",
       },
       {
-        status: 201,
+        status: 200,
       },
     );
   } catch (error: unknown) {
@@ -672,15 +527,12 @@ ${submittedAt}
        ERROR HANDLING
     ===================================================== */
 
-    console.error(
-      "TICKETS EMAIL API ERROR:",
-      error,
-    );
+    console.error("CATALOG EMAIL API ERROR:", error);
 
     const message =
       error instanceof Error
         ? error.message
-        : "Failed to submit support ticket.";
+        : "Failed to process catalogue access request.";
 
     return NextResponse.json(
       {
