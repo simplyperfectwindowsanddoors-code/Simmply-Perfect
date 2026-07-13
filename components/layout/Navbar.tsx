@@ -241,6 +241,7 @@ const categoriesData = [
       },
     ],
   },
+  
   {
     id: "wpc-doors",
     name: "WPC Doors",
@@ -256,6 +257,23 @@ const categoriesData = [
       },
     ],
   },
+
+  {
+  id: "window-grills",
+  name: "Window Grills",
+  desc: "Premium window grill designs combining security, durability, and modern aesthetics.",
+  icon: DoorOpen,
+  color:
+    "from-emerald-500/10 to-green-500/10 border-emerald-100/60 text-emerald-700",
+  files: [
+    {
+      name: "Window Grills Catalogue",
+      size: "4.5 MB",
+      url: "/catalogs/window-grills/Window Grills Catalogue.pdf",
+    },
+  ],
+},
+
 ];
 
 /* =========================================================
