@@ -468,52 +468,80 @@ export default function AboutPage() {
 
             <div className="mt-16 space-y-8">
               {[
-                {
-                  num: "01",
-                  title: "Architectural Windows & Doors",
-                  desc: "Thermally broken architectural uPVC and high-grade structural Aluminium systems engineered against high windloads and acoustic degradation.",
-                  link: "/windows-doors",
-                  img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=2000"
-                },
-                {
-                  num: "02",
-                  title: "High-Luxury Interiors Studio",
-                  desc: "Turn-key luxury indoor masterplanning combining space fluid dynamics, material selection blueprints, and customizable premium millwork layouts.",
-                  link: "/interiors",
-                  img: "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=2000"
-                },
-                {
-                  num: "03",
-                  title: "Comprehensive Restructuring",
-                  desc: "Complete technical building overhauls and spatial extensions engineered without breaking core historical or foundational structural criteria.",
-                  link: "/renovation",
-                  img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2000"
-                }
-              ].map((service, idx) => (
-                <motion.div
-                  key={idx}
-                  {...smoothFadeUp}
-                  whileHover={{ y: -4 }}
-                  className="group bg-slate-50/70 rounded-3xl overflow-hidden border border-slate-200/60 shadow-[0_12px_40px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_50px_rgba(10,46,111,0.05)] transition-all duration-300"
-                >
-                  <div className="grid lg:grid-cols-12 items-stretch">
-                    <div className="lg:col-span-7 p-8 md:p-12 flex flex-col justify-between">
-                      <div>
-                        <span className="text-5xl font-black text-slate-200/80 tracking-tight">{service.num}</span>
-                        <h3 className="mt-4 text-2xl font-extrabold text-[#071224] tracking-tight">{service.title}</h3>
-                        <p className="mt-3 text-sm text-slate-500 leading-relaxed font-medium">{service.desc}</p>
-                      </div>
-                      <Link href={service.link} className="inline-flex items-center gap-2 mt-8 text-xs font-bold tracking-wider uppercase text-[#0A2E6F] group-hover:text-blue-600 transition-colors">
-                        Explore Blueprint Range
-                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                      </Link>
-                    </div>
-                    <div className="lg:col-span-5 min-h-[250px] overflow-hidden relative">
-                      <img src={service.img} alt={service.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+  {
+    num: "01",
+    title: "Architectural Windows & Doors",
+    desc: "Thermally broken architectural uPVC and high-grade structural Aluminium systems engineered against high windloads and acoustic degradation.",
+    link: "/windows-doors",
+    img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=2000",
+  },
+  {
+    num: "02",
+    title: "High-Luxury Interiors Studio",
+    desc: "Turn-key luxury indoor masterplanning combining space fluid dynamics, material selection blueprints, and customizable premium millwork layouts.",
+    link: "/interiors",
+    img: "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=2000",
+  },
+  {
+    num: "03",
+    title: "Comprehensive Restructuring",
+    desc: "Complete technical building overhauls and spatial extensions engineered without breaking core historical or foundational structural criteria.",
+    link: "/renovation",
+    img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2000",
+  },
+  {
+    num: "04",
+    title: "Precision Metal Works",
+    desc: "Custom architectural metal fabrication solutions combining precision engineering, superior craftsmanship, and durable materials for residential, commercial, and structural applications.",
+    link: "/metal-works",
+    img: "/metal-works.jpg",
+  },
+].map((service, idx) => (
+  <motion.div
+    key={service.num}
+    {...smoothFadeUp}
+    whileHover={{ y: -4 }}
+    className="group overflow-hidden rounded-3xl border border-slate-200/60 bg-slate-50/70 shadow-[0_12px_40px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_20px_50px_rgba(10,46,111,0.05)]"
+  >
+    <div className="grid items-stretch lg:grid-cols-12">
+      <div className="flex flex-col justify-between p-8 md:p-12 lg:col-span-7">
+        <div>
+          <span className="text-5xl font-black tracking-tight text-slate-200/80">
+            {service.num}
+          </span>
+
+          <h3 className="mt-4 text-2xl font-extrabold tracking-tight text-[#071224]">
+            {service.title}
+          </h3>
+
+          <p className="mt-3 text-sm font-medium leading-relaxed text-slate-500">
+            {service.desc}
+          </p>
+        </div>
+
+        <Link
+          href={service.link}
+          className="mt-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0A2E6F] transition-colors group-hover:text-blue-600"
+        >
+          Explore Blueprint Range
+
+          <ArrowRight
+            size={14}
+            className="transition-transform group-hover:translate-x-1"
+          />
+        </Link>
+      </div>
+
+      <div className="relative min-h-[250px] overflow-hidden lg:col-span-5">
+        <img
+          src={service.img}
+          alt={service.title}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+      </div>
+    </div>
+  </motion.div>
+))}
             </div>
           </div>
         </section>
