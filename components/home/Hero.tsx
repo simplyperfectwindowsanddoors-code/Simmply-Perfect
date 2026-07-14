@@ -442,14 +442,7 @@ export default function Hero() {
                 ================================================= */}
 
                 <div className="relative overflow-hidden">
-                  {/* LEFT FADE */}
-
-                  <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-20 w-12 bg-gradient-to-r from-white via-white/70 to-transparent" />
-
-                  {/* RIGHT FADE */}
-
-                  <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-20 w-12 bg-gradient-to-l from-white via-white/70 to-transparent" />
-
+                  
                   {/* SCROLLING TRACK */}
 
                   <motion.div
