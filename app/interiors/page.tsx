@@ -432,19 +432,19 @@ export default function InteriorsPage() {
                 <div className="relative h-[550px] lg:h-[650px] rounded-[2.5rem] overflow-hidden shadow-2xl">
                   {/* Changed hero image to Unsplash so the main page image is visible */}
                   <motion.img
-                    src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600"
-                    alt="Luxury Interior Design"
-                    className="w-full h-full object-cover"
-                    animate={{
-                      scale: [1, 1.03, 1],
-                      y: [0, -10, 0]
-                    }}
-                    transition={{
-                      duration: 8,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
+  src="/interiors/hero.jpg"
+  alt="Luxury Interior Design"
+  className="w-full h-full object-cover"
+  animate={{
+    scale: [1, 1.03, 1],
+    y: [0, -10, 0],
+  }}
+  transition={{
+    duration: 8,
+    repeat: Infinity,
+    ease: "easeInOut",
+  }}
+/>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                 </div>
               </motion.div>
