@@ -58,6 +58,10 @@ const companies = [
     label: "Home Renovations",
     href: "/renovation",
   },
+  {
+    label: "Metal Works",
+    href: "/metal-works",
+  },
 ];
 
 const socialLinks = [

@@ -6,6 +6,8 @@ import "./globals.css";
 
 import FloatingContact from "@/components/common/FloatingContact";
 
+
+
 const geistSans = Geist({
 
   variable: "--font-geist-sans",
@@ -55,6 +57,8 @@ export default function RootLayout({
     >
 
       <body className="min-h-full flex flex-col">
+
+        
 
         {children}
 

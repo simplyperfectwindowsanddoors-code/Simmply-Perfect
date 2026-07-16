@@ -21,6 +21,7 @@ import {
   TicketCheck,
   User,
   X,
+  Paperclip,
 } from "lucide-react";
 
 import { FaWhatsapp } from "react-icons/fa";
@@ -35,6 +36,7 @@ type TicketFormData = {
   orderId: string;
   item: string;
   complaint: string;
+  attachment: File | null;
 };
 
 /* =========================================================
@@ -57,6 +59,7 @@ const initialFormData: TicketFormData = {
   orderId: "",
   item: "",
   complaint: "",
+  attachment: null,
 };
 
 /* =========================================================
@@ -69,18 +72,12 @@ export default function FloatingContact() {
   ========================================================= */
 
   const [ticketOpen, setTicketOpen] = useState(false);
-
-  const [isSubmitting, setIsSubmitting] =
-    useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
   const [ticketId, setTicketId] = useState("");
-
   const [errorMessage, setErrorMessage] = useState("");
 
-  const [formData, setFormData] =
-    useState<TicketFormData>(initialFormData);
+  const [formData, setFormData] = useState<TicketFormData>(initialFormData);
 
   /* =========================================================
      OPEN TICKET MODAL
@@ -151,7 +148,14 @@ export default function FloatingContact() {
       return "Please describe your complaint.";
     }
 
-    return "";
+    if (!formData.attachment) {
+      return "Please upload an attachment (Photo, Video, or File).";
+    }
+
+    // Optional: Max file size validation (e.g., 10MB)
+    if (formData.attachment.size > 10 * 1024 * 1024) {
+      return "File size must be less than 10MB.";
+    }
   };
 
   /* =========================================================
@@ -185,28 +189,28 @@ export default function FloatingContact() {
     setIsSubmitting(true);
 
     try {
+      const form = new FormData();
+
+      form.append("fullName", formData.fullName.trim());
+      form.append("contact", formData.contact.trim());
+      form.append("orderId", formData.orderId.trim());
+      form.append("item", formData.item.trim());
+      form.append("complaint", formData.complaint.trim());
+
+      if (formData.attachment) {
+        form.append("attachment", formData.attachment);
+      }
+
       const response = await fetch("/api/tickets", {
         method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          fullName: formData.fullName.trim(),
-          contact: formData.contact.trim(),
-          orderId: formData.orderId.trim(),
-          item: formData.item.trim(),
-          complaint: formData.complaint.trim(),
-        }),
+        body: form,
       });
 
       /* ===================================================
          READ API RESPONSE
       =================================================== */
 
-      const result =
-        (await response.json()) as TicketApiResponse;
+      const result = (await response.json()) as TicketApiResponse;
 
       /* ===================================================
          HANDLE API ERROR
@@ -214,8 +218,7 @@ export default function FloatingContact() {
 
       if (!response.ok || !result.success) {
         throw new Error(
-          result.message ||
-            "Unable to submit your ticket.",
+          result.message || "Unable to submit your ticket.",
         );
       }
 
@@ -224,15 +227,10 @@ export default function FloatingContact() {
       =================================================== */
 
       setTicketId(result.ticketId ?? "");
-
       setSubmitted(true);
-
       setFormData(initialFormData);
     } catch (error) {
-      console.error(
-        "Ticket submission failed:",
-        error,
-      );
+      console.error("Ticket submission failed:", error);
 
       setErrorMessage(
         error instanceof Error
@@ -257,24 +255,14 @@ export default function FloatingContact() {
       }
     };
 
-    const previousOverflow =
-      document.body.style.overflow;
-
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    window.addEventListener(
-      "keydown",
-      handleEscape,
-    );
+    window.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.body.style.overflow =
-        previousOverflow;
-
-      window.removeEventListener(
-        "keydown",
-        handleEscape,
-      );
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
     };
   }, [ticketOpen, closeTicketModal]);
 
@@ -337,9 +325,7 @@ export default function FloatingContact() {
         >
           <TicketCheck className="h-5 w-5" />
 
-          <FloatingTooltip>
-            Raise a Ticket
-          </FloatingTooltip>
+          <FloatingTooltip>Raise a Ticket</FloatingTooltip>
         </motion.button>
 
         {/* ===================================================
@@ -386,9 +372,7 @@ export default function FloatingContact() {
 
           <FaWhatsapp className="relative z-10 h-[22px] w-[22px]" />
 
-          <FloatingTooltip>
-            Chat on WhatsApp
-          </FloatingTooltip>
+          <FloatingTooltip>Chat on WhatsApp</FloatingTooltip>
         </motion.a>
 
         {/* ===================================================
@@ -422,9 +406,7 @@ export default function FloatingContact() {
         >
           <Phone className="relative z-10 h-5 w-5" />
 
-          <FloatingTooltip>
-            Call Us
-          </FloatingTooltip>
+          <FloatingTooltip>Call Us</FloatingTooltip>
         </motion.a>
       </div>
 
@@ -478,9 +460,7 @@ export default function FloatingContact() {
                 duration: 0.3,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              onMouseDown={(event) =>
-                event.stopPropagation()
-              }
+              onMouseDown={(event) => event.stopPropagation()}
               className="
                 relative
                 max-h-[calc(100vh-48px)]
@@ -515,8 +495,7 @@ export default function FloatingContact() {
                       </h2>
 
                       <p className="mt-1 text-xs leading-5 text-slate-500">
-                        Tell us about your issue and our team
-                        will assist you.
+                        Tell us about your issue and our team will assist you.
                       </p>
                     </div>
                   </div>
@@ -589,9 +568,8 @@ export default function FloatingContact() {
                   </h3>
 
                   <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500">
-                    Your complaint has been submitted
-                    successfully. Our support team will review
-                    your request and contact you.
+                    Your complaint has been submitted successfully. Our support
+                    team will review your request and contact you.
                   </p>
 
                   {/* =========================================
@@ -621,8 +599,7 @@ export default function FloatingContact() {
                       </p>
 
                       <p className="mt-1 text-[10px] text-slate-400">
-                        Please keep this ID for future
-                        reference.
+                        Please keep this ID for future reference.
                       </p>
                     </div>
                   )}
@@ -654,29 +631,18 @@ export default function FloatingContact() {
                     TICKET FORM
                 ============================================= */
 
-                <form
-                  onSubmit={handleSubmit}
-                  className="px-6 py-6"
-                  noValidate
-                >
+                <form onSubmit={handleSubmit} className="px-6 py-6" noValidate>
                   <div className="space-y-4">
                     {/* FULL NAME */}
 
-                    <FormField
-                      label="Full Name"
-                      required
-                      icon={User}
-                    >
+                    <FormField label="Full Name" required icon={User}>
                       <input
                         type="text"
                         required
                         autoComplete="name"
                         value={formData.fullName}
                         onChange={(event) =>
-                          handleChange(
-                            "fullName",
-                            event.target.value,
-                          )
+                          handleChange("fullName", event.target.value)
                         }
                         placeholder="Enter your full name"
                         className={inputStyles}
@@ -685,11 +651,7 @@ export default function FloatingContact() {
 
                     {/* CONTACT */}
 
-                    <FormField
-                      label="Contact Number"
-                      required
-                      icon={Phone}
-                    >
+                    <FormField label="Contact Number" required icon={Phone}>
                       <input
                         type="tel"
                         required
@@ -700,9 +662,7 @@ export default function FloatingContact() {
                         onChange={(event) =>
                           handleChange(
                             "contact",
-                            event.target.value
-                              .replace(/\D/g, "")
-                              .slice(0, 10),
+                            event.target.value.replace(/\D/g, "").slice(0, 10),
                           )
                         }
                         placeholder="Enter 10-digit contact number"
@@ -713,40 +673,26 @@ export default function FloatingContact() {
                     {/* ORDER ID + ITEM */}
 
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <FormField
-                        label="Order ID"
-                        required
-                        icon={FileText}
-                      >
+                      <FormField label="Order ID" required icon={FileText}>
                         <input
                           type="text"
                           required
                           value={formData.orderId}
                           onChange={(event) =>
-                            handleChange(
-                              "orderId",
-                              event.target.value,
-                            )
+                            handleChange("orderId", event.target.value)
                           }
                           placeholder="Order ID"
                           className={inputStyles}
                         />
                       </FormField>
 
-                      <FormField
-                        label="Item"
-                        required
-                        icon={Package}
-                      >
+                      <FormField label="Item" required icon={Package}>
                         <input
                           type="text"
                           required
                           value={formData.item}
                           onChange={(event) =>
-                            handleChange(
-                              "item",
-                              event.target.value,
-                            )
+                            handleChange("item", event.target.value)
                           }
                           placeholder="Item name"
                           className={inputStyles}
@@ -767,14 +713,55 @@ export default function FloatingContact() {
                         maxLength={2000}
                         value={formData.complaint}
                         onChange={(event) =>
-                          handleChange(
-                            "complaint",
-                            event.target.value,
-                          )
+                          handleChange("complaint", event.target.value)
                         }
                         placeholder="Please describe your complaint..."
                         className={`${inputStyles} min-h-[110px] resize-none py-3`}
                       />
+                    </FormField>
+
+                    {/* =========================================
+                        ATTACHMENT (PHOTO, VIDEO, OR FILE)
+                    ========================================= */}
+
+                    <FormField label="Attachment (Photo, Video, or File)" required icon={Paperclip}>
+                      <input
+                        type="file"
+                        required
+                        accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar"
+                        onChange={(event) =>
+                          setFormData((previous) => ({
+                            ...previous,
+                            attachment: event.target.files?.[0] ?? null,
+                          }))
+                        }
+                        className="
+                          block
+                          w-full
+                          rounded-xl
+                          border
+                          border-slate-200
+                          bg-white
+                          px-4
+                          py-3
+                          text-sm
+                          text-slate-700
+                          file:mr-4
+                          file:rounded-lg
+                          file:border-0
+                          file:bg-[#0A2E6F]
+                          file:px-4
+                          file:py-2
+                          file:text-sm
+                          file:font-semibold
+                          file:text-white
+                          hover:file:bg-[#08265d]
+                        "
+                      />
+
+                      <p className="mt-2 text-xs text-slate-500">
+                        Upload a photo, video, or document related to your issue (Max 10MB).
+                      </p>
                     </FormField>
                   </div>
 
@@ -861,22 +848,19 @@ export default function FloatingContact() {
                             border-t-white
                           "
                         />
-
                         Sending Ticket...
                       </>
                     ) : (
                       <>
                         Submit Ticket
-
                         <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                       </>
                     )}
                   </button>
 
                   <p className="mt-4 text-center text-[11px] leading-5 text-slate-400">
-                    Our support team will review your request
-                    and contact you using the details
-                    provided.
+                    Our support team will review your request and contact you
+                    using the details provided.
                   </p>
                 </form>
               )}
@@ -896,9 +880,7 @@ type FloatingTooltipProps = {
   children: ReactNode;
 };
 
-function FloatingTooltip({
-  children,
-}: FloatingTooltipProps) {
+function FloatingTooltip({ children }: FloatingTooltipProps) {
   return (
     <span
       className="
@@ -949,14 +931,9 @@ function FormField({
     <div>
       <label className="mb-2 flex items-center gap-2 text-xs font-bold text-[#071224]">
         <Icon className="h-3.5 w-3.5 text-[#0A2E6F]" />
-
         {label}
-
-        {required && (
-          <span className="text-red-500">*</span>
-        )}
+        {required && <span className="text-red-500">*</span>}
       </label>
-
       {children}
     </div>
   );

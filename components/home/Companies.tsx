@@ -19,7 +19,6 @@ const companies = [
       { value: "99.12%", label: "Client Satisfaction" },
     ],
   },
-
   {
     number: "02",
     title: "Interiors",
@@ -34,7 +33,6 @@ const companies = [
       { value: "98.20%", label: "Client Satisfaction" },
     ],
   },
-
   {
     number: "03",
     title: "Renovation",
@@ -49,7 +47,6 @@ const companies = [
       { value: "97.57%", label: "Client Satisfaction" },
     ],
   },
-
   {
     number: "04",
     title: "Metal Works",
@@ -75,17 +72,9 @@ export default function Companies() {
         ===================================================== */}
 
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 40,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           className="mb-28 text-center"
         >
           <span className="font-semibold uppercase tracking-[6px] text-[#0A2E6F]">
@@ -99,10 +88,9 @@ export default function Companies() {
           </h2>
 
           <p className="mx-auto mt-8 max-w-3xl text-lg leading-8 text-slate-600">
-            Simmply Perfect Group brings together premium
-            expertise in Windows & Doors, Luxury Interiors,
-            Renovation and Metal Works to create exceptional
-            residential and commercial spaces.
+            Simmply Perfect Group brings together premium expertise in Windows &
+            Doors, Luxury Interiors, Renovation and Metal Works to create
+            exceptional residential and commercial spaces.
           </p>
         </motion.div>
 
@@ -114,31 +102,23 @@ export default function Companies() {
           {companies.map((company, index) => (
             <motion.div
               key={company.title}
-              initial={{
-                opacity: 0,
-                y: 80,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              transition={{
-                duration: 0.8,
-              }}
-              className={`grid items-center gap-16 lg:grid-cols-2 ${
-                index % 2 !== 0
-                  ? "lg:[&>*:first-child]:order-2"
-                  : ""
+              initial={{ opacity: 0, y: 80 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className={`grid items-start gap-10 lg:grid-cols-2 lg:gap-16 ${
+                index % 2 !== 0 ? "lg:[&>*:first-child]:order-2" : ""
               }`}
             >
               {/* =================================================
-                  IMAGE SIDE
+                  DESKTOP IMAGE SIDE (Hidden on Mobile)
               ================================================= */}
-
-              <Link href={company.href}>
+              <Link
+                href={company.href}
+                className={`hidden lg:block lg:order-1 ${
+                  index % 2 !== 0 ? "lg:order-2" : ""
+                }`}
+              >
                 <div className="group relative cursor-pointer overflow-hidden rounded-[36px]">
                   <img
                     src={company.image}
@@ -154,9 +134,7 @@ export default function Companies() {
                       group-hover:scale-105
                     "
                   />
-
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
-
                   <div className="absolute bottom-8 left-8">
                     <span className="text-sm uppercase tracking-[4px] text-white">
                       SIMMPLY PERFECT GROUP
@@ -168,8 +146,11 @@ export default function Companies() {
               {/* =================================================
                   CONTENT SIDE
               ================================================= */}
-
-              <div>
+              <div
+                className={`lg:order-2 flex flex-col ${
+                  index % 2 !== 0 ? "lg:order-1" : ""
+                }`}
+              >
                 <span className="text-[120px] font-black leading-none text-slate-100 md:text-[150px]">
                   {company.number}
                 </span>
@@ -187,9 +168,40 @@ export default function Companies() {
                 </p>
 
                 {/* =================================================
+                    MOBILE IMAGE (Hidden on Desktop)
+                    Placed directly after description
+                ================================================= */}
+                <Link
+                  href={company.href}
+                  className="mt-8 block lg:hidden"
+                >
+                  <div className="group relative cursor-pointer overflow-hidden rounded-[36px]">
+                    <img
+                      src={company.image}
+                      alt={company.title}
+                      className="
+                        h-[400px]
+                        w-full
+                        transform-gpu
+                        object-cover
+                        transition-transform
+                        duration-1000
+                        ease-out
+                        group-hover:scale-105
+                      "
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
+                    <div className="absolute bottom-6 left-6">
+                      <span className="text-[11px] uppercase tracking-[4px] text-white sm:text-sm">
+                        SIMMPLY PERFECT GROUP
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+
+                {/* =================================================
                     EXPLORE BUTTON
                 ================================================= */}
-
                 <div className="mt-10 flex gap-6">
                   <Link
                     href={company.href}
@@ -207,7 +219,6 @@ export default function Companies() {
                     "
                   >
                     Explore Division
-
                     <ArrowRight size={18} />
                   </Link>
                 </div>
@@ -215,72 +226,40 @@ export default function Companies() {
                 {/* =================================================
                     COMPANY STATS
                 ================================================= */}
-
                 <motion.div
-                  initial={{
-                    opacity: 0,
-                    y: 20,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  viewport={{
-                    once: true,
-                  }}
-                  transition={{
-                    delay: 0.45,
-                    duration: 0.6,
-                  }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.45, duration: 0.6 }}
                   className="mt-12"
                 >
                   <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.06)]">
                     {company.stats.map((stat, i) => (
                       <motion.div
                         key={`${company.title}-${stat.label}`}
-                        whileHover={{
-                          y: -4,
-                          scale: 1.02,
-                        }}
-                        transition={{
-                          duration: 0.25,
-                        }}
+                        whileHover={{ y: -4, scale: 1.02 }}
+                        transition={{ duration: 0.25 }}
                         className={`group relative flex flex-col items-center justify-center px-3 py-5 text-center ${
                           i !== company.stats.length - 1
                             ? "border-r border-slate-200"
                             : ""
                         }`}
                       >
-                        {/* =========================================
-                            SOFT BACKGROUND GLOW
-                        ========================================= */}
-
+                        {/* SOFT BACKGROUND GLOW */}
                         <div className="absolute inset-0 z-0 rounded-xl bg-blue-50/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                        {/* =========================================
-                            TOP ACCENT
-                        ========================================= */}
-
+                        {/* TOP ACCENT */}
                         <div className="absolute left-1/2 top-0 z-10 h-[2px] w-0 -translate-x-1/2 rounded-full bg-[#0A2E6F] transition-all duration-300 group-hover:w-12" />
 
-                        {/* =========================================
-                            VALUE
-                        ========================================= */}
-
+                        {/* VALUE */}
                         <h3 className="relative z-10 text-2xl font-extrabold tracking-tight text-[#0A2E6F] transition-transform duration-300 group-hover:scale-105 sm:text-3xl">
                           {stat.value}
                         </h3>
 
-                        {/* =========================================
-                            DIVIDER
-                        ========================================= */}
-
+                        {/* DIVIDER */}
                         <div className="relative z-10 my-2 h-[2px] w-7 rounded-full bg-[#0A2E6F]/20 transition-all duration-300 group-hover:w-10 group-hover:bg-[#0A2E6F]" />
 
-                        {/* =========================================
-                            LABEL
-                        ========================================= */}
-
+                        {/* LABEL */}
                         <p className="relative z-10 text-[10px] font-semibold uppercase leading-tight tracking-[0.15em] text-slate-500 transition-colors duration-300 group-hover:text-[#0A2E6F] sm:text-[11px]">
                           {stat.label}
                         </p>

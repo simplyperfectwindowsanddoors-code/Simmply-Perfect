@@ -2,18 +2,6 @@ import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
 
 /* =========================================================
-   TICKET REQUEST TYPE
-========================================================= */
-
-type TicketRequestBody = {
-  fullName: string;
-  contact: string;
-  orderId: string;
-  item: string;
-  complaint: string;
-};
-
-/* =========================================================
    GENERATE TICKET ID
 ========================================================= */
 
@@ -50,19 +38,17 @@ function escapeHtml(value: string) {
 export async function POST(req: Request) {
   try {
     /* =====================================================
-       READ REQUEST BODY
+       READ REQUEST FORM DATA
     ===================================================== */
 
-    const body =
-      (await req.json()) as TicketRequestBody;
+    const formData = await req.formData();
 
-    const {
-      fullName,
-      contact,
-      orderId,
-      item,
-      complaint,
-    } = body;
+    const fullName = formData.get("fullName") as string | null;
+    const contact = formData.get("contact") as string | null;
+    const orderId = formData.get("orderId") as string | null;
+    const item = formData.get("item") as string | null;
+    const complaint = formData.get("complaint") as string | null;
+    const attachment = formData.get("attachment") as File | null;
 
     /* =====================================================
        REQUIRED FIELD VALIDATION
@@ -96,8 +82,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Please enter a valid 10-digit contact number.",
+          message: "Please enter a valid 10-digit contact number.",
         },
         {
           status: 400,
@@ -110,23 +95,15 @@ export async function POST(req: Request) {
     ===================================================== */
 
     const smtpHost = process.env.SMTP_HOST;
-
     const smtpPort = process.env.SMTP_PORT;
-
     const smtpUser = process.env.SMTP_USER;
-
     const smtpPass = process.env.SMTP_PASS;
 
     /* =====================================================
        CHECK SMTP CONFIGURATION
     ===================================================== */
 
-    if (
-      !smtpHost ||
-      !smtpPort ||
-      !smtpUser ||
-      !smtpPass
-    ) {
+    if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
       console.error(
         "TICKETS API ERROR: Missing SMTP environment variables.",
         {
@@ -140,8 +117,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Email service is not configured.",
+          message: "Email service is not configured.",
         },
         {
           status: 500,
@@ -155,56 +131,55 @@ export async function POST(req: Request) {
 
     const ticketId = generateTicketId();
 
-    const submittedAt = new Date().toLocaleString(
-      "en-IN",
-      {
-        timeZone: "Asia/Kolkata",
-        dateStyle: "medium",
-        timeStyle: "short",
-      },
-    );
+    const submittedAt = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
 
     /* =====================================================
-       CLEAN USER DATA
+       CLEAN & SANITIZE USER DATA
     ===================================================== */
 
     const cleanFullName = fullName.trim();
-
     const cleanOrderId = orderId.trim();
-
     const cleanItem = item.trim();
-
     const cleanComplaint = complaint.trim();
 
+    const safeFullName = escapeHtml(cleanFullName);
+    const safeContact = escapeHtml(cleanContact);
+    const safeOrderId = escapeHtml(cleanOrderId);
+    const safeItem = escapeHtml(cleanItem);
+    const safeComplaint = escapeHtml(cleanComplaint).replace(/\n/g, "<br />");
+
     /* =====================================================
-       SANITIZE DATA FOR HTML EMAIL
+       PROCESS ATTACHMENT
     ===================================================== */
 
-    const safeFullName = escapeHtml(cleanFullName);
+    const mailAttachments = [];
+    let attachmentDetailsText = "None";
 
-    const safeContact = escapeHtml(cleanContact);
+    if (attachment && attachment.size > 0) {
+      const arrayBuffer = await attachment.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
 
-    const safeOrderId = escapeHtml(cleanOrderId);
+      mailAttachments.push({
+        filename: attachment.name,
+        content: buffer,
+        contentType: attachment.type,
+      });
 
-    const safeItem = escapeHtml(cleanItem);
-
-    const safeComplaint = escapeHtml(
-      cleanComplaint,
-    ).replace(/\n/g, "<br />");
+      attachmentDetailsText = `Included (${attachment.name})`;
+    }
 
     /* =====================================================
        CREATE SMTP TRANSPORTER
-
-       Uses the same SMTP settings as the Catalog API.
     ===================================================== */
 
     const transporter = nodemailer.createTransport({
       host: smtpHost,
-
       port: Number(smtpPort),
-
       secure: Number(smtpPort) === 465,
-
       auth: {
         user: smtpUser,
         pass: smtpPass,
@@ -223,11 +198,9 @@ export async function POST(req: Request) {
 
     const mailResult = await transporter.sendMail({
       from: `"Simmply Perfect Support" <${smtpUser}>`,
-
       to: "simplyperfectwindowsanddoors@gmail.com",
-
       subject: `New Support Ticket ${ticketId} - ${cleanOrderId}`,
-
+      attachments: mailAttachments,
       text: `
 SIMMPLY PERFECT GROUP
 NEW CUSTOMER SUPPORT TICKET
@@ -262,473 +235,171 @@ ${cleanComplaint}
 
 ----------------------------------------
 
+ATTACHMENTS: ${attachmentDetailsText}
+
+----------------------------------------
+
 This is an automated support notification from the
 Simmply Perfect Group website.
       `,
-
       html: `
         <!DOCTYPE html>
-
         <html lang="en">
-
           <head>
-
             <meta charset="UTF-8" />
-
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1.0"
-            />
-
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>New Support Ticket</title>
-
           </head>
-
-          <body
-            style="
-              margin: 0;
-              padding: 0;
-              background-color: #f1f5f9;
-              font-family: Arial, Helvetica, sans-serif;
-            "
-          >
-
+          <body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: Arial, Helvetica, sans-serif;">
             <!-- ============================================
                  EMAIL WRAPPER
             ============================================= -->
-
-            <div
-              style="
-                width: 100%;
-                padding: 32px 15px;
-                box-sizing: border-box;
-              "
-            >
-
+            <div style="width: 100%; padding: 32px 15px; box-sizing: border-box;">
               <!-- ==========================================
                    EMAIL CONTAINER
               =========================================== -->
-
-              <div
-                style="
-                  width: 100%;
-                  max-width: 620px;
-                  margin: 0 auto;
-                  background-color: #ffffff;
-                  border: 1px solid #e2e8f0;
-                  border-radius: 16px;
-                  overflow: hidden;
-                  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
-                "
-              >
-
+              <div style="width: 100%; max-width: 620px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);">
+                
                 <!-- ========================================
                      HEADER
                 ========================================= -->
-
-                <div
-                  style="
-                    padding: 28px 30px;
-                    background-color: #071224;
-                  "
-                >
-
-                  <p
-                    style="
-                      margin: 0 0 8px;
-                      color: #93c5fd;
-                      font-size: 10px;
-                      font-weight: 700;
-                      letter-spacing: 2px;
-                      text-transform: uppercase;
-                    "
-                  >
+                <div style="padding: 28px 30px; background-color: #071224;">
+                  <p style="margin: 0 0 8px; color: #93c5fd; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">
                     Simmply Perfect Group
                   </p>
-
-                  <h1
-                    style="
-                      margin: 0;
-                      color: #ffffff;
-                      font-size: 24px;
-                      line-height: 1.3;
-                    "
-                  >
+                  <h1 style="margin: 0; color: #ffffff; font-size: 24px; line-height: 1.3;">
                     New Customer Support Ticket
                   </h1>
-
-                  <p
-                    style="
-                      margin: 10px 0 0;
-                      color: #94a3b8;
-                      font-size: 13px;
-                      line-height: 1.6;
-                    "
-                  >
-                    A customer has submitted a support request
-                    through the Simmply Perfect Group website.
+                  <p style="margin: 10px 0 0; color: #94a3b8; font-size: 13px; line-height: 1.6;">
+                    A customer has submitted a support request through the Simmply Perfect Group website.
                   </p>
-
                 </div>
 
                 <!-- ========================================
                      CONTENT
                 ========================================= -->
-
-                <div
-                  style="
-                    padding: 28px 30px;
-                  "
-                >
-
+                <div style="padding: 28px 30px;">
+                  
                   <!-- ======================================
                        TICKET ID
                   ======================================= -->
-
-                  <div
-                    style="
-                      margin-bottom: 26px;
-                      padding: 17px 18px;
-                      background-color: #eff6ff;
-                      border: 1px solid #dbeafe;
-                      border-radius: 10px;
-                    "
-                  >
-
-                    <p
-                      style="
-                        margin: 0 0 6px;
-                        color: #64748b;
-                        font-size: 10px;
-                        font-weight: 700;
-                        letter-spacing: 1.5px;
-                        text-transform: uppercase;
-                      "
-                    >
+                  <div style="margin-bottom: 26px; padding: 17px 18px; background-color: #eff6ff; border: 1px solid #dbeafe; border-radius: 10px;">
+                    <p style="margin: 0 0 6px; color: #64748b; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">
                       Ticket ID
                     </p>
-
-                    <p
-                      style="
-                        margin: 0;
-                        color: #0A2E6F;
-                        font-size: 20px;
-                        font-weight: 700;
-                      "
-                    >
+                    <p style="margin: 0; color: #0A2E6F; font-size: 20px; font-weight: 700;">
                       ${ticketId}
                     </p>
-
                   </div>
 
                   <!-- ======================================
                        CUSTOMER DETAILS
                   ======================================= -->
-
-                  <h2
-                    style="
-                      margin: 0 0 14px;
-                      color: #071224;
-                      font-size: 16px;
-                    "
-                  >
+                  <h2 style="margin: 0 0 14px; color: #071224; font-size: 16px;">
                     Customer Details
                   </h2>
-
-                  <table
-                    role="presentation"
-                    cellpadding="0"
-                    cellspacing="0"
-                    style="
-                      width: 100%;
-                      margin-bottom: 28px;
-                      border-collapse: collapse;
-                    "
-                  >
-
+                  <table role="presentation" cellpadding="0" cellspacing="0" style="width: 100%; margin-bottom: 28px; border-collapse: collapse;">
                     <tr>
-
-                      <td
-                        style="
-                          width: 40%;
-                          padding: 11px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #64748b;
-                          font-size: 13px;
-                        "
-                      >
+                      <td style="width: 40%; padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 13px;">
                         Full Name
                       </td>
-
-                      <td
-                        style="
-                          padding: 11px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #071224;
-                          font-size: 13px;
-                          font-weight: 700;
-                        "
-                      >
+                      <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #071224; font-size: 13px; font-weight: 700;">
                         ${safeFullName}
                       </td>
-
                     </tr>
-
                     <tr>
-
-                      <td
-                        style="
-                          width: 40%;
-                          padding: 11px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #64748b;
-                          font-size: 13px;
-                        "
-                      >
+                      <td style="width: 40%; padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 13px;">
                         Contact Number
                       </td>
-
-                      <td
-                        style="
-                          padding: 11px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #071224;
-                          font-size: 13px;
-                          font-weight: 700;
-                        "
-                      >
+                      <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #071224; font-size: 13px; font-weight: 700;">
                         ${safeContact}
                       </td>
-
                     </tr>
-
                   </table>
 
                   <!-- ======================================
                        ORDER DETAILS
                   ======================================= -->
-
-                  <h2
-                    style="
-                      margin: 0 0 14px;
-                      color: #071224;
-                      font-size: 16px;
-                    "
-                  >
+                  <h2 style="margin: 0 0 14px; color: #071224; font-size: 16px;">
                     Order Details
                   </h2>
-
-                  <table
-                    role="presentation"
-                    cellpadding="0"
-                    cellspacing="0"
-                    style="
-                      width: 100%;
-                      margin-bottom: 28px;
-                      border-collapse: collapse;
-                    "
-                  >
-
+                  <table role="presentation" cellpadding="0" cellspacing="0" style="width: 100%; margin-bottom: 28px; border-collapse: collapse;">
                     <tr>
-
-                      <td
-                        style="
-                          width: 40%;
-                          padding: 11px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #64748b;
-                          font-size: 13px;
-                        "
-                      >
+                      <td style="width: 40%; padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 13px;">
                         Order ID
                       </td>
-
-                      <td
-                        style="
-                          padding: 11px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #071224;
-                          font-size: 13px;
-                          font-weight: 700;
-                        "
-                      >
+                      <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #071224; font-size: 13px; font-weight: 700;">
                         ${safeOrderId}
                       </td>
-
                     </tr>
-
                     <tr>
-
-                      <td
-                        style="
-                          width: 40%;
-                          padding: 11px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #64748b;
-                          font-size: 13px;
-                        "
-                      >
+                      <td style="width: 40%; padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 13px;">
                         Item
                       </td>
-
-                      <td
-                        style="
-                          padding: 11px 0;
-                          border-bottom: 1px solid #f1f5f9;
-                          color: #071224;
-                          font-size: 13px;
-                          font-weight: 700;
-                        "
-                      >
+                      <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #071224; font-size: 13px; font-weight: 700;">
                         ${safeItem}
                       </td>
-
                     </tr>
-
                   </table>
 
                   <!-- ======================================
                        COMPLAINT
                   ======================================= -->
-
-                  <h2
-                    style="
-                      margin: 0 0 12px;
-                      color: #071224;
-                      font-size: 16px;
-                    "
-                  >
+                  <h2 style="margin: 0 0 12px; color: #071224; font-size: 16px;">
                     Customer Complaint
                   </h2>
-
-                  <div
-                    style="
-                      padding: 16px;
-                      background-color: #f8fafc;
-                      border: 1px solid #e2e8f0;
-                      border-left: 4px solid #0A2E6F;
-                      border-radius: 8px;
-                      color: #334155;
-                      font-size: 13px;
-                      line-height: 1.7;
-                    "
-                  >
+                  <div style="padding: 16px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #0A2E6F; border-radius: 8px; color: #334155; font-size: 13px; line-height: 1.7; margin-bottom: 28px;">
                     ${safeComplaint}
+                  </div>
+
+                  <!-- ======================================
+                       ATTACHMENTS
+                  ======================================= -->
+                  <h2 style="margin: 0 0 12px; color: #071224; font-size: 16px;">
+                    Attachments
+                  </h2>
+                  <div style="padding: 16px; background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; color: #334155; font-size: 13px;">
+                    ${attachmentDetailsText}
                   </div>
 
                   <!-- ======================================
                        STATUS
                   ======================================= -->
-
-                  <div
-                    style="
-                      margin-top: 26px;
-                      padding: 15px 16px;
-                      background-color: #fff7ed;
-                      border: 1px solid #fed7aa;
-                      border-radius: 8px;
-                    "
-                  >
-
-                    <table
-                      role="presentation"
-                      cellpadding="0"
-                      cellspacing="0"
-                      style="
-                        width: 100%;
-                        border-collapse: collapse;
-                      "
-                    >
-
+                  <div style="margin-top: 26px; padding: 15px 16px; background-color: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
                       <tr>
-
-                        <td
-                          style="
-                            color: #9a3412;
-                            font-size: 12px;
-                            font-weight: 700;
-                          "
-                        >
+                        <td style="color: #9a3412; font-size: 12px; font-weight: 700;">
                           Ticket Status
                         </td>
-
-                        <td
-                          align="right"
-                          style="
-                            color: #c2410c;
-                            font-size: 12px;
-                            font-weight: 700;
-                          "
-                        >
+                        <td align="right" style="color: #c2410c; font-size: 12px; font-weight: 700;">
                           OPEN
                         </td>
-
                       </tr>
-
                     </table>
-
                   </div>
 
                   <!-- ======================================
                        DATE
                   ======================================= -->
-
-                  <div
-                    style="
-                      margin-top: 24px;
-                      padding-top: 20px;
-                      border-top: 1px solid #e2e8f0;
-                    "
-                  >
-
-                    <p
-                      style="
-                        margin: 0;
-                        color: #94a3b8;
-                        font-size: 11px;
-                        line-height: 1.6;
-                      "
-                    >
+                  <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                    <p style="margin: 0; color: #94a3b8; font-size: 11px; line-height: 1.6;">
                       Submitted on ${submittedAt}
                     </p>
-
                   </div>
-
                 </div>
 
                 <!-- ========================================
                      FOOTER
                 ========================================= -->
-
-                <div
-                  style="
-                    padding: 18px 30px;
-                    background-color: #f8fafc;
-                    border-top: 1px solid #e2e8f0;
-                    text-align: center;
-                  "
-                >
-
-                  <p
-                    style="
-                      margin: 0;
-                      color: #94a3b8;
-                      font-size: 10px;
-                      line-height: 1.6;
-                    "
-                  >
-                    Automated support notification from
-                    Simmply Perfect Group.
+                <div style="padding: 18px 30px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
+                  <p style="margin: 0; color: #94a3b8; font-size: 10px; line-height: 1.6;">
+                    Automated support notification from Simmply Perfect Group.
                   </p>
-
                 </div>
 
               </div>
-
             </div>
-
           </body>
-
         </html>
       `,
     });
@@ -738,18 +409,11 @@ Simmply Perfect Group website.
     ===================================================== */
 
     console.log("====================================");
-
     console.log("SUPPORT TICKET EMAIL SENT");
-
     console.log("Ticket ID:", ticketId);
-
     console.log("Message ID:", mailResult.messageId);
-
-    console.log(
-      "Receiver:",
-      "simplyperfectwindowsanddoors@gmail.com",
-    );
-
+    console.log("Receiver:", "simplyperfectwindowsanddoors@gmail.com");
+    console.log("Attachment:", attachmentDetailsText);
     console.log("====================================");
 
     /* =====================================================
@@ -759,10 +423,7 @@ Simmply Perfect Group website.
     return NextResponse.json(
       {
         success: true,
-
-        message:
-          "Your support ticket has been submitted successfully.",
-
+        message: "Your support ticket has been submitted successfully.",
         ticketId,
       },
       {
@@ -774,10 +435,7 @@ Simmply Perfect Group website.
        ERROR LOG
     ===================================================== */
 
-    console.error(
-      "TICKETS EMAIL API ERROR:",
-      error,
-    );
+    console.error("TICKETS EMAIL API ERROR:", error);
 
     /* =====================================================
        ERROR MESSAGE
@@ -795,7 +453,6 @@ Simmply Perfect Group website.
     return NextResponse.json(
       {
         success: false,
-
         message,
       },
       {
