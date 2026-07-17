@@ -545,8 +545,8 @@ export default function Navbar() {
             <Image
               src="/logo.png"
               alt="Simmply Perfect"
-              width={55}
-              height={55}
+              width={80}
+              height={65}
               priority
               className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
             />
@@ -749,8 +749,8 @@ export default function Navbar() {
                 <Image
                   src="/logo.png"
                   alt="Simmply Perfect"
-                  width={40}
-                  height={40}
+                  width={80}
+                  height={65}
                   className="h-10 w-auto"
                 />
 
