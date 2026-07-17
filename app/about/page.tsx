@@ -5,84 +5,128 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/home/Footer";
 import CountUp from "react-countup";
-import { motion, type Transition } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   Award,
   ShieldCheck,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
-  Briefcase,
-  Quote,
   Target,
   Compass,
-  Cpu,
-  Binary,
-  Wrench,
+  Building2,
+  Lightbulb,
   Layers,
-  Settings,
+  Shield,
+  Clock,
+  Wrench,
+  Briefcase,
+  DollarSign,
+  Activity,
+  HeartHandshake,
+  MessageCircle,
+  ThumbsUp,
+  PenTool,
+  Quote,
   GraduationCap,
-  Hammer,
-  ChevronDown
+  ChevronDown,
+  Star,
+  Leaf,
+  Settings,
+  Users
 } from "lucide-react";
 
-const smoothFadeUp = {
-  initial: { opacity: 0, y: 40 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-50px" },
-  transition: {
-    duration: 0.8,
-    ease: [0.16, 1, 0.3, 1],
-  } satisfies Transition,
+// --- ANIMATION VARIANTS ---
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } 
+  },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+  },
 };
 
 const timelineCardVariants = (index: number) => ({
-  initial: { opacity: 0, x: index % 2 === 0 ? -50 : 50, y: 20 },
-  whileInView: { opacity: 1, x: 0, y: 0 },
-  viewport: { once: true, margin: "-100px" },
-  transition: { 
-    type: "spring" as const, 
-    damping: 25, 
-    stiffness: 140, 
-    delay: 0.1 
+  hidden: { opacity: 0, x: index % 2 === 0 ? -50 : 50, y: 20 },
+  visible: { 
+    opacity: 1, 
+    x: 0, 
+    y: 0,
+    transition: { type: "spring", damping: 20, stiffness: 100, delay: index * 0.15 }
   }
 });
 
-// --- DATA FOR Q&A AND REVIEWS ---
+const timelineDotVariants = (index: number) => ({
+  hidden: { scale: 0, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { type: "spring", delay: index * 0.15 + 0.1 } }
+});
+
+// --- DATA ---
+const businessDivisions = [
+  { 
+    title: "Windows & Doors", 
+    desc: "Thermally broken and structurally engineered systems for maximum durability and acoustic perfection.", 
+    link: "/windows-doors", 
+    img: "/windows-doors.jpg", 
+    icon: Building2,
+  },
+  { 
+    title: "Interior Solutions", 
+    desc: "Turn-key luxury indoor masterplanning combining space fluid dynamics and premium materials.", 
+    link: "/interiors", 
+    img: "/interiors.jpg", 
+    icon: Lightbulb,
+  },
+  { 
+    title: "Renovations", 
+    desc: "Complete technical overhauls engineered without breaking foundational structural criteria.", 
+    link: "/renovation", 
+    img: "/renovation.jpg", 
+    icon: Layers,
+  },
+  { 
+    title: "Metal Works", 
+    desc: "Custom architectural fabrication combining precision engineering and durable materials.", 
+    link: "/metal-works", 
+    img: "/metal-works.jpg", 
+    icon: Shield,
+  },
+];
+
+const whyChooseUs = [
+  { title: "Premium Quality Materials", icon: ShieldCheck },
+  { title: "Experienced Professionals", icon: Briefcase },
+  { title: "Skilled Workmanship", icon: Wrench },
+  { title: "Timely Delivery", icon: Clock },
+  { title: "Customized Solutions", icon: PenTool },
+  { title: "Affordable Pricing", icon: DollarSign },
+  { title: "Innovative Designs", icon: Activity },
+  { title: "Excellent Support", icon: HeartHandshake },
+  { title: "Transparent Communication", icon: MessageCircle },
+  { title: "Long-term Reliability", icon: ThumbsUp },
+];
+
+const trustIndicators = [
+  "Quality Assurance", "Customer Satisfaction", "Engineering Excellence", 
+  "Professional Workforce", "Industry Experience", "Reliable Service", 
+  "Premium Materials", "Innovative Solutions"
+];
+
 const faqs = [
-  { 
-    q: "What materials do you use for your window and door systems?", 
-    a: "We primarily utilize thermally broken architectural uPVC and high-grade structural Aluminium. These materials are engineered for maximum durability, superior acoustic degradation, and high wind-load resistance." 
-  },
-  { 
-    q: "Do you offer comprehensive warranties on your installations?", 
-    a: "Yes, all our premium sourced composite materials and installations come with an extensive warranty, typically spanning 10 to 15 years depending on the specific product tier and environmental conditions." 
-  },
-  { 
-    q: "How long does a typical bespoke renovation project take?", 
-    a: "Project timelines vary significantly based on scope and structural complexity. A standard luxury interior integration might take 4-8 weeks, while complete structural overhauls are mapped out during our Phase 01 Discovery process." 
-  },
-  { 
-    q: "Can your team handle custom geometric shapes for windows?", 
-    a: "Absolutely. Our advanced parametric design architecture allows us to manufacture bespoke geometric configurations without compromising the structural integrity or thermal efficiency of the unit." 
-  },
-  { 
-    q: "Are your interior and architectural designs energy efficient?", 
-    a: "Yes. Sustainability and energy efficiency are core to our engineering methodology. Our window systems feature multi-chambered profiles and double/triple glazing to significantly reduce thermal transfer." 
-  },
-  { 
-    q: "Do you manage the entire project or just supply materials?", 
-    a: "Simmply Perfect Group operates as an end-to-end management hub. We handle everything from initial architectural drafting and material sourcing to final onsite execution and certified handover." 
-  },
-  { 
-    q: "What is your process for quality assurance?", 
-    a: "We implement rigorous laboratory quality control and statical tolerance analysis during manufacturing, followed by a strict milestone inspection process onsite managed by our senior certified engineers." 
-  },
-  { 
-    q: "Do you provide after-sales support or maintenance?", 
-    a: "Yes, we maintain a dedicated after-sales and Annual Maintenance Contract (AMC) framework to ensure your architectural installations perform optimally for decades." 
-  }
+  { q: "What materials do you use for your window and door systems?", a: "We primarily utilize thermally broken architectural uPVC and high-grade structural Aluminium. These materials are engineered for maximum durability, superior acoustic degradation, and high wind-load resistance." },
+  { q: "Do you offer comprehensive warranties on your installations?", a: "Yes, all our premium sourced composite materials and installations come with an extensive warranty, typically spanning 10 to 15 years depending on the specific product tier and environmental conditions." },
+  { q: "How long does a typical bespoke renovation project take?", a: "Project timelines vary significantly based on scope and structural complexity. A standard luxury interior integration might take 4-8 weeks, while complete structural overhauls are mapped out during our Phase 01 Discovery process." },
+  { q: "Can your team handle custom geometric shapes for windows?", a: "Absolutely. Our advanced parametric design architecture allows us to manufacture bespoke geometric configurations without compromising the structural integrity or thermal efficiency of the unit." },
+  { q: "Are your interior and architectural designs energy efficient?", a: "Yes. Sustainability and energy efficiency are core to our engineering methodology. Our window systems feature multi-chambered profiles and double/triple glazing to significantly reduce thermal transfer." },
+  { q: "Do you manage the entire project or just supply materials?", a: "Simmply Perfect Group operates as an end-to-end management hub. We handle everything from initial architectural drafting and material sourcing to final onsite execution and certified handover." },
 ];
 
 const reviews = [
@@ -91,13 +135,8 @@ const reviews = [
   { name: "Vikram Singh", role: "Lead Architect", review: "The technical expertise in polymer science translates perfectly into their architectural systems. A highly reliable partner for large-scale structural nodes." },
   { name: "Priya Menon", role: "Interior Designer", review: "Their bespoke interior studio is phenomenal. They matched our exact material specifications and delivered the custom millwork right on schedule without any compromises." },
   { name: "Anand Gupta", role: "Commercial Contractor", review: "The end-to-end project management eliminated so much friction for us. Having a single point of accountability made the entire structural overhaul seamless." },
-  { name: "Elena R.", role: "Homeowner", review: "Beautiful craftsmanship and excellent customer service. The custom aluminium doors they installed in our patio are easily the highlight of our entire home." },
-  { name: "Suresh Reddy", role: "Estate Manager", review: "We hired them for a comprehensive restructuring of a heritage property. They respected the foundational criteria while upgrading the entire space flawlessly." },
-  { name: "Kavya T.", role: "Real Estate Investor", review: "Outstanding quality. The precision in their parametric designs and strict timeline adherence is exactly why I keep returning to them for all my properties." }
 ];
-
-// Doubling the array to allow for a seamless infinite scroll effect
-const infiniteReviews = [...reviews, ...reviews];
+const infiniteReviews = [...reviews, ...reviews, ...reviews];
 
 export default function AboutPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -106,677 +145,493 @@ export default function AboutPage() {
     <>
       <Navbar />
       
-      {/* Injecting keyframes for the marquee animation so it works natively */}
+      {/* Marquee Animation Styles */}
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes marquee {
           0% { transform: translateX(0%); }
-          100% { transform: translateX(calc(-50% - 1rem)); }
+          100% { transform: translateX(calc(-33.33% - 1rem)); }
         }
         .animate-marquee {
           animation: marquee 40s linear infinite;
         }
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
       `}} />
 
-      <main className="bg-[#FAFBFD] text-slate-900 overflow-hidden antialiased">
+      <main className="bg-slate-50 text-slate-900 overflow-hidden antialiased selection:bg-blue-600 selection:text-white">
         
-        {/* HERO SECTION */}
-        <section className="relative pt-44 pb-24 bg-gradient-to-b from-slate-50 via-white to-transparent">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_0%,#000_70%,transparent_100%)]" />
-
+        {/* 1. ENHANCED HERO SECTION */}
+        <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-white overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
+          
           <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
               
-              {/* LEFT INTEL (Reduced Span & Padding) */}
               <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
-                className="lg:col-span-5 xl:col-span-5 z-10"
+                initial="hidden"
+                animate="visible"
+                variants={staggerContainer}
+                className="max-w-2xl z-10"
               >
-                <h1 className="mt-6 text-5xl md:text-6xl font-black text-[#071224] tracking-tight leading-[0.95]">
-                  Creating <br />
-                  Spaces That <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0A2E6F] via-[#1E4ED8] to-indigo-600">
-                    Inspire Living
-                  </span>
-                </h1>
-
-                <p className="mt-6 text-sm md:text-base text-slate-600 leading-relaxed max-w-md font-medium">
-                  Simmply Perfect Group delivers premium Windows & Doors, luxury interiors, and turn-key structural innovations engineered gracefully to elevate modern living architectures.
-                </p>
-
-                {/* FUNCTIONAL ENHANCED CTAs */}
-                <div className="flex flex-col sm:flex-row gap-3 mt-8 max-w-md">
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full">
-                    <Link
-                      href="/contact"
-                      className="group w-full bg-[#1A3673] hover:bg-[#072456] text-white px-6 py-3.5 rounded-full font-bold text-[14px] tracking-wide flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(26,54,115,0.2)] transition-all duration-300"
-                    >
-                      Get In Touch
-                      <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
-                    </Link>
-                  </motion.div>
-
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full">
-                    <Link
-                      href="/windows-doors"
-                      className="w-full border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-[#071224] px-6 py-3.5 rounded-full transition-all duration-300 font-bold text-[14px] tracking-wide flex items-center justify-center"
-                    >
-                      Explore Services
-                    </Link>
-                  </motion.div>
-                </div>
-
-                {/* EXACT SCREENSHOT MATCH: COUNTER TILES (Scaled Down for Composition) */}
-                <div className="grid grid-cols-3 mt-10 sm:mt-12 py-5 sm:py-6 rounded-[1.5rem] bg-white border border-slate-200/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] divide-x divide-slate-200">
-                  {[
-                    { value: 5000, suffix: "+", label: "PROJECTS\nDELIVERED" },
-                    { value: 20, suffix: "+", label: "YEARS\nEXPERIENCE" },
-                    { value: 99.12, suffix: "%", label: "CLIENT\nSATISFACTION", decimals: 2 },
-                  ].map((item, index) => (
-                    <div key={index} className="flex flex-col items-center text-center justify-start px-2 sm:px-3">
-                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#1A2E6F] tracking-tight flex items-baseline justify-center">
-                        <CountUp end={item.value} duration={3} delay={0.2} decimals={item.decimals ?? 0} enableScrollSpy scrollSpyOnce separator="," />
-                        <span className="ml-0.5">{item.suffix}</span>
-                      </h3>
-                      {/* Sub-divider line matching screenshot */}
-                      <div className="w-6 h-[2px] bg-slate-300 rounded-full my-2 sm:my-3" />
-                      <p className="text-[8px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed whitespace-pre-line">
-                        {item.label}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* RIGHT HERO IMAGERY (Expanded Span & Height) */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96, x: 30 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
-                className="lg:col-span-7 xl:col-span-7 relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#0A2E6F]/10 to-transparent rounded-[32px] pointer-events-none z-10" />
-                <img
-                  src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2200"
-                  alt="Simmply Perfect Architecture Look"
-                  className="w-full h-[450px] sm:h-[500px] lg:h-[750px] object-cover rounded-[32px] border border-slate-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.06)]"
-                />
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* HIGH-DENSITY PROFESSIONAL EXECUTIVE CABINET CONSOLE */}
-        <section className="py-24 sm:py-32 bg-[#091122] text-white border-y border-slate-800 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(#ffffff02_1px,transparent_1px)] bg-[size:20px_24px] pointer-events-none opacity-80" />
-          <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-blue-500/[0.03] rounded-full blur-[130px] pointer-events-none" />
-          <div className="absolute bottom-1/4 left-0 w-[500px] h-[500px] bg-[#0A2E6F]/10 rounded-full blur-[120px] pointer-events-none" />
-
-          <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-              
-              {/* STICKY SIDEBAR AVATAR & QUOTE BLOCK */}
-              <motion.div 
-                {...smoothFadeUp}
-                className="lg:col-span-4 lg:sticky lg:top-32 space-y-5 flex flex-col"
-              >
-                <div className="relative rounded-3xl overflow-hidden border border-white/[0.08] bg-slate-950 shadow-2xl group">
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-90 z-10" />
-                  <img
-                    src="/founder.jpg" 
-                    alt="Aakaash Deep Shrivastava"
-                    className="w-full h-[440px] md:h-[500px] lg:h-[460px] xl:h-[500px] object-cover rounded-3xl group-hover:scale-[1.012] transition-transform duration-500 ease-out"
-                  />
-                  <div className="absolute bottom-0 inset-x-0 p-6 z-20 space-y-1">
-                    <h3 className="text-2xl font-black tracking-tight text-white">Aakaash Deep Shrivastava</h3>
-                    <p className="text-xs text-blue-400 font-black uppercase tracking-widest">Founder & Technical Director</p>
-                    <div className="pt-2 flex items-center gap-2 text-xs text-slate-400">
-                      <Briefcase size={14} className="text-blue-500 shrink-0" />
-                      <span className="font-medium">18+ years Experience</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-md relative shadow-inner">
-                  <Quote className="text-blue-500/10 absolute top-4 left-4" size={32} />
-                  <p className="text-xs text-slate-300 italic leading-relaxed relative z-10 pl-5 font-medium">
-                    &quot;Industrial manufacturing logic and tolerance constraints are what ultimately distinguish luxury conceptual drafts from real-world structural milestones.&quot;
-                  </p>
-                </div>
-              </motion.div>
-
-              {/* TECHNICAL INTEGRATION MATRIX DISPLAY PANEL */}
-              <motion.div 
-                {...smoothFadeUp}
-                transition={{ ...smoothFadeUp.transition, delay: 0.1 }}
-                className="lg:col-span-8 space-y-6"
-              >
-                <div className="space-y-3 text-center lg:text-left">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-blue-500/10 border border-blue-500/20 text-[10px] font-black uppercase tracking-widest text-blue-400 shadow-sm">
-                    <Settings size={12} className="animate-spin-slow" />
-                    <span>Subject Matter Expert: Injection Molding & Extrusion</span>
-                  </div>
-                  <h2 className="text-3xl sm:text-4xl font-black tracking-tight leading-none text-white">
-                    Polymer Science Engineering & Tooling Diagnostics
-                  </h2>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed font-light">
-                    Directing cross-functional architecture across specialized Research & Development (R&D), advanced tool component designs, macro manufacturing setups, and predictive maintenance logs, bridging high-tolerance polymer processing into modern structural spaces.
-                  </p>
-                </div>
-
-                {/* CORE COMPETENCIES COMPACT SUB-GRID */}
-                <div className="bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 space-y-3 shadow-inner">
-                  <h4 className="text-[11px] font-black uppercase tracking-widest text-blue-400 flex items-center gap-2">
-                    <Cpu size={14} /> Domain Skills
-                  </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                    {[
-                      "Plastic Product Design",
-                      "Plastic Flow Analysis",
-                      "Plastic Mold Design",
-                      "New Product Development",
-                      "Tool & Die Making",
-                      "Plastic Mold Manufacturing",
-                      "UPVC Gasket Die Design",
-                      "UPVC Extrusion Process Expert",
-                      "Sustainable Mechanical Engineering"
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2.5 p-3 rounded-xl bg-slate-900/60 border border-white/[0.04]">
-                        <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
-                        <span className="text-xs font-bold text-slate-200 tracking-wide truncate">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* CAD & CAE METRIC TRACKS */}
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/[0.05] space-y-2.5">
-                    <h5 className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
-                      <Wrench size={14} className="text-blue-400" /> CAD Skills
-                    </h5>
-                    <p className="text-xs text-slate-400 leading-relaxed font-light">
-                      Complete functional drafting mastery across <span className="text-white font-semibold">AutoCAD, Creo, CATIA, NX-CAD, Solidworks</span>, and <span className="text-white font-semibold">Autodesk Inventor</span> environments.
-                    </p>
-                  </div>
-                  <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/[0.05] space-y-2.5">
-                    <h5 className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
-                      <Binary size={14} className="text-purple-400" /> CAE Skills
-                    </h5>
-                    <p className="text-xs text-slate-400 leading-relaxed font-light">
-                      Excellent proven expertise in executing structural Static & Dynamic Analysis within <span className="text-white font-semibold">Ansys Workbench, Ansys Fluent, Solidworks Plastics</span>, and <span className="text-white font-semibold">Moldflow</span> setups.
-                    </p>
-                  </div>
-                </div>
-
-                {/* PLM CONTROL SYSTEMS AND PROCESS METHODOLOGIES */}
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/[0.05] space-y-2">
-                    <h5 className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
-                      <Layers size={14} className="text-cyan-400" /> PLM Software
-                    </h5>
-                    <p className="text-xs text-slate-400 font-light leading-relaxed">
-                      Sustained handling knowledge of enterprise Product Lifecycle Management software structures including <span className="text-white">Team Center, Enovia, PTC Windchill</span>, and automated <span className="text-white">Agile</span> frameworks.
-                    </p>
-                  </div>
-                  <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/[0.05] space-y-2">
-                    <h5 className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
-                      <Settings size={14} className="text-amber-400" /> Tools & Methodologies
-                    </h5>
-                    <p className="text-xs text-slate-400 font-light leading-relaxed">
-                      Optimized implementation workflows for Value Engineering, Reverse Engineering, Kaizen, Poke-Yoke, 5S, TQM, 80/20 Rule, Bathtub Curve, RCA, Fish bone diagram, DFMEA, PFMEA, Stackup Analysis, and Statical Tolerance Analysis (RSS & WCS).
-                    </p>
-                  </div>
-                </div>
-
-                {/* DOCUMENTATION MATRIX CONSOLE */}
-                <div className="p-5 rounded-2xl bg-gradient-to-r from-slate-950 to-slate-900 border border-white/[0.05] space-y-2">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Documentation Support & Exposure</span>
-                  <p className="text-xs text-slate-300 leading-relaxed font-light">
-                    Providing analytical vector-graphic data records using <span className="text-white font-semibold">Adobe Illustrator, Adobe Photoshop</span>, and MS Office. Exposure to working in multiple industrial domains such as Household, Automobile, Construction, Electrical and Electronics, Mechatronics, and Medical/Healthcare fields.
-                  </p>
-                </div>
-
-                {/* ACADEMIC RESEARCH SUMMARY PANEL */}
-                <div className="space-y-3">
-                  <h4 className="text-[11px] font-black uppercase tracking-widest text-blue-400 flex items-center gap-2">
-                    <Award size={14} /> Validated Certifications
-                  </h4>
-                  <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-2">
-                    {[
-                      { title: "Autodesk", sub: "Moldflow '15" },
-                      { title: "PTC CREO", sub: "Tooling '14" },
-                      { title: "Solidworks", sub: "Core Eng. '15" },
-                      { title: "CATIA", sub: "Suite '16" },
-                      { title: "Solidworks", sub: "Plastics '16" },
-                      { title: "AutoCAD", sub: "Inventor '17" }
-                    ].map((badge, i) => (
-                      <div key={i} className="p-2 bg-slate-950/80 border border-white/[0.05] rounded-xl text-center shadow-sm">
-                        <span className="block text-[10px] font-black text-slate-200 tracking-tight truncate">{badge.title}</span>
-                        <span className="block text-[8px] text-blue-400 font-medium tracking-wide mt-0.5 whitespace-nowrap">{badge.sub}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex items-start gap-3 p-3.5 bg-blue-500/[0.01] border border-blue-500/10 rounded-xl text-xs text-slate-400 font-medium">
-                    <GraduationCap size={16} className="text-blue-400 shrink-0 mt-0.5" />
-                    <p className="leading-normal">
-                      Holds 6 years of active working knowledge performing Finite Element Analysis (FEA) using <span className="text-slate-300 font-bold">ANSYS, ABAQUS, and COMSOL</span>. Published <span className="text-white font-bold">8 independent international research papers</span> mapping the design and development framework metrics of modern injection molds.
-                    </p>
-                  </div>
-                </div>
-
-              </motion.div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* WHO WE ARE CORPORATE STATEMENT */}
-        <section className="py-28 bg-[#FAFBFD]">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="grid lg:grid-cols-12 gap-16 items-center">
-              
-              {/* NARRATIVE TEXT */}
-              <motion.div {...smoothFadeUp} className="lg:col-span-7">
-                <div className="text-center lg:text-left space-y-4">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#0A2E6F]">
-                    Operational Creed
-                  </span>
-                  <h2 className="text-4xl font-black text-[#071224] tracking-tight leading-tight">
-                    Building Exceptional Spaces Through Innovation & Quality
-                  </h2>
-                </div>
-                <p className="mt-6 text-slate-600 text-base leading-relaxed text-center">
-                  Simmply Perfect Group operates as a synchronized structural hub providing end-to-end management frameworks across state-of-the-art building domains. We minimize developer execution fragmentation by providing architectural solutions under one single elite umbrella system.
-                </p>
-
-                <div className="grid sm:grid-cols-2 gap-4 mt-8">
-                  {[
-                    "Premium Sourced Composite Materials",
-                    "Vetted Architectural Engineering Team",
-                    "Bespoke High-Luxury Modern Designs",
-                    "End-To-End Absolute Project Management",
-                    "Rigorous Laboratory Quality Control Assurance",
-                    "Strict Timeline Milestone Project Delivery",
-                  ].map((item) => (
-                    <div key={item} className="flex items-center gap-3 py-1 justify-center lg:justify-start">
-                      <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
-                      <span className="font-semibold text-sm text-slate-700">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* CORPORATE STILL IMAGERY */}
-              <motion.div 
-                {...smoothFadeUp}
-                transition={{ ...smoothFadeUp.transition, delay: 0.1 }}
-                className="lg:col-span-5"
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2000"
-                  alt="Bespoke Spatial Design Manifestation"
-                  className="w-full h-[450px] lg:h-[520px] object-cover rounded-[28px] border border-slate-200/60 shadow-[0_12px_40px_rgba(0,0,0,0.03)]"
-                />
-              </motion.div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* METRICS RECOGNITION PANEL */}
-        <section className="py-24 bg-slate-50 border-y border-slate-200/50">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="text-center max-w-xl mx-auto">
-              <span className="text-xs font-bold tracking-widest text-[#0A2E6F] uppercase">System Analytics</span>
-              <h2 className="mt-3 text-3xl font-black text-[#071224] tracking-tight">Our Achievements In Numbers</h2>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
-              {[
-                { count: 5000, suffix: "+", desc: "Premium Projects Transmitted" },
-                { count: 20, suffix: "+ years", desc: "Years Experience" },
-                { count: 99.12, suffix: "%", desc: "Audited Retention & Satisfaction", decimals: 2 },
-                { count: 50, suffix: "+", desc: "In-House Subject Matter Experts" },
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  {...smoothFadeUp}
-                  transition={{ ...smoothFadeUp.transition, delay: index * 0.05 }}
-                  className="bg-white rounded-2xl p-8 text-center border border-slate-200/60 shadow-[0_10px_30px_rgba(0,0,0,0.02)]"
-                >
-                  <h3 className="text-5xl font-black text-[#0A2E6F] tracking-tight">
-                    <CountUp end={item.count} duration={2.5} decimals={item.decimals ?? 0} enableScrollSpy scrollSpyOnce />
-                    {item.suffix}
-                  </h3>
-                  <p className="mt-3 text-xs font-bold text-slate-400 uppercase tracking-wider">{item.desc}</p>
+                <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 backdrop-blur-sm border border-blue-100 text-blue-700 text-sm font-bold mb-6 shadow-sm">
+                  <Award size={16} /> Simmply Perfect Group
                 </motion.div>
-              ))}
+                
+                <motion.h1 variants={fadeUp} className="text-5xl lg:text-7xl font-black text-slate-900 tracking-tight leading-[1.05]">
+                  Architectural <br />
+                  Excellence, <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-500">
+                    Engineered.
+                  </span>
+                </motion.h1>
+
+                <motion.p variants={fadeUp} className="mt-6 text-lg text-slate-600 leading-relaxed font-medium">
+                  We are a premier corporate entity delivering world-class Windows & Doors, luxury Interior Solutions, structural Renovations, and precision Metal Works. Building spaces that inspire living.
+                </motion.p>
+
+                <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 mt-10">
+                  <Link href="/contact" className="group inline-flex items-center justify-center gap-2 bg-[#0A2E6F] hover:bg-blue-900 text-white px-8 py-4 rounded-xl font-bold text-sm tracking-wide transition-all shadow-lg hover:shadow-blue-900/25">
+                    Start Your Project
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                  <Link href="#overview" className="inline-flex items-center justify-center bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-900 px-8 py-4 rounded-xl font-bold text-sm tracking-wide transition-all">
+                    Discover Our Story
+                  </Link>
+                </motion.div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                className="relative h-[400px] sm:h-[500px] lg:h-[700px] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/10 border border-white/50 mt-12 lg:mt-0 w-full"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2200"
+                  alt="Premium Architecture and Design"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
+                
+                <motion.div 
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.6, type: "spring", damping: 20 }}
+                  className="absolute bottom-4 left-4 right-4 lg:bottom-6 lg:left-6 lg:right-6 bg-white/10 backdrop-blur-xl rounded-3xl p-5 lg:p-6 shadow-2xl border border-white/20"
+                >
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 divide-x divide-white/20">
+                    {[
+                      { value: 5000, suffix: "+", label: "Projects" },
+                      { value: 20, suffix: "+", label: "Years Exp." },
+                      { value: 99, suffix: "%", label: "Satisfaction" },
+                      { value: 4, suffix: "", label: "Divisions" },
+                    ].map((stat, i) => (
+                      <div key={i} className="text-center px-1 lg:px-2 flex flex-col justify-center">
+                        <div className="text-xl sm:text-2xl lg:text-3xl font-black text-white drop-shadow-sm">
+                          <CountUp end={stat.value} duration={2.5} enableScrollSpy scrollSpyOnce />
+                          {stat.suffix}
+                        </div>
+                        <div className="text-[9px] lg:text-xs font-bold text-blue-100 uppercase mt-1 tracking-wider">{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
             </div>
           </div>
         </section>
 
-        {/* REVENUE LINE LAYER SERVICES */}
-        <section className="py-28 bg-white">
+        {/* 2. COMPANY OVERVIEW */}
+        <section id="overview" className="py-24 bg-slate-50 relative">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="text-center max-w-2xl mx-auto">
-              <span className="text-xs font-bold tracking-widest text-[#0A2E6F] uppercase">Product Portfolio</span>
-              <h2 className="mt-3 text-4xl font-black text-[#071224] tracking-tight">Bespoke Structural Offerings</h2>
-            </div>
-
-            <div className="mt-16 space-y-8">
-              {[
-  {
-    num: "01",
-    title: "Architectural Windows & Doors",
-    desc: "Thermally broken architectural uPVC and high-grade structural Aluminium systems engineered against high windloads and acoustic degradation.",
-    link: "/windows-doors",
-    img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=2000",
-  },
-  {
-    num: "02",
-    title: "High-Luxury Interiors Studio",
-    desc: "Turn-key luxury indoor masterplanning combining space fluid dynamics, material selection blueprints, and customizable premium millwork layouts.",
-    link: "/interiors",
-    img: "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=2000",
-  },
-  {
-    num: "03",
-    title: "Comprehensive Restructuring",
-    desc: "Complete technical building overhauls and spatial extensions engineered without breaking core historical or foundational structural criteria.",
-    link: "/renovation",
-    img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2000",
-  },
-  {
-    num: "04",
-    title: "Precision Metal Works",
-    desc: "Custom architectural metal fabrication solutions combining precision engineering, superior craftsmanship, and durable materials for residential, commercial, and structural applications.",
-    link: "/metal-works",
-    img: "/metal-works.jpg",
-  },
-].map((service, idx) => (
-  <motion.div
-    key={service.num}
-    {...smoothFadeUp}
-    whileHover={{ y: -4 }}
-    className="group overflow-hidden rounded-3xl border border-slate-200/60 bg-slate-50/70 shadow-[0_12px_40px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_20px_50px_rgba(10,46,111,0.05)]"
-  >
-    <div className="grid items-stretch lg:grid-cols-12">
-      <div className="flex flex-col justify-between p-8 md:p-12 lg:col-span-7">
-        <div>
-          <span className="text-5xl font-black tracking-tight text-slate-200/80">
-            {service.num}
-          </span>
-
-          <h3 className="mt-4 text-2xl font-extrabold tracking-tight text-[#071224]">
-            {service.title}
-          </h3>
-
-          <p className="mt-3 text-sm font-medium leading-relaxed text-slate-500">
-            {service.desc}
-          </p>
-        </div>
-
-        <Link
-          href={service.link}
-          className="mt-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0A2E6F] transition-colors group-hover:text-blue-600"
-        >
-          Explore Blueprint Range
-
-          <ArrowRight
-            size={14}
-            className="transition-transform group-hover:translate-x-1"
-          />
-        </Link>
-      </div>
-
-      <div className="relative min-h-[250px] overflow-hidden lg:col-span-5">
-        <img
-          src={service.img}
-          alt={service.title}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-      </div>
-    </div>
-  </motion.div>
-))}
-            </div>
-          </div>
-        </section>
-
-        {/* STRATEGIC COMMITMENT DARK SECTION */}
-        <section className="py-28 bg-[#071224] relative overflow-hidden">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:50px_50px]" />
-          <div className="relative max-w-7xl mx-auto px-6 lg:px-8 text-center">
-            <span className="text-xs font-bold tracking-widest text-blue-400 uppercase">Operational Thresholds</span>
-            <h2 className="mt-3 text-4xl font-black text-white tracking-tight">Excellence Placed In Every Single Specification</h2>
-            
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
-              {[
-                "Certified Grade-A Sourced Components",
-                "Senior Certified Project Managers",
-                "Advanced Parametric Design Architecture",
-                "Integrated Single Point Accountability",
-                "Transparent Fixed Fiscal Budgeting",
-                "Uncompromised Operational Schedule Adherence",
-              ].map((value, i) => (
-                <div key={i} className="p-6 rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/[0.08] text-left flex items-start gap-3.5">
-                  <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 mt-0.5"><CheckCircle2 size={16} /></div>
-                  <h3 className="text-sm font-bold text-slate-200 leading-snug">{value}</h3>
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={staggerContainer}
+              className="grid lg:grid-cols-12 gap-16 items-center"
+            >
+              <motion.div variants={fadeUp} className="lg:col-span-7 space-y-6">
+                <span className="text-sm font-bold tracking-widest text-blue-700 uppercase">Company Overview</span>
+                <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                  A Legacy of Precision, Innovation, and Trust.
+                </h2>
+                <div className="space-y-4 text-slate-600 text-lg leading-relaxed font-medium">
+                  <p>
+                    Established as a benchmark of excellence, Simmply Perfect Group operates with a singular focus: transforming concepts into architectural masterpieces. Our business philosophy is rooted in an uncompromising customer-first approach and a deep commitment to quality.
+                  </p>
+                  <p>
+                    With deep industry expertise across structural renovations, interior masterplanning, metal fabrication, and advanced window systems, our core strengths lie in our multidisciplinary approach. We bridge the gap between aesthetic luxury and industrial engineering.
+                  </p>
                 </div>
-              ))}
+              </motion.div>
+
+              <motion.div variants={fadeUp} className="lg:col-span-5 bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+                <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                  <ShieldCheck className="text-blue-600" /> Trust Indicators
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {trustIndicators.map((indicator, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="p-1 rounded-full bg-blue-50 text-blue-600">
+                        <CheckCircle2 size={16} />
+                      </div>
+                      <span className="text-sm font-semibold text-slate-700">{indicator}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 3. SIMPLIFIED & ALIGNED FOUNDER SECTION */}
+        <section className="py-24 bg-[#F8FAFC] relative overflow-hidden border-y border-slate-200/60">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px]" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none" />
+          
+          <div className="relative max-w-7xl mx-auto px-6 lg:px-8 z-10">
+            <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+              
+              {/* Left Column: Profile Card */}
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="lg:col-span-5 space-y-6 lg:sticky lg:top-32"
+              >
+                <div className="bg-white rounded-3xl p-4 shadow-xl shadow-slate-200/50 border border-slate-200/60">
+                  <div className="relative rounded-2xl overflow-hidden aspect-[4/5] mb-6">
+                    <img
+                      src="/founder.jpg" 
+                      alt="Aakaash Deep Shrivastava"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h3 className="text-2xl font-black text-white leading-tight">Aakaash Deep Shrivastava</h3>
+                      <p className="text-blue-300 font-bold text-sm mt-1 uppercase tracking-wider">Founder & Technical Director</p>
+                    </div>
+                  </div>
+                  <div className="px-2 pb-2 space-y-4">
+                    <div className="flex items-center gap-3 text-slate-600 font-medium text-sm">
+                      <Briefcase className="text-blue-600" size={18} />
+                      18+ Years Industrial Experience
+                    </div>
+                    <div className="flex items-center gap-3 text-slate-600 font-medium text-sm">
+                      <GraduationCap className="text-blue-600" size={18} />
+                      8 International Research Papers
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Right Column: Reduced & Aligned Prose */}
+              <div className="lg:col-span-7 space-y-8 lg:pt-10">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }} 
+                  whileInView={{ opacity: 1, y: 0 }} 
+                  viewport={{ once: true }}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="w-10 h-0.5 bg-blue-600 rounded-full" />
+                    <span className="text-sm font-bold tracking-widest text-blue-700 uppercase">Executive Leadership</span>
+                  </div>
+                  <h2 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight mb-8">The Architect of Precision</h2>
+                  
+                  {/* Clean, aligned paragraphs */}
+                  <div className="text-slate-600 text-lg font-medium leading-relaxed space-y-6 text-left">
+                    <p>
+                      Operating at the intersection of high-luxury architecture and rigorous industrial physics, Aakaash directs the cross-functional R&D methodologies at Simmply Perfect Group. His expertise extends far beyond aesthetic design into the predictive mathematical mechanics of modern construction materials.
+                    </p>
+                    <p>
+                      Relying on complex structural analyses and advanced polymer rheology, Aakaash ensures every architectural profile possesses unparalleled longevity. By implementing strict statistical tolerance metrics (RSS/WCS) across thousands of micro-components, he engineers systems that guarantee perfect mechanical synergy, acoustic sealing, and zero-defect installation.
+                    </p>
+                  </div>
+
+                  <div className="mt-10 bg-gradient-to-br from-[#0A2E6F] to-blue-900 text-white rounded-3xl p-8 shadow-xl border border-blue-800 relative overflow-hidden group">
+                    <Quote className="absolute right-4 bottom-4 text-white opacity-10" size={80} />
+                    <p className="text-lg font-medium italic leading-relaxed relative z-10 text-blue-50">
+                      "Industrial manufacturing logic and rigorous mathematical tolerance constraints are what ultimately distinguish a luxury conceptual draft from a flawless, real-world structural reality."
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* CHRONOLOGICAL HISTORICAL MILESTONES */}
+        {/* 4. EXPANDED VISION & MISSION SECTION */}
         <section className="py-28 bg-white relative">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="text-center max-w-xl mx-auto space-y-2">
-              <span className="text-xs font-bold tracking-widest text-[#0A2E6F] uppercase">Our Journey Timeline</span>
-              <h2 className="text-4xl font-black text-[#071224] tracking-tight">Building A Legacy Of Absolute Quality</h2>
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-sm font-bold tracking-widest text-blue-700 uppercase">Core Philosophy</span>
+              <h2 className="mt-4 text-4xl font-black text-slate-900 tracking-tight">Our Vision & Mission</h2>
             </div>
 
-            <div className="relative mt-24 max-w-4xl mx-auto">
-              <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#0A2E6F]/20 via-slate-200 to-slate-200/10 -translate-x-1/2" />
-
-              {[
-                { 
-                  year: "2013", 
-                  title: "Bespoke Foundations", 
-                  desc: "Started with bespoke window replacements and repairs." 
-                },
-                { 
-                  year: "2016", 
-                  title: "uPVC Integration", 
-                  desc: "Added uPVC systems—sliding, casement, ventilators." 
-                },
-                { 
-                  year: "2019", 
-                  title: "Material Expansion", 
-                  desc: "Expanded to aluminum facades and premium hardware." 
-                },
-                { 
-                  year: "2022", 
-                  title: "Mass Operational Delivery", 
-                  desc: "1,000th project delivered with 4.9★ average feedback." 
-                },
-                { 
-                  year: "2024-26", 
-                  title: "Client Care Frameworks", 
-                  desc: "Dedicated after-sales and AMC support program." 
-                }
-              ].map((milestone, index) => (
-                <div
-                  key={index}
-                  className={`relative flex items-stretch mb-16 last:mb-0 flex-col md:flex-row ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
-                >
-                  <div className="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#0A2E6F] ring-4 ring-white shadow-md z-10 top-6">
-                    <span className="absolute inset-0 rounded-full bg-[#0A2E6F] animate-ping opacity-25" />
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={staggerContainer}
+              className="flex flex-col gap-10"
+            >
+              {/* Wide Vision Card */}
+              <motion.div variants={fadeUp} className="bg-slate-50 rounded-[2.5rem] p-8 lg:p-14 border border-slate-200 relative overflow-hidden group hover:border-blue-300 hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-100/50 to-indigo-50/50 rounded-full blur-3xl -mr-32 -mt-32 transition-transform group-hover:scale-110 duration-700 pointer-events-none" />
+                
+                <div className="lg:w-1/3 flex flex-col justify-center relative z-10">
+                  <div className="w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center text-white mb-6 shadow-lg shadow-blue-600/30 group-hover:scale-105 group-hover:-rotate-3 transition-transform duration-500">
+                    <Target size={48} />
                   </div>
-
-                  <motion.div 
-                    {...timelineCardVariants(index)}
-                    className="ml-14 md:ml-0 md:w-[45%] bg-white hover:bg-slate-50 p-6 rounded-3xl border border-slate-200/70 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_rgba(10,46,111,0.05)] transition-all duration-300 text-left"
-                  >
-                    <span className="inline-block text-xl font-black text-[#0A2E6F] bg-[#0A2E6F]/5 px-3 py-1 rounded-xl shadow-inner">{milestone.year}</span>
-                    <h4 className="text-lg font-extrabold text-[#071224] mt-3 tracking-tight">{milestone.title}</h4>
-                    <p className="text-xs text-slate-500 leading-relaxed font-medium mt-2">{milestone.desc}</p>
-                  </motion.div>
+                  <h3 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">Our Vision</h3>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
-        {/* COGNITIVE VALUES FRAMEWORK */}
-        <section className="py-24 bg-slate-50 border-t border-slate-100">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-8">
-              
-              {/* VISION METRIC */}
-              <motion.div {...smoothFadeUp} className="bg-white rounded-3xl p-10 border border-slate-200/60 shadow-[0_12px_32px_rgba(0,0,0,0.02)] flex flex-col justify-between">
-                <div>
-                  <div className="w-10 h-10 rounded-xl bg-[#0A2E6F]/5 text-[#0A2E6F] flex items-center justify-center mx-auto lg:mx-0"><Target size={20} /></div>
-                  <h3 className="text-2xl font-black text-[#071224] tracking-tight mt-6 text-center lg:text-left">Our Strategic Vision</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed font-medium mt-3 text-center lg:text-left">To remain the gold standard configuration partner for ultra-premium window, door, and spatial design integration, elevating living environments flawlessly across national spaces.</p>
+                <div className="lg:w-2/3 relative z-10">
+                  <p className="text-xl text-slate-700 leading-relaxed font-medium mb-6">
+                    To be universally recognized as the leading provider of premium architectural and construction solutions, setting industry benchmarks for design elegance, structural integrity, and sustainable living environments globally.
+                  </p>
+                  <p className="text-lg text-slate-600 leading-relaxed">
+                    We envision a future where every structure we engineer harmonizes seamlessly with its environment, utilizing smart technologies and carbon-neutral materials. Our goal is to expand our footprint across international markets, pioneering aesthetic frameworks that inspire generations while maintaining the uncompromising precision of advanced industrial manufacturing.
+                  </p>
                 </div>
               </motion.div>
 
-              {/* MISSION METRIC */}
-              <motion.div {...smoothFadeUp} transition={{ ...smoothFadeUp.transition, delay: 0.1 }} className="bg-[#071224] text-white rounded-3xl p-10 flex flex-col justify-between">
-                <div>
-                  <div className="w-10 h-10 rounded-xl bg-white/10 text-blue-400 flex items-center justify-center mx-auto lg:mx-0"><Compass size={20} /></div>
-                  <h3 className="text-2xl font-black tracking-tight mt-6 text-center lg:text-left">Our Execution Mission</h3>
-                  <p className="text-sm text-white/70 leading-relaxed mt-3 text-center lg:text-left">To continuously transform real estate assets using rigorous industrial engineering principles, premium sourced compositions, and uncompromised craftsmanship metrics.</p>
+              {/* Wide Mission Card */}
+              <motion.div variants={fadeUp} className="bg-gradient-to-br from-[#071224] to-[#0a1b38] rounded-[2.5rem] p-8 lg:p-14 border border-slate-800 relative overflow-hidden group hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-500 flex flex-col lg:flex-row-reverse gap-10 lg:gap-16 items-center">
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-3xl -ml-32 -mb-32 transition-transform group-hover:scale-110 duration-700 pointer-events-none" />
+                
+                <div className="lg:w-1/3 flex flex-col justify-center relative z-10">
+                  <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center text-blue-400 mb-6 border border-white/10 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-500">
+                    <Compass size={48} />
+                  </div>
+                  <h3 className="text-4xl lg:text-5xl font-black text-white tracking-tight">Our Mission</h3>
+                </div>
+
+                <div className="lg:w-2/3 relative z-10">
+                  <p className="text-xl text-blue-50 leading-relaxed mb-8 font-medium">
+                    To deliver uncompromised value and transform real estate assets using rigorous industrial engineering principles. We are committed to executing every project with absolute transparency, mathematical precision, and an unwavering dedication to client success through four core pillars:
+                  </p>
+                  
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                      <Shield className="text-blue-400 mb-3" size={24} />
+                      <h4 className="text-white font-bold text-lg mb-2">Material Integrity</h4>
+                      <p className="text-sm text-slate-400">Sourcing and engineering only the highest-grade composites, alloys, and sustainable materials.</p>
+                    </div>
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                      <Settings className="text-blue-400 mb-3" size={24} />
+                      <h4 className="text-white font-bold text-lg mb-2">Operational Precision</h4>
+                      <p className="text-sm text-slate-400">Implementing strict statical tolerances (RSS/WCS) to ensure zero-defect manufacturing and handovers.</p>
+                    </div>
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                      <Users className="text-blue-400 mb-3" size={24} />
+                      <h4 className="text-white font-bold text-lg mb-2">Client Centricity</h4>
+                      <p className="text-sm text-slate-400">Maintaining single-point accountability and providing dedicated after-sales AMC support.</p>
+                    </div>
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                      <Leaf className="text-blue-400 mb-3" size={24} />
+                      <h4 className="text-white font-bold text-lg mb-2">Sustainable Innovation</h4>
+                      <p className="text-sm text-slate-400">Reducing thermal transfer and acoustic degradation through advanced multi-chambered profiling.</p>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
-
-            </div>
+            </motion.div>
           </div>
         </section>
 
-        {/* OPERATIONAL STRATEGY MILESTONES */}
-        <section className="py-28 bg-white">
+        {/* 5. LOCAL IMAGES BUSINESS DIVISIONS CARDS */}
+        <section className="py-24 bg-slate-50 border-y border-slate-200/60">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="text-center max-w-xl mx-auto">
-              <span className="text-xs font-bold tracking-widest text-[#0A2E6F] uppercase">System Logistics</span>
-              <h2 className="mt-3 text-3xl font-black text-[#071224] tracking-tight">Bespoke Workflow Phasing</h2>
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-sm font-bold tracking-widest text-blue-700 uppercase">Core Services</span>
+              <h2 className="mt-4 text-4xl font-black text-slate-900 tracking-tight">Four Specialized Business Divisions</h2>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6 mt-16">
-              {[
-                { ph: "01", t: "Discovery & Context", d: "Documenting client vision parameters, structural limitations, and budgetary scope." },
-                { ph: "02", t: "System Planning", d: "Formulating technical resource layouts, component orders, and timeline tracking blueprints." },
-                { ph: "03", t: "Bespoke Engineering", d: "Developing specialized 3D mockups and customized hardware selections." },
-                { ph: "04", t: "Onsite Execution", d: "Deploying senior engineering personnel to manage architectural implementation layers." },
-                { ph: "05", t: "Certified Handover", d: "Final inspection pass against high tolerance parameters and deployment release." }
-              ].map((phase, idx) => (
-                <motion.div
-                  key={idx}
-                  {...smoothFadeUp}
-                  transition={{ ...smoothFadeUp.transition, delay: idx * 0.05 }}
-                  className="bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-[0_8px_24px_rgba(0,0,0,0.01)] text-center"
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={staggerContainer}
+              className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+              {businessDivisions.map((division, idx) => (
+                <motion.div 
+                  key={idx} 
+                  variants={fadeUp} 
+                  className="group relative bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl hover:shadow-blue-900/10 transition-all duration-300 flex flex-col h-full"
                 >
-                  <span className="text-4xl font-black text-[#0A2E6F]/15 tracking-tight">{phase.ph}</span>
-                  <h4 className="text-base font-bold text-[#071224] mt-3 tracking-tight">{phase.t}</h4>
-                  <p className="text-xs text-slate-400 font-medium leading-relaxed mt-2">{phase.d}</p>
+                  <div className="aspect-[4/3] w-full overflow-hidden relative">
+                    <img src={division.img} alt={division.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <division.icon className="mb-2 text-blue-400" size={24} />
+                      <h3 className="text-lg font-bold leading-tight">{division.title}</h3>
+                    </div>
+                  </div>
+                  
+                  <div className="p-5 flex flex-col flex-grow">
+                    <p className="text-slate-600 text-sm font-medium leading-relaxed mb-4 flex-grow">{division.desc}</p>
+                    
+                    <Link href={division.link} className="inline-flex items-center text-blue-700 font-bold text-sm hover:text-blue-800 transition-colors mt-auto">
+                      Explore Division <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 6. WHY CHOOSE US */}
+        <section className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-sm font-bold tracking-widest text-blue-700 uppercase">Competitive Advantage</span>
+              <h2 className="mt-4 text-4xl font-black text-slate-900 tracking-tight">Why Choose Simmply Perfect?</h2>
+            </div>
+
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={staggerContainer}
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6"
+            >
+              {whyChooseUs.map((feature, idx) => (
+                <motion.div 
+                  key={idx} 
+                  variants={fadeUp} 
+                  className="bg-slate-50 border border-slate-100 rounded-2xl p-6 text-center hover:bg-white hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 group"
+                >
+                  <div className="w-12 h-12 mx-auto bg-blue-100/50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 group-hover:bg-blue-600 group-hover:text-white">
+                    <feature.icon size={24} />
+                  </div>
+                  <h4 className="font-bold text-slate-800 text-sm">{feature.title}</h4>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 7. ANIMATED TIMELINE WITH YEARS */}
+        <section className="py-24 bg-slate-50 border-t border-slate-200/60 relative">
+          <div className="max-w-4xl mx-auto px-6 lg:px-8">
+            <div className="text-center space-y-4 mb-20">
+              <span className="text-sm font-bold tracking-widest text-blue-700 uppercase">Company Timeline</span>
+              <h2 className="text-4xl font-black text-slate-900 tracking-tight">Our Journey of Growth</h2>
+            </div>
+
+            <div className="relative pt-6 pb-12">
+              {/* Central Animated Line */}
+              <motion.div 
+                initial={{ height: 0 }}
+                whileInView={{ height: "100%" }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+                className="absolute left-4 md:left-1/2 top-0 w-0.5 bg-slate-200 -translate-x-1/2 origin-top" 
+              />
+
+              {[
+                { year: "2013", title: "Company Foundation", desc: "Started with a vision to redefine bespoke architectural elements and small-scale window installations." },
+                { year: "2016", title: "Project Expansion", desc: "Successfully completed our first major commercial projects, expanding our workforce and client base." },
+                { year: "2019", title: "Multiple Services", desc: "Launched Interior Solutions and Metal Works divisions to provide comprehensive end-to-end services." },
+                { year: "2022", title: "Customer Milestones", desc: "Crossed 5,000+ completed projects with a 99% satisfaction rate across residential and commercial sectors." },
+                { year: "2024+", title: "Sustainable Innovations", desc: "Integrating smart technologies and sustainable materials to lead the future of modern living architectures." }
+              ].map((milestone, index) => (
+                <motion.div
+                  key={index}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-100px" }}
+                  variants={timelineCardVariants(index)}
+                  className={`relative flex items-center mb-12 last:mb-0 ${index % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"}`}
+                >
+                  {/* Animated Dot */}
+                  <motion.div 
+                    variants={timelineDotVariants(index)}
+                    className="absolute left-4 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-4 border-white bg-blue-600 shadow-md z-10" 
+                  />
+                  
+                  <div className={`ml-12 md:ml-0 md:w-1/2 ${index % 2 === 0 ? "md:pl-12" : "md:pr-12 text-left md:text-right"}`}>
+                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-shadow">
+                      <span className="text-blue-700 font-black text-xl tracking-tight mb-2 block">{milestone.year}</span>
+                      <h4 className="text-xl font-bold text-slate-900 mb-2">{milestone.title}</h4>
+                      <p className="text-slate-600 text-sm font-medium leading-relaxed">{milestone.desc}</p>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* TEAM SYNERGY BLOCK */}
-        <section className="py-28 bg-slate-50 border-y border-slate-200/50">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="grid lg:grid-cols-12 gap-16 items-center">
-              
-              <motion.div {...smoothFadeUp} className="lg:col-span-7">
-                <div className="text-center lg:text-left space-y-4">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#0A2E6F]">Personnel Capital</span>
-                  <h2 className="text-4xl font-black text-[#071224] tracking-tight leading-tight">A High-Performance Engineering Culture</h2>
-                </div>
-                <p className="mt-6 text-slate-600 text-base leading-relaxed text-center lg:text-left">
-                  Our internal design coordinators, production engineers, material technicians, and field installation supervisors share matching performance metrics. Every deployment sub-system operates under single point supervisor oversight to ensure perfect quality handovers.
-                </p>
-              </motion.div>
-
-              <motion.div 
-                {...smoothFadeUp} 
-                transition={{ ...smoothFadeUp.transition, delay: 0.1 }}
-                className="lg:col-span-5"
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2000"
-                  alt="Simmply Perfect Group Mastermind Session"
-                  className="w-full h-[400px] object-cover rounded-[24px] border border-slate-200/80 shadow-[0_12px_40px_rgba(0,0,0,0.03)]"
-                />
-              </motion.div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* FREQUENTLY ASKED QUESTIONS */}
-        <section className="py-24 bg-white relative">
-          <div className="max-w-4xl mx-auto px-6 lg:px-8">
-            <div className="text-center space-y-4 mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#0A2E6F]">Knowledge Base</span>
-              <h2 className="text-4xl font-black text-[#071224] tracking-tight">Frequently Asked Questions</h2>
+        {/* 8. FAQs (Q&A Section) */}
+        <section className="py-24 bg-white">
+          <div className="max-w-3xl mx-auto px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <span className="text-sm font-bold tracking-widest text-blue-700 uppercase">Knowledge Base</span>
+              <h2 className="mt-4 text-4xl font-black text-slate-900 tracking-tight">Frequently Asked Questions</h2>
             </div>
             
             <div className="space-y-4">
               {faqs.map((faq, index) => (
-                <div 
-                  key={index} 
-                  className={`border ${openFaq === index ? "border-[#0A2E6F]/30 bg-blue-50/30" : "border-slate-200/70 bg-white"} rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#0A2E6F]/30 shadow-sm`}
-                >
+                <div key={index} className="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:border-blue-200 transition-all">
                   <button
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
                     className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
                   >
-                    <span className="font-bold text-[#071224] pr-4">{faq.q}</span>
-                    <ChevronDown size={20} className={`text-[#0A2E6F] shrink-0 transition-transform duration-300 ${openFaq === index ? "rotate-180" : ""}`} />
+                    <span className="font-bold text-slate-900 pr-4">{faq.q}</span>
+                    <ChevronDown size={20} className={`text-blue-600 shrink-0 transition-transform duration-300 ${openFaq === index ? "rotate-180" : ""}`} />
                   </button>
-                  <div className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${openFaq === index ? "max-h-48 pb-6 opacity-100" : "max-h-0 opacity-0"}`}>
-                    <p className="text-sm text-slate-600 leading-relaxed font-medium">{faq.a}</p>
-                  </div>
+                  <AnimatePresence>
+                    {openFaq === index && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="px-6 pb-6 text-slate-600 font-medium leading-relaxed"
+                      >
+                        {faq.a}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* CLIENT REVIEWS CONTINUOUS SCROLL */}
-        <section className="py-24 bg-[#FAFBFD] border-t border-slate-200/50">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="text-center max-w-xl mx-auto space-y-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#0A2E6F]">Client Testimonials</span>
-              <h2 className="text-4xl font-black text-[#071224] tracking-tight">Trusted By Industry Leaders</h2>
-            </div>
+        {/* 9. REVIEWS (Marquee) */}
+        <section className="py-24 bg-slate-50 border-t border-slate-200/60 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-16 text-center">
+            <span className="text-sm font-bold tracking-widest text-blue-700 uppercase">Client Testimonials</span>
+            <h2 className="mt-4 text-4xl font-black text-slate-900 tracking-tight">Trusted By Industry Leaders</h2>
           </div>
           
-          <div className="mt-16 relative w-full overflow-hidden">
-            {/* Gradient fades for the edges matching the section background */}
-            <div className="absolute top-0 bottom-0 left-0 w-24 md:w-48 bg-gradient-to-r from-[#FAFBFD] to-transparent z-10 pointer-events-none" />
-            <div className="absolute top-0 bottom-0 right-0 w-24 md:w-48 bg-gradient-to-l from-[#FAFBFD] to-transparent z-10 pointer-events-none" />
+          <div className="relative w-full flex">
+            {/* Gradient Masks */}
+            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
             
-            <div className="flex w-max gap-8 animate-marquee hover:[animation-play-state:paused] pl-8">
+            <div className="flex gap-6 px-4 animate-marquee">
               {infiniteReviews.map((item, i) => (
-                <div
-                  key={`${item.name}-${i}`}
-                  className="w-[320px] md:w-[420px] shrink-0 bg-white rounded-3xl p-8 shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-slate-200/60 relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(10,46,111,0.06)] hover:border-[#0A2E6F]/20 transition-all duration-300"
-                >
-                  <Quote className="absolute top-6 right-6 text-slate-100 w-24 h-24 -z-0 rotate-12 transition-transform duration-500 group-hover:rotate-0 group-hover:text-blue-50" />
-                  <div className="relative z-10">
-                    <div className="text-amber-400 text-lg tracking-widest flex gap-1">★★★★★</div>
-                    <p className="mt-6 text-slate-700 leading-relaxed font-medium italic text-[15px]">"{item.review}"</p>
-                    <div className="mt-8 pt-6 border-t border-slate-100">
-                      <h4 className="font-bold text-[#071224]">{item.name}</h4>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">{item.role}</p>
+                <div key={i} className="w-[350px] md:w-[420px] shrink-0 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow">
+                  <div className="flex gap-1 text-amber-400 mb-6">
+                    {[...Array(5)].map((_, idx) => <Star key={idx} size={18} fill="currentColor" />)}
+                  </div>
+                  <p className="text-slate-700 font-medium italic mb-8 line-clamp-4 leading-relaxed">"{item.review}"</p>
+                  <div className="mt-auto border-t border-slate-100 pt-4 flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg">
+                      {item.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-900">{item.name}</h4>
+                      <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1">{item.role}</p>
                     </div>
                   </div>
                 </div>
@@ -785,39 +640,71 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* STYLISH PERSISTENT OUTBOUND PORTAL (CTA) */}
-        <section className="relative py-36 overflow-hidden bg-[#071224]">
-          <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-          <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0A2E6F]/30 rounded-full blur-[120px] pointer-events-none" />
+        {/* 10. ENHANCED CTA SECTION */}
+        <section className="py-24 lg:py-32 bg-[#0A2E6F] relative overflow-hidden">
+          {/* Abstract Glow and Patterns */}
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]" />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/20 rounded-full blur-[120px] pointer-events-none" />
+          
+          <div className="relative max-w-4xl mx-auto px-6 lg:px-8 text-center z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              {/* Trust Avatars & Badge */}
+              <div className="flex flex-col items-center justify-center mb-8">
+                <div className="flex -space-x-3 mb-4">
+                  {[
+                    "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=100&auto=format&fit=crop",
+                    "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop",
+                    "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=100&auto=format&fit=crop",
+                    "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop"
+                  ].map((src, i) => (
+                    <img key={i} src={src} alt="Client" className="w-12 h-12 rounded-full border-2 border-[#0A2E6F] object-cover" />
+                  ))}
+                  <div className="w-12 h-12 rounded-full border-2 border-[#0A2E6F] bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
+                    +5k
+                  </div>
+                </div>
+                <span className="text-blue-200 font-bold text-sm tracking-wide">Join 5,000+ satisfied clients</span>
+              </div>
 
-          <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-            <motion.h2 {...smoothFadeUp} className="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight">
-              Ready To Transform Your Space?
-            </motion.h2>
-            <p className="mt-6 text-sm md:text-base text-slate-300/80 max-w-2xl mx-auto leading-relaxed font-medium">
-              Connect directly with our primary engineering desk. Let us evaluate your architectural parameters and coordinate your custom-built milestone package.
-            </p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
+                Ready To Elevate Your Space?
+              </h2>
+              <p className="text-lg text-blue-100 mb-10 max-w-2xl mx-auto font-medium leading-relaxed">
+                Experience the perfect blend of premium materials, engineering excellence, and impeccable design. Let our experts orchestrate your next structural milestone.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                <Link href="/contact" className="bg-white text-[#0A2E6F] px-8 py-4 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors shadow-2xl hover:shadow-white/10 flex items-center justify-center gap-2">
+                  Start Your Project <ArrowRight size={16} />
+                </Link>
+                <Link href="/windows-doors" className="border-2 border-white/20 text-white px-8 py-4 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
+                  Discover Core Services
+                </Link>
+              </div>
 
-            <div className="flex justify-center gap-4 mt-10 flex-wrap">
-              <Link
-                href="/contact"
-                className="w-full sm:w-auto bg-white text-[#071224] px-8 py-4 rounded-xl font-bold text-sm tracking-wide shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-              >
-                Book Consultation
-              </Link>
-              <Link
-                href="/windows-doors"
-                className="w-full sm:w-auto border border-white/20 text-white hover:bg-white/5 px-8 py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-300"
-              >
-                Explore Services
-              </Link>
-            </div>
+              {/* Bottom Guarantee Badges */}
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-bold text-blue-300">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-emerald-400" /> Premium Materials
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-emerald-400" /> Certified Experts
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-emerald-400" /> End-to-End Management
+                </div>
+              </div>
+
+            </motion.div>
           </div>
         </section>
 
       </main>
-
       <Footer />
     </>
   );
