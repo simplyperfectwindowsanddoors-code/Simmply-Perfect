@@ -927,3 +927,43 @@ input:-webkit-autofill:active {
 
   transition: background-color 9999s ease-out 0s !important;
 }
+
+/* =========================================================
+   PARTNER / AFFILIATE FORM
+   INPUT TEXT VISIBILITY
+========================================================= */
+
+input,
+textarea,
+select {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgb(100 116 139) !important;
+  opacity: 1 !important;
+}
+
+/* Chrome autofill */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Dark form controls */
+
+input,
+textarea,
+select {
+  color-scheme: dark;
+}
