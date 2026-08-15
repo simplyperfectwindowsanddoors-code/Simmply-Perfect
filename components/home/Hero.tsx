@@ -30,7 +30,7 @@ const youtubeVideos = [
     title: "Simmply Perfect Windows & Doors - Theme Song",
     duration: "03:55",
     embedId: "VNWaeyvvwCo",
-    category: "Creative Content",
+    category: "Windows & Doors",
   },
   {
     id: "vid-2",
@@ -38,15 +38,15 @@ const youtubeVideos = [
       "Customer Positive Feedback about Simmply Perfect Windows & Doors",
     duration: "00:13",
     embedId: "vLjkmSap5V4",
-    category: "Review",
+    category: "Customer Reviews",
   },
   {
     id: "vid-3",
     title:
-      "For the Best and most Promising Windows & Doors in Hyderabad - Choose Simmply Perfect Windows & Doors",
+      "For the Best and Most Promising Windows & Doors in Hyderabad - Choose Simmply Perfect Windows & Doors",
     duration: "00:13",
     embedId: "8lJYols0PDk",
-    category: "Interiors",
+    category: "Windows & Doors",
   },
 ];
 
@@ -131,9 +131,7 @@ const statistics = [
 ========================================================= */
 
 export default function Hero() {
-  const [activeEmbedId, setActiveEmbedId] = useState<string | null>(
-    null
-  );
+  const [activeEmbedId, setActiveEmbedId] = useState<string | null>(null);
 
   const getYouTubeThumbnail = (embedId: string) => {
     return `https://img.youtube.com/vi/${embedId}/maxresdefault.jpg`;
@@ -145,7 +143,10 @@ export default function Hero() {
           HERO SECTION
       ===================================================== */}
 
-      <section className="relative overflow-hidden bg-white pb-16 pt-28 text-slate-900 antialiased">
+      <section
+        aria-labelledby="hero-heading"
+        className="relative overflow-hidden bg-white pb-16 pt-28 text-slate-900 antialiased"
+      >
         <div className="mx-auto max-w-[1600px] px-6 lg:px-12">
           <div className="grid items-start gap-10 lg:grid-cols-[0.65fr_1.35fr] xl:gap-12">
             {/* =================================================
@@ -177,6 +178,7 @@ export default function Hero() {
               {/* MAIN HEADING */}
 
               <motion.h1
+                id="hero-heading"
                 initial={{
                   opacity: 0,
                   y: 30,
@@ -198,6 +200,14 @@ export default function Hero() {
                 <span className="bg-gradient-to-r from-[#0A2E6F] via-[#1E4ED8] to-indigo-600 bg-clip-text text-transparent">
                   Experiences
                 </span>
+
+                {/* SEO CONTEXT — visually hidden, not a UI change */}
+                <span className="sr-only">
+                  Simmply Perfect Group provides premium aluminium and UPVC
+                  windows and doors, luxury interior design, home and
+                  commercial renovation, custom metal fabrication, and
+                  architectural solutions in Hyderabad.
+                </span>
               </motion.h1>
 
               {/* DESCRIPTION */}
@@ -217,10 +227,10 @@ export default function Hero() {
                 }}
                 className="mt-8 max-w-xl text-lg font-medium leading-relaxed text-slate-600"
               >
-                One trusted destination for premium Windows & Doors,
-                Luxury Interiors, Custom Metal Fabrication, Home
-                Renovations, and turnkey architectural solutions
-                designed to elevate every space.
+                One trusted destination for premium aluminium and UPVC
+                Windows & Doors, Luxury Interiors, Custom Metal Fabrication,
+                Home & Commercial Renovations, and turnkey architectural
+                solutions in Hyderabad.
               </motion.p>
 
               {/* SERVICES */}
@@ -237,6 +247,7 @@ export default function Hero() {
                   duration: 0.5,
                 }}
                 className="mt-8 flex flex-wrap gap-2.5"
+                aria-label="Simmply Perfect Group services"
               >
                 {services.map((service) => {
                   const Icon = service.icon;
@@ -374,6 +385,7 @@ export default function Hero() {
                   loop
                   playsInline
                   preload="auto"
+                  aria-label="Simmply Perfect Group windows, doors, interiors, renovation and architectural solutions"
                   className="block h-auto w-full object-contain"
                 >
                   <source
@@ -442,7 +454,6 @@ export default function Hero() {
                 ================================================= */}
 
                 <div className="relative overflow-hidden">
-                  
                   {/* SCROLLING TRACK */}
 
                   <motion.div
@@ -469,12 +480,14 @@ export default function Hero() {
                           key={`${project.id}-${index}`}
                           href="/gallery"
                           className="group relative h-[175px] w-[280px] shrink-0 overflow-hidden rounded-2xl bg-slate-100 xl:h-[190px] xl:w-[310px]"
+                          aria-label={`View ${project.title} by Simmply Perfect Group`}
                         >
                           {/* PROJECT IMAGE */}
 
                           <img
                             src={project.image}
-                            alt={project.title}
+                            alt={`${project.title} by Simmply Perfect Group`}
+                            loading="lazy"
                             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
 
@@ -537,7 +550,10 @@ export default function Hero() {
           MEDIA SECTION
       ========================================================= */}
 
-      <section className="relative z-10 border-t border-slate-100 bg-[#FAFBFD] py-24">
+      <section
+        aria-labelledby="media-heading"
+        className="relative z-10 border-t border-slate-100 bg-[#FAFBFD] py-24"
+      >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {/* HEADER */}
 
@@ -549,15 +565,18 @@ export default function Hero() {
                 Media & Broadcast Hub
               </span>
 
-              <h2 className="mt-3 text-3xl font-black tracking-tight text-[#0A1A35] md:text-4xl">
+              <h2
+                id="media-heading"
+                className="mt-3 text-3xl font-black tracking-tight text-[#0A1A35] md:text-4xl"
+              >
                 Featured Video Presentations
               </h2>
             </div>
 
             <p className="max-w-md text-sm leading-relaxed text-slate-500">
-              Explore dynamic product overviews, design framework
-              walkthroughs, and animated media stories produced
-              directly by our engineering teams.
+              Explore dynamic product overviews, customer stories, Windows &
+              Doors presentations, design walkthroughs, and media stories
+              produced directly by Simmply Perfect Group.
             </p>
           </div>
 
@@ -571,6 +590,14 @@ export default function Hero() {
                 onClick={() =>
                   setActiveEmbedId(youtubeVideos[0].embedId)
                 }
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    setActiveEmbedId(youtubeVideos[0].embedId);
+                  }
+                }}
+                aria-label={`Play ${youtubeVideos[0].title}`}
                 className="relative aspect-video cursor-pointer overflow-hidden rounded-xl bg-slate-900"
               >
                 <img
@@ -578,6 +605,7 @@ export default function Hero() {
                     youtubeVideos[0].embedId
                   )}
                   alt={youtubeVideos[0].title}
+                  loading="lazy"
                   className="h-full w-full object-cover opacity-85 transition-transform duration-500 group-hover:scale-105"
                   onError={(event) => {
                     event.currentTarget.src = `https://img.youtube.com/vi/${youtubeVideos[0].embedId}/hqdefault.jpg`;
@@ -630,12 +658,21 @@ export default function Hero() {
                   onClick={() =>
                     setActiveEmbedId(video.embedId)
                   }
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      setActiveEmbedId(video.embedId);
+                    }
+                  }}
+                  aria-label={`Play ${video.title}`}
                   className="group flex cursor-pointer items-center gap-4 rounded-2xl border border-slate-200/60 bg-white p-4 transition-all duration-300 hover:border-[#0A2E6F]/20 hover:shadow-lg"
                 >
                   <div className="relative aspect-video w-32 shrink-0 overflow-hidden rounded-xl bg-slate-800 sm:w-40">
                     <img
                       src={getYouTubeThumbnail(video.embedId)}
                       alt={video.title}
+                      loading="lazy"
                       className="h-full w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105"
                       onError={(event) => {
                         event.currentTarget.src = `https://img.youtube.com/vi/${video.embedId}/hqdefault.jpg`;
@@ -679,9 +716,9 @@ export default function Hero() {
                   </h4>
 
                   <p className="mt-1 text-xs leading-relaxed text-white/70">
-                    Subscribe to our corporate channels for product
-                    releases, customer stories, and engineering
-                    insights.
+                    Subscribe to our corporate channels for Windows & Doors
+                    product releases, customer stories, project showcases,
+                    and engineering insights.
                   </p>
                 </div>
 
@@ -689,6 +726,7 @@ export default function Hero() {
                   href="https://www.youtube.com/@SimmplyPerfectWindowsandDoors"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Visit Simmply Perfect Windows and Doors YouTube channel"
                   className="mt-4 inline-flex items-center gap-1.5 self-start text-xs font-bold text-blue-400"
                 >
                   Visit Main YouTube Channel
@@ -707,7 +745,12 @@ export default function Hero() {
 
       <AnimatePresence>
         {activeEmbedId && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Simmply Perfect Group video player"
+          >
             <motion.div
               initial={{
                 opacity: 0,
@@ -755,7 +798,7 @@ export default function Hero() {
 
               <iframe
                 src={`https://www.youtube.com/embed/${activeEmbedId}?autoplay=1&rel=0`}
-                title="YouTube Video Player"
+                title="Simmply Perfect Group YouTube Video Player"
                 className="h-full w-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
