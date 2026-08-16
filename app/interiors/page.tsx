@@ -958,7 +958,7 @@ export default function InteriorsPage() {
                     Get Consultation
                   </Link>
                   <a
-                    href="tel:+919999999999"
+                    href="tel:+919390719623"
                     className="border border-white/20 bg-white/5 backdrop-blur-sm text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:bg-white/10"
                   >
                     Call Now
