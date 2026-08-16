@@ -241,7 +241,6 @@ const categoriesData = [
       },
     ],
   },
-  
   {
     id: "wpc-doors",
     name: "WPC Doors",
@@ -257,23 +256,21 @@ const categoriesData = [
       },
     ],
   },
-
   {
-  id: "window-grills",
-  name: "Window Grills",
-  desc: "Premium window grill designs combining security, durability, and modern aesthetics.",
-  icon: DoorOpen,
-  color:
-    "from-emerald-500/10 to-green-500/10 border-emerald-100/60 text-emerald-700",
-  files: [
-    {
-      name: "Window Grills Catalogue",
-      size: "4.5 MB",
-      url: "/catalogs/window-grills/Window Grills Catalogue.pdf",
-    },
-  ],
-},
-
+    id: "window-grills",
+    name: "Window Grills",
+    desc: "Premium window grill designs combining security, durability, and modern aesthetics.",
+    icon: DoorOpen,
+    color:
+      "from-emerald-500/10 to-green-500/10 border-emerald-100/60 text-emerald-700",
+    files: [
+      {
+        name: "Window Grills Catalogue",
+        size: "4.5 MB",
+        url: "/catalogs/window-grills/Window Grills Catalogue.pdf",
+      },
+    ],
+  },
 ];
 
 /* =========================================================
@@ -518,332 +515,139 @@ export default function Navbar() {
   const companiesActive =
     pathname === "/windows-doors" ||
     pathname === "/interiors" ||
-    pathname === "/renovation";
+    pathname === "/renovation" ||
     pathname === "/metal-works";
 
   return (
-  <>
-    {/* =====================================================
-        NAVBAR
-    ===================================================== */}
+    <>
+      {/* =====================================================
+          NAVBAR
+      ===================================================== */}
 
-    <header
-      className={`fixed left-0 right-0 top-0 z-[200] w-full transition-all duration-500 ${
-        scrolled
-          ? "border-b border-slate-100 bg-white/95 shadow-[0_8px_30px_rgba(15,23,42,0.08)] backdrop-blur-2xl"
-          : "bg-white/90 backdrop-blur-xl"
-      }`}
-    >
-      <div className="mx-auto max-w-[1600px] px-5 lg:px-8 xl:px-10">
-        <div className="flex h-24 items-center justify-between">
-          {/* LOGO */}
+      <header
+        className={`fixed left-0 right-0 top-0 z-[200] w-full transition-all duration-500 ${
+          scrolled
+            ? "border-b border-slate-100 bg-white/95 shadow-[0_8px_30px_rgba(15,23,42,0.08)] backdrop-blur-2xl"
+            : "bg-white/90 backdrop-blur-xl"
+        }`}
+      >
+        <div className="mx-auto max-w-[1600px] px-5 lg:px-8 xl:px-10">
+          <div className="flex h-20 items-center justify-between">
+            {/* LOGO */}
 
-          <Link
-            href="/"
-            className="group flex shrink-0 items-center gap-3"
-          >
-            <Image
-              src="/logo.png"
-              alt="Simmply Perfect"
-              width={80}
-              height={65}
-              priority
-              className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-            />
-
-            <div>
-              <h1 className="whitespace-nowrap text-xl font-bold leading-none tracking-wide text-[#0A2E6F]">
-                SIMMPLY PERFECT
-              </h1>
-
-              <span className="text-[10px] tracking-[5px] text-slate-500">
-                GROUP
-              </span>
-            </div>
-          </Link>
-
-          {/* DESKTOP NAVIGATION */}
-
-          <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
-            <DesktopNavLink
+            <Link
               href="/"
-              label="Home"
-              pathname={pathname}
-            />
-
-            <DesktopNavLink
-              href="/about"
-              label="About"
-              pathname={pathname}
-            />
-
-            {/* COMPANIES */}
-
-            <div
-              className="relative"
-              onMouseEnter={() => setCompaniesOpen(true)}
-              onMouseLeave={() => setCompaniesOpen(false)}
+              className="group flex shrink-0 items-center gap-3.5"
             >
-              <button
-                type="button"
-                onClick={() =>
-                  setCompaniesOpen((previous) => !previous)
-                }
-                className={`group relative flex items-center gap-1.5 whitespace-nowrap text-[16px] transition-all duration-300 ${
-                  companiesActive
-                    ? "font-bold text-[#0A2E6F]"
-                    : "font-semibold text-slate-700 hover:text-[#0A2E6F]"
-                }`}
-              >
-                Companies
+              <Image
+                src="/logo.png"
+                alt="Simmply Perfect"
+                width={120}
+                height={90}
+                style={{ width: "auto", height: "auto" }}
+                className="max-h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              />
 
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform duration-300 ${
-                    companiesOpen ? "rotate-180" : ""
-                  }`}
-                />
-
-                <span
-                  className={`absolute -bottom-2 left-0 h-[2px] bg-[#0A2E6F] transition-all duration-300 ${
-                    companiesActive
-                      ? "w-full"
-                      : "w-0 group-hover:w-full"
-                  }`}
-                />
-              </button>
-
-              <AnimatePresence>
-                {companiesOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 6 }}
-                    transition={{
-                      duration: 0.18,
-                      ease: "easeOut",
-                    }}
-                    className="absolute left-1/2 top-full z-[220] w-[230px] -translate-x-1/2 pt-4"
-                  >
-                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-[0_20px_50px_rgba(15,23,42,0.15)]">
-                      {companyItems.map((company) => {
-                        const isActive =
-                          pathname === company.href;
-
-                        return (
-                          <Link
-                            key={company.label}
-                            href={company.href}
-                            onClick={() =>
-                              setCompaniesOpen(false)
-                            }
-                            className={`group/item flex items-center justify-between rounded-lg px-3.5 py-3 text-sm transition-all duration-200 ${
-                              isActive
-                                ? "bg-blue-50 font-semibold text-[#0A2E6F]"
-                                : "font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0A2E6F]"
-                            }`}
-                          >
-                            <span>{company.label}</span>
-
-                            <ChevronRight
-                              className={`h-3.5 w-3.5 transition-all duration-200 ${
-                                isActive
-                                  ? "text-[#0A2E6F]"
-                                  : "text-slate-300 group-hover/item:translate-x-0.5 group-hover/item:text-[#0A2E6F]"
-                              }`}
-                            />
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* CATALOGS */}
-
-            <button
-              type="button"
-              onClick={() => {
-                setCompaniesOpen(false);
-                setCatalogsOpen(true);
-              }}
-              className="group relative whitespace-nowrap text-[16px] font-semibold text-slate-700 transition-all duration-300 hover:text-[#0A2E6F]"
-            >
-              Catalogs
-
-              <span className="absolute -bottom-2 left-0 h-[2px] w-0 bg-[#0A2E6F] transition-all duration-300 group-hover:w-full" />
-            </button>
-
-            <DesktopNavLink
-              href="/gallery"
-              label="Gallery"
-              pathname={pathname}
-            />
-
-            <DesktopNavLink
-              href="/articles"
-              label="Articles"
-              pathname={pathname}
-            />
-
-            <DesktopNavLink
-              href="/careers"
-              label="Careers"
-              pathname={pathname}
-            />
-
-            <DesktopNavLink
-              href="/contact"
-              label="Contact"
-              pathname={pathname}
-            />
-          </nav>
-
-          {/* MOBILE MENU BUTTON */}
-
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setMobileMenuOpen(true)}
-            aria-label="Open navigation menu"
-            className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-white shadow-md lg:hidden"
-          >
-            <div className="flex flex-col gap-1.5">
-              <span className="h-[2px] w-5 bg-[#0A2E6F]" />
-              <span className="h-[2px] w-5 bg-[#0A2E6F]" />
-              <span className="h-[2px] w-5 bg-[#0A2E6F]" />
-            </div>
-          </motion.button>
-        </div>
-      </div>
-    </header>
-
-    {/* =====================================================
-        MOBILE NAVIGATION
-    ===================================================== */}
-
-    <AnimatePresence>
-      {mobileMenuOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setMobileMenuOpen(false)}
-            className="fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm"
-          />
-
-          <motion.aside
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{
-              duration: 0.35,
-              ease: "easeInOut",
-            }}
-            className="fixed right-0 top-0 z-[310] flex h-[100dvh] w-[90%] max-w-[380px] flex-col bg-white shadow-2xl"
-          >
-            <div className="flex shrink-0 items-center justify-between border-b border-slate-100 p-6">
-              <div className="flex items-center gap-3">
-                <Image
-                  src="/logo.png"
-                  alt="Simmply Perfect"
-                  width={80}
-                  height={65}
-                  className="h-10 w-auto"
-                />
-
-                <span className="text-sm font-bold tracking-wide text-[#0A2E6F]">
+              <div className="flex flex-col justify-center">
+                <h1 className="whitespace-nowrap text-[22px] font-bold leading-tight tracking-wide text-[#0A2E6F]">
                   SIMMPLY PERFECT
+                </h1>
+
+                <span className="text-[11px] font-medium tracking-[0.38em] text-slate-500">
+                  GROUP
                 </span>
               </div>
+            </Link>
 
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600"
+            {/* DESKTOP NAVIGATION */}
+
+            <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
+              <DesktopNavLink
+                href="/"
+                label="Home"
+                pathname={pathname}
+              />
+
+              <DesktopNavLink
+                href="/about"
+                label="About"
+                pathname={pathname}
+              />
+
+              {/* COMPANIES */}
+
+              <div
+                className="relative"
+                onMouseEnter={() => setCompaniesOpen(true)}
+                onMouseLeave={() => setCompaniesOpen(false)}
               >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-6 sm:p-8">
-              {[
-                { href: "/", label: "Home" },
-                { href: "/about", label: "About" },
-              ].map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`rounded-xl px-3 py-3.5 text-[17px] ${
-                    pathname === item.href
-                      ? "bg-blue-50 font-black text-[#0A2E6F]"
-                      : "font-bold text-slate-600 hover:bg-slate-50 hover:text-[#0A2E6F]"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-
-              {/* MOBILE COMPANIES */}
-
-              <div>
                 <button
                   type="button"
                   onClick={() =>
-                    setMobileCompaniesOpen(
-                      (previous) => !previous,
-                    )
+                    setCompaniesOpen((previous) => !previous)
                   }
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-3.5 text-[17px] font-bold ${
+                  className={`group relative flex items-center gap-1.5 whitespace-nowrap text-[16px] transition-all duration-300 ${
                     companiesActive
-                      ? "bg-blue-50 text-[#0A2E6F]"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-[#0A2E6F]"
+                      ? "font-bold text-[#0A2E6F]"
+                      : "font-semibold text-slate-700 hover:text-[#0A2E6F]"
                   }`}
                 >
                   Companies
 
                   <ChevronDown
-                    className={`h-4 w-4 transition-transform ${
-                      mobileCompaniesOpen ? "rotate-180" : ""
+                    className={`h-4 w-4 transition-transform duration-300 ${
+                      companiesOpen ? "rotate-180" : ""
+                    }`}
+                  />
+
+                  <span
+                    className={`absolute -bottom-2 left-0 h-[2px] bg-[#0A2E6F] transition-all duration-300 ${
+                      companiesActive
+                        ? "w-full"
+                        : "w-0 group-hover:w-full"
                     }`}
                   />
                 </button>
 
                 <AnimatePresence>
-                  {mobileCompaniesOpen && (
+                  {companiesOpen && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{
-                        opacity: 1,
-                        height: "auto",
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{
+                        duration: 0.18,
+                        ease: "easeOut",
                       }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden"
+                      className="absolute left-1/2 top-full z-[220] w-[230px] -translate-x-1/2 pt-4"
                     >
-                      <div className="ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
+                      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-[0_20px_50px_rgba(15,23,42,0.15)]">
                         {companyItems.map((company) => {
-                          const Icon = company.icon;
+                          const isActive =
+                            pathname === company.href;
 
                           return (
                             <Link
                               key={company.label}
                               href={company.href}
-                              onClick={() => {
-                                setMobileMenuOpen(false);
-                                setMobileCompaniesOpen(false);
-                              }}
-                              className="flex items-center gap-3 rounded-xl px-3 py-3 text-slate-500 hover:bg-slate-50 hover:text-[#0A2E6F]"
+                              onClick={() =>
+                                setCompaniesOpen(false)
+                              }
+                              className={`group/item flex items-center justify-between rounded-lg px-3.5 py-3 text-sm transition-all duration-200 ${
+                                isActive
+                                  ? "bg-blue-50 font-semibold text-[#0A2E6F]"
+                                  : "font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0A2E6F]"
+                              }`}
                             >
-                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
-                                <Icon className="h-4 w-4" />
-                              </div>
+                              <span>{company.label}</span>
 
-                              <span className="text-sm font-bold">
-                                {company.label}
-                              </span>
+                              <ChevronRight
+                                className={`h-3.5 w-3.5 transition-all duration-200 ${
+                                  isActive
+                                    ? "text-[#0A2E6F]"
+                                    : "text-slate-300 group-hover/item:translate-x-0.5 group-hover/item:text-[#0A2E6F]"
+                                }`}
+                              />
                             </Link>
                           );
                         })}
@@ -853,530 +657,746 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
 
-              {/* MOBILE CATALOGS */}
+              {/* CATALOGS */}
 
               <button
                 type="button"
                 onClick={() => {
-                  setMobileMenuOpen(false);
-
-                  setTimeout(() => {
-                    setCatalogsOpen(true);
-                  }, 350);
+                  setCompaniesOpen(false);
+                  setCatalogsOpen(true);
                 }}
-                className="w-full rounded-xl px-3 py-3.5 text-left text-[17px] font-bold text-slate-600 hover:bg-slate-50 hover:text-[#0A2E6F]"
+                className="group relative whitespace-nowrap text-[16px] font-semibold text-slate-700 transition-all duration-300 hover:text-[#0A2E6F]"
               >
                 Catalogs
+
+                <span className="absolute -bottom-2 left-0 h-[2px] w-0 bg-[#0A2E6F] transition-all duration-300 group-hover:w-full" />
               </button>
 
-              {[
-                { href: "/gallery", label: "Gallery" },
-                { href: "/articles", label: "Articles" },
-                { href: "/careers", label: "Careers" },
-                { href: "/contact", label: "Contact" },
-              ].map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
+              <DesktopNavLink
+                href="/gallery"
+                label="Gallery"
+                pathname={pathname}
+              />
+
+              <DesktopNavLink
+                href="/articles"
+                label="Articles"
+                pathname={pathname}
+              />
+
+              <DesktopNavLink
+                href="/careers"
+                label="Careers"
+                pathname={pathname}
+              />
+
+              <DesktopNavLink
+                href="/contact"
+                label="Contact"
+                pathname={pathname}
+              />
+            </nav>
+
+            {/* MOBILE MENU BUTTON */}
+
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white shadow-sm lg:hidden"
+            >
+              <div className="flex flex-col gap-1.5">
+                <span className="h-[2px] w-5 bg-[#0A2E6F]" />
+                <span className="h-[2px] w-5 bg-[#0A2E6F]" />
+                <span className="h-[2px] w-5 bg-[#0A2E6F]" />
+              </div>
+            </motion.button>
+          </div>
+        </div>
+      </header>
+
+      {/* =====================================================
+          MOBILE NAVIGATION
+      ===================================================== */}
+
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm"
+            />
+
+            <motion.aside
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{
+                duration: 0.35,
+                ease: "easeInOut",
+              }}
+              className="fixed right-0 top-0 z-[310] flex h-[100dvh] w-[90%] max-w-[380px] flex-col bg-white shadow-2xl"
+            >
+              <div className="flex shrink-0 items-center justify-between border-b border-slate-100 p-6">
+                <div className="flex items-center gap-3">
+                  <Image
+                    src="/logo.png"
+                    alt="Simmply Perfect"
+                    width={100}
+                    height={75}
+                    style={{ width: "auto", height: "auto" }}
+                    className="max-h-11 w-auto"
+                  />
+
+                  <div className="flex flex-col justify-center">
+                    <span className="text-[15px] font-bold leading-tight tracking-wide text-[#0A2E6F]">
+                      SIMMPLY PERFECT
+                    </span>
+                    <span className="text-[9px] font-medium tracking-[0.3em] text-slate-500">
+                      GROUP
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`rounded-xl px-3 py-3.5 text-[17px] ${
-                    pathname === item.href
-                      ? "bg-blue-50 font-black text-[#0A2E6F]"
-                      : "font-bold text-slate-600 hover:bg-slate-50 hover:text-[#0A2E6F]"
-                  }`}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition-colors hover:bg-slate-200"
                 >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </motion.aside>
-        </>
-      )}
-    </AnimatePresence>
+                  <X size={18} />
+                </button>
+              </div>
 
-    {/* =====================================================
-        CATALOG MODAL
-    ===================================================== */}
+              <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-6 sm:p-8">
+                {[
+                  { href: "/", label: "Home" },
+                  { href: "/about", label: "About" },
+                ].map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`rounded-xl px-3 py-3.5 text-[17px] transition-colors ${
+                        isActive
+                          ? "bg-blue-50 font-bold text-[#0A2E6F]"
+                          : "font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#0A2E6F]"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
 
-    <AnimatePresence>
-      {catalogsOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[500] flex items-center justify-center p-3 sm:p-5"
-        >
-          {/* BACKDROP */}
+                {/* MOBILE COMPANIES */}
 
-          <motion.button
-            type="button"
-            aria-label="Close catalog popup"
+                <div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setMobileCompaniesOpen(
+                        (previous) => !previous,
+                      )
+                    }
+                    className={`flex w-full items-center justify-between rounded-xl px-3 py-3.5 text-[17px] font-bold transition-colors ${
+                      companiesActive
+                        ? "bg-blue-50 text-[#0A2E6F]"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-[#0A2E6F]"
+                    }`}
+                  >
+                    Companies
+
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform duration-300 ${
+                        mobileCompaniesOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {mobileCompaniesOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{
+                          opacity: 1,
+                          height: "auto",
+                        }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
+                          {companyItems.map((company) => {
+                            const Icon = company.icon;
+                            const isActive = pathname === company.href;
+
+                            return (
+                              <Link
+                                key={company.label}
+                                href={company.href}
+                                onClick={() => {
+                                  setMobileMenuOpen(false);
+                                  setMobileCompaniesOpen(false);
+                                }}
+                                className={`flex items-center gap-3 rounded-xl px-3 py-3 transition-colors ${
+                                  isActive
+                                    ? "bg-blue-50 font-bold text-[#0A2E6F]"
+                                    : "font-semibold text-slate-500 hover:bg-slate-50 hover:text-[#0A2E6F]"
+                                }`}
+                              >
+                                <div
+                                  className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                                    isActive
+                                      ? "bg-[#0A2E6F] text-white"
+                                      : "bg-blue-50 text-[#0A2E6F]"
+                                  }`}
+                                >
+                                  <Icon className="h-4 w-4" />
+                                </div>
+
+                                <span className="text-sm">
+                                  {company.label}
+                                </span>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* MOBILE CATALOGS */}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+
+                    setTimeout(() => {
+                      setCatalogsOpen(true);
+                    }, 350);
+                  }}
+                  className="w-full rounded-xl px-3 py-3.5 text-left text-[17px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-[#0A2E6F]"
+                >
+                  Catalogs
+                </button>
+
+                {[
+                  { href: "/gallery", label: "Gallery" },
+                  { href: "/articles", label: "Articles" },
+                  { href: "/careers", label: "Careers" },
+                  { href: "/contact", label: "Contact" },
+                ].map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`rounded-xl px-3 py-3.5 text-[17px] transition-colors ${
+                        isActive
+                          ? "bg-blue-50 font-bold text-[#0A2E6F]"
+                          : "font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#0A2E6F]"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* =====================================================
+          CATALOG MODAL
+      ===================================================== */}
+
+      <AnimatePresence>
+        {catalogsOpen && (
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={handleCloseCatalogs}
-            className="absolute inset-0 h-full w-full cursor-default bg-[#020817]/80 backdrop-blur-md"
-          />
-
-          {/* MODAL */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-              scale: 0.97,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1,
-            }}
-            exit={{
-              opacity: 0,
-              y: 20,
-              scale: 0.97,
-            }}
-            transition={{
-              duration: 0.3,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="relative z-[510] flex max-h-[94dvh] w-full max-w-6xl flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_40px_120px_rgba(0,0,0,0.4)]"
+            className="fixed inset-0 z-[500] flex items-center justify-center p-3 sm:p-5"
           >
-            {/* MODAL HEADER */}
+            {/* BACKDROP */}
 
-            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-4 sm:px-7">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0A2E6F] text-white">
-                  <FolderOpen className="h-5 w-5" />
-                </div>
+            <motion.button
+              type="button"
+              aria-label="Close catalog popup"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleCloseCatalogs}
+              className="absolute inset-0 h-full w-full cursor-default bg-[#020817]/80 backdrop-blur-md"
+            />
 
-                <div className="min-w-0">
-                  <h2 className="truncate text-lg font-bold text-[#071224] sm:text-xl">
-                    Simmply Perfect Catalogs
-                  </h2>
+            {/* MODAL */}
 
-                  <p className="mt-0.5 hidden text-xs text-slate-500 sm:block">
-                    Explore and download our product catalogues
-                  </p>
-                </div>
-              </div>
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 30,
+                scale: 0.97,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                y: 20,
+                scale: 0.97,
+              }}
+              transition={{
+                duration: 0.3,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="relative z-[510] flex max-h-[94dvh] w-full max-w-6xl flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_40px_120px_rgba(0,0,0,0.4)]"
+            >
+              {/* MODAL HEADER */}
 
-              <button
-                type="button"
-                onClick={handleCloseCatalogs}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+              <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-4 sm:px-7">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0A2E6F] text-white">
+                    <FolderOpen className="h-5 w-5" />
+                  </div>
 
-            {/* =================================================
-                LEAD FORM
-            ================================================= */}
+                  <div className="min-w-0">
+                    <h2 className="truncate text-lg font-bold text-[#071224] sm:text-xl">
+                      Simmply Perfect Catalogs
+                    </h2>
 
-            {!isSubmitted ? (
-              <div className="grid flex-1 overflow-y-auto lg:grid-cols-[0.9fr_1.1fr]">
-                {/* LEFT INFORMATION */}
-
-                <div className="relative hidden overflow-hidden bg-[#071224] p-10 text-white lg:block">
-                  <div
-                    className="absolute inset-0 opacity-[0.08]"
-                    style={{
-                      backgroundImage: `
-                        linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)
-                      `,
-                      backgroundSize: "45px 45px",
-                    }}
-                  />
-
-                  <div className="relative">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-2">
-                      <Sparkles className="h-4 w-4 text-blue-300" />
-
-                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100">
-                        Product Library
-                      </span>
-                    </div>
-
-                    <h3 className="mt-8 text-4xl font-bold leading-tight tracking-[-0.04em]">
-                      Discover our complete product collection.
-                    </h3>
-
-                    <p className="mt-5 text-sm leading-7 text-slate-300">
-                      Access premium catalogues for railing systems,
-                      UPVC windows, UPVC doors, wooden doors, WPC
-                      doors, and WPVC solutions.
+                    <p className="mt-0.5 hidden text-xs text-slate-500 sm:block">
+                      Explore and download our product catalogues
                     </p>
-
-                    <div className="mt-10 space-y-4">
-                      {[
-                        "High-quality product catalogues",
-                        "Detailed product specifications",
-                        "Instant PDF preview and download",
-                      ].map((item) => (
-                        <div
-                          key={item}
-                          className="flex items-center gap-3"
-                        >
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-                            <ArrowRight className="h-4 w-4 text-blue-300" />
-                          </div>
-
-                          <span className="text-sm font-semibold text-slate-200">
-                            {item}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 </div>
 
-                {/* FORM */}
-
-                <div className="flex items-center p-6 sm:p-10">
-                  <form
-                    onSubmit={handleSubmit}
-                    className="mx-auto w-full max-w-lg"
-                  >
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
-                      Catalogue Access
-                    </p>
-
-                    <h3 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-[#071224]">
-                      Enter your details
-                    </h3>
-
-                    <p className="mt-3 text-sm leading-6 text-slate-500">
-                      Complete the short form below to access our
-                      digital catalogue library.
-                    </p>
-
-                    <div className="mt-8 space-y-4">
-                      {/* NAME */}
-
-<div>
-  <label className="mb-2 block text-xs font-bold text-slate-700">
-    Full Name
-  </label>
-
-  <div
-    className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
-      focusedField === "name"
-        ? "border-[#0A2E6F] ring-4 ring-blue-50"
-        : "border-slate-200"
-    }`}
-  >
-    <User className="h-4 w-4 shrink-0 text-slate-400" />
-
-    <input
-      required
-      type="text"
-      name="catalog_customer_name"
-      value={formData.name}
-      autoComplete="off"
-      onFocus={() => setFocusedField("name")}
-      onBlur={() => setFocusedField(null)}
-      onChange={(event) =>
-        setFormData((previous) => ({
-          ...previous,
-          name: event.target.value,
-        }))
-      }
-      placeholder="Enter your full name"
-      className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
-    />
-  </div>
-</div>
-
-{/* EMAIL */}
-
-<div>
-  <label className="mb-2 block text-xs font-bold text-slate-700">
-    Email Address
-  </label>
-
-  <div
-    className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
-      focusedField === "email"
-        ? "border-[#0A2E6F] ring-4 ring-blue-50"
-        : "border-slate-200"
-    }`}
-  >
-    <Mail className="h-4 w-4 shrink-0 text-slate-400" />
-
-    <input
-      required
-      type="email"
-      name="catalog_customer_email"
-      value={formData.email}
-      autoComplete="off"
-      onFocus={() => setFocusedField("email")}
-      onBlur={() => setFocusedField(null)}
-      onChange={(event) =>
-        setFormData((previous) => ({
-          ...previous,
-          email: event.target.value,
-        }))
-      }
-      placeholder="Enter your email address"
-      className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
-    />
-  </div>
-</div>
-
-{/* PHONE */}
-
-<div>
-  <label className="mb-2 block text-xs font-bold text-slate-700">
-    Mobile Number
-  </label>
-
-  <div
-    className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
-      focusedField === "phone"
-        ? "border-[#0A2E6F] ring-4 ring-blue-50"
-        : "border-slate-200"
-    }`}
-  >
-    <Phone className="h-4 w-4 shrink-0 text-slate-400" />
-
-    <input
-      required
-      type="tel"
-      name="catalog_customer_mobile"
-      value={formData.phone}
-      autoComplete="off"
-      inputMode="numeric"
-      onFocus={() => setFocusedField("phone")}
-      onBlur={() => setFocusedField(null)}
-      onChange={(event) =>
-        handlePhoneChange(event.target.value)
-      }
-      placeholder="+91 98765 43210"
-      className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
-    />
-  </div>
-</div>
-                    </div>
-
-                    {submitError && (
-                      <p className="mt-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-xs font-medium text-red-600">
-                        {submitError}
-                      </p>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="mt-7 flex w-full items-center justify-center gap-3 rounded-xl bg-[#0A2E6F] px-5 py-4 text-sm font-bold text-white transition-all hover:bg-[#123D80] disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          Access Catalogues
-                          <ArrowRight className="h-4 w-4" />
-                        </>
-                      )}
-                    </button>
-                  </form>
-                </div>
+                <button
+                  type="button"
+                  onClick={handleCloseCatalogs}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-            ) : (
-              /* =================================================
-                  CATALOG LIBRARY
-              ================================================= */
 
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
-                {/* CATEGORIES */}
+              {/* =================================================
+                  LEAD FORM
+              ================================================= */}
 
-                <div className="shrink-0 border-b border-slate-200 bg-slate-50 p-4 lg:w-[310px] lg:border-b-0 lg:border-r lg:p-5">
-                  <p className="mb-3 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
-                    Product Categories
-                  </p>
+              {!isSubmitted ? (
+                <div className="grid flex-1 overflow-y-auto lg:grid-cols-[0.9fr_1.1fr]">
+                  {/* LEFT INFORMATION */}
 
-                  <div className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
-                    {categoriesData.map((category) => {
-                      const Icon = category.icon;
-                      const active =
-                        activeFolderId === category.id;
+                  <div className="relative hidden overflow-hidden bg-[#071224] p-10 text-white lg:block">
+                    <div
+                      className="absolute inset-0 opacity-[0.08]"
+                      style={{
+                        backgroundImage: `
+                          linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)
+                        `,
+                        backgroundSize: "45px 45px",
+                      }}
+                    />
 
-                      return (
-                        <button
-                          type="button"
-                          key={category.id}
-                          onClick={() => {
-                            setActiveFolderId(category.id);
-                            setActivePreviewPdf(null);
-                          }}
-                          className={`flex min-w-[210px] items-center gap-3 rounded-xl border px-3 py-3 text-left transition-all lg:min-w-0 ${
-                            active
-                              ? "border-[#0A2E6F] bg-[#0A2E6F] text-white shadow-md"
-                              : "border-transparent bg-white text-slate-600 hover:border-slate-200"
-                          }`}
-                        >
-                          <div
-                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                              active
-                                ? "bg-white/10"
-                                : "bg-blue-50 text-[#0A2E6F]"
-                            }`}
-                          >
-                            <Icon className="h-4 w-4" />
-                          </div>
+                    <div className="relative">
+                      <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-2">
+                        <Sparkles className="h-4 w-4 text-blue-300" />
 
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-bold">
-                              {category.name}
-                            </p>
-
-                            <p
-                              className={`mt-0.5 truncate text-[10px] ${
-                                active
-                                  ? "text-blue-100/70"
-                                  : "text-slate-400"
-                              }`}
-                            >
-                              {category.files.length} Catalogues
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* CONTENT */}
-
-                <div className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-7">
-                  {!activeCategoryObject ? (
-                    <div className="flex min-h-[450px] flex-col items-center justify-center text-center">
-                      <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-blue-50 text-[#0A2E6F]">
-                        <Folder className="h-9 w-9" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100">
+                          Product Library
+                        </span>
                       </div>
 
-                      <h3 className="mt-6 text-2xl font-bold text-[#071224]">
-                        Select a product category
+                      <h3 className="mt-8 text-4xl font-bold leading-tight tracking-[-0.04em]">
+                        Discover our complete product collection.
                       </h3>
 
-                      <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
-                        Choose one of the available categories to
-                        browse, preview, and download product
-                        catalogues.
+                      <p className="mt-5 text-sm leading-7 text-slate-300">
+                        Access premium catalogues for railing systems,
+                        UPVC windows, UPVC doors, wooden doors, WPC
+                        doors, and WPVC solutions.
                       </p>
-                    </div>
-                  ) : activePreviewPdf ? (
-                    <div className="flex h-full min-h-[550px] flex-col">
-                      <div className="mb-4 flex items-center justify-between gap-4">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setActivePreviewPdf(null)
-                          }
-                          className="inline-flex items-center gap-2 text-sm font-bold text-[#0A2E6F]"
-                        >
-                          <ArrowLeft className="h-4 w-4" />
-                          Back to Catalogues
-                        </button>
 
-                        <a
-                          href={activePreviewPdf.url}
-                          download
-                          className="inline-flex items-center gap-2 rounded-xl bg-[#0A2E6F] px-4 py-2.5 text-xs font-bold text-white"
-                        >
-                          <Download className="h-4 w-4" />
-                          Download
-                        </a>
-                      </div>
+                      <div className="mt-10 space-y-4">
+                        {[
+                          "High-quality product catalogues",
+                          "Detailed product specifications",
+                          "Instant PDF preview and download",
+                        ].map((item) => (
+                          <div
+                            key={item}
+                            className="flex items-center gap-3"
+                          >
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
+                              <ArrowRight className="h-4 w-4 text-blue-300" />
+                            </div>
 
-                      <div className="min-h-[500px] flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-                        <iframe
-                          src={activePreviewPdf.url}
-                          title={activePreviewPdf.title}
-                          className="h-full min-h-[500px] w-full"
-                        />
+                            <span className="text-sm font-semibold text-slate-200">
+                              {item}
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  ) : (
-                    <>
-                      <div className="border-b border-slate-200 pb-5">
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
-                          Catalogue Collection
+                  </div>
+
+                  {/* FORM */}
+
+                  <div className="flex items-center p-6 sm:p-10">
+                    <form
+                      onSubmit={handleSubmit}
+                      className="mx-auto w-full max-w-lg"
+                    >
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
+                        Catalogue Access
+                      </p>
+
+                      <h3 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-[#071224]">
+                        Enter your details
+                      </h3>
+
+                      <p className="mt-3 text-sm leading-6 text-slate-500">
+                        Complete the short form below to access our
+                        digital catalogue library.
+                      </p>
+
+                      <div className="mt-8 space-y-4">
+                        {/* NAME */}
+
+                        <div>
+                          <label className="mb-2 block text-xs font-bold text-slate-700">
+                            Full Name
+                          </label>
+
+                          <div
+                            className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
+                              focusedField === "name"
+                                ? "border-[#0A2E6F] ring-4 ring-blue-50"
+                                : "border-slate-200"
+                            }`}
+                          >
+                            <User className="h-4 w-4 shrink-0 text-slate-400" />
+
+                            <input
+                              required
+                              type="text"
+                              name="catalog_customer_name"
+                              value={formData.name}
+                              autoComplete="off"
+                              onFocus={() => setFocusedField("name")}
+                              onBlur={() => setFocusedField(null)}
+                              onChange={(event) =>
+                                setFormData((previous) => ({
+                                  ...previous,
+                                  name: event.target.value,
+                                }))
+                              }
+                              placeholder="Enter your full name"
+                              className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                            />
+                          </div>
+                        </div>
+
+                        {/* EMAIL */}
+
+                        <div>
+                          <label className="mb-2 block text-xs font-bold text-slate-700">
+                            Email Address
+                          </label>
+
+                          <div
+                            className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
+                              focusedField === "email"
+                                ? "border-[#0A2E6F] ring-4 ring-blue-50"
+                                : "border-slate-200"
+                            }`}
+                          >
+                            <Mail className="h-4 w-4 shrink-0 text-slate-400" />
+
+                            <input
+                              required
+                              type="email"
+                              name="catalog_customer_email"
+                              value={formData.email}
+                              autoComplete="off"
+                              onFocus={() => setFocusedField("email")}
+                              onBlur={() => setFocusedField(null)}
+                              onChange={(event) =>
+                                setFormData((previous) => ({
+                                  ...previous,
+                                  email: event.target.value,
+                                }))
+                              }
+                              placeholder="Enter your email address"
+                              className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                            />
+                          </div>
+                        </div>
+
+                        {/* PHONE */}
+
+                        <div>
+                          <label className="mb-2 block text-xs font-bold text-slate-700">
+                            Mobile Number
+                          </label>
+
+                          <div
+                            className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
+                              focusedField === "phone"
+                                ? "border-[#0A2E6F] ring-4 ring-blue-50"
+                                : "border-slate-200"
+                            }`}
+                          >
+                            <Phone className="h-4 w-4 shrink-0 text-slate-400" />
+
+                            <input
+                              required
+                              type="tel"
+                              name="catalog_customer_mobile"
+                              value={formData.phone}
+                              autoComplete="off"
+                              inputMode="numeric"
+                              onFocus={() => setFocusedField("phone")}
+                              onBlur={() => setFocusedField(null)}
+                              onChange={(event) =>
+                                handlePhoneChange(event.target.value)
+                              }
+                              placeholder="+91 98765 43210"
+                              className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {submitError && (
+                        <p className="mt-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-xs font-medium text-red-600">
+                          {submitError}
                         </p>
+                      )}
 
-                        <h3 className="mt-2 text-2xl font-bold text-[#071224]">
-                          {activeCategoryObject.name}
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="mt-7 flex w-full items-center justify-center gap-3 rounded-xl bg-[#0A2E6F] px-5 py-4 text-sm font-bold text-white transition-all hover:bg-[#123D80] disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            Access Catalogues
+                            <ArrowRight className="h-4 w-4" />
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              ) : (
+                /* =================================================
+                    CATALOG LIBRARY
+                ================================================= */
+
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
+                  {/* CATEGORIES */}
+
+                  <div className="shrink-0 border-b border-slate-200 bg-slate-50 p-4 lg:w-[310px] lg:border-b-0 lg:border-r lg:p-5">
+                    <p className="mb-3 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+                      Product Categories
+                    </p>
+
+                    <div className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
+                      {categoriesData.map((category) => {
+                        const Icon = category.icon;
+                        const active =
+                          activeFolderId === category.id;
+
+                        return (
+                          <button
+                            type="button"
+                            key={category.id}
+                            onClick={() => {
+                              setActiveFolderId(category.id);
+                              setActivePreviewPdf(null);
+                            }}
+                            className={`flex min-w-[210px] items-center gap-3 rounded-xl border px-3 py-3 text-left transition-all lg:min-w-0 ${
+                              active
+                                ? "border-[#0A2E6F] bg-[#0A2E6F] text-white shadow-md"
+                                : "border-transparent bg-white text-slate-600 hover:border-slate-200"
+                            }`}
+                          >
+                            <div
+                              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                                active
+                                  ? "bg-white/10"
+                                  : "bg-blue-50 text-[#0A2E6F]"
+                              }`}
+                            >
+                              <Icon className="h-4 w-4" />
+                            </div>
+
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-bold">
+                                {category.name}
+                              </p>
+
+                              <p
+                                className={`mt-0.5 truncate text-[10px] ${
+                                  active
+                                    ? "text-blue-100/70"
+                                    : "text-slate-400"
+                                }`}
+                              >
+                                {category.files.length} Catalogues
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* CONTENT */}
+
+                  <div className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-7">
+                    {!activeCategoryObject ? (
+                      <div className="flex min-h-[450px] flex-col items-center justify-center text-center">
+                        <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-blue-50 text-[#0A2E6F]">
+                          <Folder className="h-9 w-9" />
+                        </div>
+
+                        <h3 className="mt-6 text-2xl font-bold text-[#071224]">
+                          Select a product category
                         </h3>
 
-                        <p className="mt-2 text-sm text-slate-500">
-                          {activeCategoryObject.desc}
+                        <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
+                          Choose one of the available categories to
+                          browse, preview, and download product
+                          catalogues.
                         </p>
                       </div>
+                    ) : activePreviewPdf ? (
+                      <div className="flex h-full min-h-[550px] flex-col">
+                        <div className="mb-4 flex items-center justify-between gap-4">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setActivePreviewPdf(null)
+                            }
+                            className="inline-flex items-center gap-2 text-sm font-bold text-[#0A2E6F]"
+                          >
+                            <ArrowLeft className="h-4 w-4" />
+                            Back to Catalogues
+                          </button>
 
-                      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                        {activeCategoryObject.files.map(
-                          (file) => (
-                            <div
-                              key={file.url}
-                              className="group rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:border-[#0A2E6F]/30 hover:shadow-md"
-                            >
-                              <div className="flex items-start gap-3">
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-500">
-                                  <FileText className="h-5 w-5" />
-                                </div>
+                          <a
+                            href={activePreviewPdf.url}
+                            download
+                            className="inline-flex items-center gap-2 rounded-xl bg-[#0A2E6F] px-4 py-2.5 text-xs font-bold text-white"
+                          >
+                            <Download className="h-4 w-4" />
+                            Download
+                          </a>
+                        </div>
 
-                                <div className="min-w-0 flex-1">
-                                  <h4 className="line-clamp-2 text-sm font-bold text-[#071224]">
-                                    {file.name}
-                                  </h4>
-
-                                  <p className="mt-1 text-[11px] text-slate-400">
-                                    PDF • {file.size}
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="mt-4 grid grid-cols-2 gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setActivePreviewPdf({
-                                      title: file.name,
-                                      url: file.url,
-                                    })
-                                  }
-                                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2.5 text-xs font-bold text-slate-600 transition-colors hover:border-[#0A2E6F] hover:text-[#0A2E6F]"
-                                >
-                                  <Eye className="h-3.5 w-3.5" />
-                                  Preview
-                                </button>
-
-                                <a
-                                  href={file.url}
-                                  download
-                                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0A2E6F] px-3 py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#123D80]"
-                                >
-                                  <Download className="h-3.5 w-3.5" />
-                                  Download
-                                </a>
-                              </div>
-                            </div>
-                          ),
-                        )}
+                        <div className="min-h-[500px] flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+                          <iframe
+                            src={activePreviewPdf.url}
+                            title={activePreviewPdf.title}
+                            className="h-full min-h-[500px] w-full"
+                          />
+                        </div>
                       </div>
-                    </>
-                  )}
+                    ) : (
+                      <>
+                        <div className="border-b border-slate-200 pb-5">
+                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
+                            Catalogue Collection
+                          </p>
+
+                          <h3 className="mt-2 text-2xl font-bold text-[#071224]">
+                            {activeCategoryObject.name}
+                          </h3>
+
+                          <p className="mt-2 text-sm text-slate-500">
+                            {activeCategoryObject.desc}
+                          </p>
+                        </div>
+
+                        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                          {activeCategoryObject.files.map(
+                            (file) => (
+                              <div
+                                key={file.url}
+                                className="group rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:border-[#0A2E6F]/30 hover:shadow-md"
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-500">
+                                    <FileText className="h-5 w-5" />
+                                  </div>
+
+                                  <div className="min-w-0 flex-1">
+                                    <h4 className="line-clamp-2 text-sm font-bold text-[#071224]">
+                                      {file.name}
+                                    </h4>
+
+                                    <p className="mt-1 text-[11px] text-slate-400">
+                                      PDF • {file.size}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="mt-4 grid grid-cols-2 gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setActivePreviewPdf({
+                                        title: file.name,
+                                        url: file.url,
+                                      })
+                                    }
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2.5 text-xs font-bold text-slate-600 transition-colors hover:border-[#0A2E6F] hover:text-[#0A2E6F]"
+                                  >
+                                    <Eye className="h-3.5 w-3.5" />
+                                    Preview
+                                  </button>
+
+                                  <a
+                                    href={file.url}
+                                    download
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0A2E6F] px-3 py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#123D80]"
+                                  >
+                                    <Download className="h-3.5 w-3.5" />
+                                    Download
+                                  </a>
+                                </div>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </>
-);
+        )}
+      </AnimatePresence>
+    </>
+  );
 }

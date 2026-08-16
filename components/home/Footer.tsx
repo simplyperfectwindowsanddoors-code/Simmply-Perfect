@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -14,11 +14,25 @@ import {
   BadgePercent,
   Building2,
   User,
-  BriefcaseBusiness,
   Globe2,
   MessageSquare,
   Loader2,
+  ArrowRight,
+  Download,
+  DoorOpen,
+  Layout,
+  Construction,
+  Hammer,
+  Layers,
+  Eye,
+  ArrowLeft,
+  Sparkles,
+  FileText,
+  Folder,
+  FolderOpen,
 } from "lucide-react";
+
+import { AnimatePresence, motion } from "framer-motion";
 
 import {
   FaFacebookF,
@@ -44,6 +58,7 @@ const quickLinks = [
   {
     label: "Catalogs",
     href: "/catalogs",
+    isCatalog: true,
   },
   {
     label: "Articles",
@@ -109,6 +124,218 @@ const socialLinks = [
     href: "https://www.linkedin.com/company/simmply-perfect-windows-doors/",
     icon: FaLinkedinIn,
     hoverClass: "hover:bg-[#0077B5]",
+  },
+];
+
+/* =========================================================
+   CATALOG DATA (IDENTICAL SOURCE OF TRUTH FROM NAVBAR)
+========================================================= */
+
+const categoriesData = [
+  {
+    id: "railing",
+    name: "Railing Systems",
+    desc: "Balcony, staircase, and safety specifications",
+    icon: Layers,
+    color:
+      "from-blue-500/10 to-cyan-500/10 border-blue-100/60 text-blue-700",
+    files: [
+      {
+        name: "Brass Stair Railing",
+        size: "2.4 MB",
+        url: "/catalogs/Railing/Brass Stair Railing.pdf",
+      },
+      {
+        name: "Glass Balcony Railing",
+        size: "3.1 MB",
+        url: "/catalogs/Railing/Glass Balcony Railing.pdf",
+      },
+      {
+        name: "Glass Staircase Railing",
+        size: "2.8 MB",
+        url: "/catalogs/Railing/Glass Staircase Railing.pdf",
+      },
+      {
+        name: "MS Balcony Railing",
+        size: "1.9 MB",
+        url: "/catalogs/Railing/MS Balcony Railing.pdf",
+      },
+      {
+        name: "MS Safety Door",
+        size: "2.2 MB",
+        url: "/catalogs/Railing/MS Safety Door.pdf",
+      },
+      {
+        name: "MS Stair Railing",
+        size: "2.5 MB",
+        url: "/catalogs/Railing/MS Stair Railing.pdf",
+      },
+      {
+        name: "SS Balcony Railing",
+        size: "2.1 MB",
+        url: "/catalogs/Railing/SS Balcony Railing.pdf",
+      },
+      {
+        name: "SS Main Gate",
+        size: "4.2 MB",
+        url: "/catalogs/Railing/SS Main Gate.pdf",
+      },
+      {
+        name: "SS Safety Door",
+        size: "2.3 MB",
+        url: "/catalogs/Railing/SS Safety Door.pdf",
+      },
+      {
+        name: "SS Spiral Railing",
+        size: "3.0 MB",
+        url: "/catalogs/Railing/SS Spiral Railing.pdf",
+      },
+    ],
+  },
+  {
+    id: "upvc-doors",
+    name: "UPVC Doors",
+    desc: "Sliding, folding, and casement structures",
+    icon: DoorOpen,
+    color:
+      "from-indigo-500/10 to-blue-500/10 border-indigo-100/60 text-indigo-700",
+    files: [
+      {
+        name: "Casement Doors",
+        size: "3.5 MB",
+        url: "/catalogs/UPVC-doors/Casement Doors.pdf",
+      },
+      {
+        name: "Customized Doors",
+        size: "4.8 MB",
+        url: "/catalogs/UPVC-doors/Customized.pdf",
+      },
+      {
+        name: "French Door",
+        size: "3.9 MB",
+        url: "/catalogs/UPVC-doors/French Door.pdf",
+      },
+      {
+        name: "Lift and Slide",
+        size: "5.1 MB",
+        url: "/catalogs/UPVC-doors/Lift and Slide.pdf",
+      },
+      {
+        name: "Slide & Fold",
+        size: "4.6 MB",
+        url: "/catalogs/UPVC-doors/Slide & Fold.pdf",
+      },
+      {
+        name: "Sliding Doors",
+        size: "3.2 MB",
+        url: "/catalogs/UPVC-doors/Sliding Doors.pdf",
+      },
+    ],
+  },
+  {
+    id: "upvc-windows",
+    name: "UPVC Windows",
+    desc: "Fixed, hung, and combination window frames",
+    icon: Layout,
+    color:
+      "from-purple-500/10 to-indigo-500/10 border-purple-100/60 text-purple-700",
+    files: [
+      {
+        name: "Bay and Bow",
+        size: "2.9 MB",
+        url: "/catalogs/UPVC-windows/Bay and Bow.pdf",
+      },
+      {
+        name: "Casement Windows",
+        size: "3.1 MB",
+        url: "/catalogs/UPVC-windows/Casement Windows.pdf",
+      },
+      {
+        name: "Combination windows",
+        size: "4.2 MB",
+        url: "/catalogs/UPVC-windows/Combination windows.pdf",
+      },
+      {
+        name: "Double Hung",
+        size: "2.7 MB",
+        url: "/catalogs/UPVC-windows/Double Hung.pdf",
+      },
+      {
+        name: "Fixed Windows",
+        size: "1.8 MB",
+        url: "/catalogs/UPVC-windows/Fixed Windows.pdf",
+      },
+      {
+        name: "French Windows",
+        size: "3.6 MB",
+        url: "/catalogs/UPVC-windows/French Windows.pdf",
+      },
+      {
+        name: "Glass to Glass",
+        size: "4.0 MB",
+        url: "/catalogs/UPVC-windows/Glass to Glass.pdf",
+      },
+      {
+        name: "Single Hung",
+        size: "2.3 MB",
+        url: "/catalogs/UPVC-windows/Single Hung.pdf",
+      },
+      {
+        name: "Sliding Windows",
+        size: "3.0 MB",
+        url: "/catalogs/UPVC-windows/Sliding Windows.pdf",
+      },
+      {
+        name: "Tilt and Turn",
+        size: "3.4 MB",
+        url: "/catalogs/UPVC-windows/Tilt and Turn.pdf",
+      },
+    ],
+  },
+  {
+    id: "wooden-doors",
+    name: "Wooden Doors",
+    desc: "Premium natural solid timber frames",
+    icon: Construction,
+    color:
+      "from-amber-500/10 to-orange-500/10 border-amber-100/60 text-amber-700",
+    files: [
+      {
+        name: "Simmply Perfect Wooden Door",
+        size: "5.8 MB",
+        url: "/catalogs/Wooden-doors/Simmply Perfect Wooden Door.pdf",
+      },
+    ],
+  },
+  {
+    id: "wpc-doors",
+    name: "WPC Doors",
+    desc: "Wood Polymer Composite structural doors",
+    icon: DoorOpen,
+    color:
+      "from-emerald-500/10 to-green-500/10 border-emerald-100/60 text-emerald-700",
+    files: [
+      {
+        name: "WPC Doors Catalogue",
+        size: "4.5 MB",
+        url: "/catalogs/WPC-doors/WPC Doors Catalogue.pdf",
+      },
+    ],
+  },
+  {
+    id: "window-grills",
+    name: "Window Grills",
+    desc: "Premium window grill designs combining security, durability, and modern aesthetics.",
+    icon: DoorOpen,
+    color:
+      "from-emerald-500/10 to-green-500/10 border-emerald-100/60 text-emerald-700",
+    files: [
+      {
+        name: "Window Grills Catalogue",
+        size: "4.5 MB",
+        url: "/catalogs/window-grills/Window Grills Catalogue.pdf",
+      },
+    ],
   },
 ];
 
@@ -190,7 +417,7 @@ const applicationContent = {
 
 export default function Footer() {
   /* =======================================================
-     MODAL STATE
+     PARTNER / AFFILIATE MODAL STATE
   ======================================================= */
 
   const [applicationType, setApplicationType] =
@@ -215,7 +442,51 @@ export default function Footer() {
   });
 
   /* =======================================================
-     OPEN MODAL
+     CATALOG MODAL STATE
+  ======================================================= */
+
+  const [catalogsOpen, setCatalogsOpen] = useState(false);
+
+  const [catalogFormData, setCatalogFormData] = useState({
+    name: "",
+    email: "",
+    phone: "+91 ",
+  });
+
+  const [isCatalogSubmitting, setIsCatalogSubmitting] = useState(false);
+  const [isCatalogSubmitted, setIsCatalogSubmitted] = useState(false);
+  const [catalogSubmitError, setCatalogSubmitError] = useState<string | null>(
+    null
+  );
+  const [catalogFocusedField, setCatalogFocusedField] = useState<string | null>(
+    null
+  );
+
+  const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
+
+  const [activePreviewPdf, setActivePreviewPdf] = useState<{
+    title: string;
+    url: string;
+  } | null>(null);
+
+  /* =======================================================
+     BODY SCROLL LOCK
+  ======================================================= */
+
+  useEffect(() => {
+    if (applicationType || catalogsOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [applicationType, catalogsOpen]);
+
+  /* =======================================================
+     OPEN APPLICATION MODAL
   ======================================================= */
 
   const openApplication = (type: ApplicationType) => {
@@ -234,12 +505,10 @@ export default function Footer() {
     });
 
     setSubmitStatus("idle");
-
-    document.body.style.overflow = "hidden";
   };
 
   /* =======================================================
-     CLOSE MODAL
+     CLOSE APPLICATION MODAL
   ======================================================= */
 
   const closeApplication = () => {
@@ -247,12 +516,10 @@ export default function Footer() {
 
     setApplicationType(null);
     setSubmitStatus("idle");
-
-    document.body.style.overflow = "";
   };
 
   /* =======================================================
-     HANDLE INPUT
+     HANDLE APPLICATION INPUT
   ======================================================= */
 
   const handleChange = (
@@ -272,7 +539,7 @@ export default function Footer() {
   };
 
   /* =======================================================
-     SUBMIT FORM
+     SUBMIT APPLICATION FORM
   ======================================================= */
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -323,7 +590,124 @@ export default function Footer() {
   };
 
   /* =======================================================
-     ACTIVE CONTENT
+     CATALOG PHONE FORMAT
+  ======================================================= */
+
+  const handleCatalogPhoneChange = (val: string) => {
+    if (!val.startsWith("+91 ")) {
+      setCatalogFormData((prev) => ({
+        ...prev,
+        phone: "+91 ",
+      }));
+
+      return;
+    }
+
+    const digits = val.slice(4).replace(/\D/g, "");
+
+    if (digits.length > 10) return;
+
+    let formatted = "+91 ";
+
+    if (digits.length > 0) {
+      formatted += digits.substring(0, 5);
+    }
+
+    if (digits.length > 5) {
+      formatted += ` ${digits.substring(5, 10)}`;
+    }
+
+    setCatalogFormData((prev) => ({
+      ...prev,
+      phone: formatted,
+    }));
+  };
+
+  /* =======================================================
+     SUBMIT CATALOG FORM
+  ======================================================= */
+
+  const handleCatalogSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const rawDigits = catalogFormData.phone.slice(4).replace(/\s/g, "");
+
+    const regexValidation = /^[6-9]\d{9}$/;
+
+    if (!regexValidation.test(rawDigits)) {
+      setCatalogSubmitError(
+        "Please enter a valid 10-digit mobile number following the +91 prefix code."
+      );
+
+      return;
+    }
+
+    setIsCatalogSubmitting(true);
+    setCatalogSubmitError(null);
+
+    try {
+      const response = await fetch("/api/catalogs", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          name: catalogFormData.name,
+          email: catalogFormData.email,
+          phone: catalogFormData.phone,
+          message:
+            "User successfully cleared lead parameters to access high-res blueprint catalogs.",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to register document vault credentials.");
+      }
+
+      setIsCatalogSubmitted(true);
+    } catch (error: any) {
+      console.error(error);
+
+      setCatalogSubmitError(error.message || "Connection timeout exception.");
+
+      setIsCatalogSubmitted(false);
+    } finally {
+      setIsCatalogSubmitting(false);
+    }
+  };
+
+  /* =======================================================
+     CLOSE CATALOG MODAL
+  ======================================================= */
+
+  const handleCloseCatalogs = () => {
+    setCatalogsOpen(false);
+
+    setTimeout(() => {
+      setIsCatalogSubmitted(false);
+      setIsCatalogSubmitting(false);
+      setCatalogSubmitError(null);
+      setActivePreviewPdf(null);
+      setActiveFolderId(null);
+
+      setCatalogFormData({
+        name: "",
+        email: "",
+        phone: "+91 ",
+      });
+
+      setCatalogFocusedField(null);
+    }, 300);
+  };
+
+  const activeCategoryObject = categoriesData.find(
+    (category) => category.id === activeFolderId
+  );
+
+  /* =======================================================
+     ACTIVE APPLICATION CONTENT
   ======================================================= */
 
   const activeContent = applicationType
@@ -416,17 +800,34 @@ export default function Footer() {
               </h3>
 
               <div className="mt-6 flex flex-col items-start gap-3.5">
-                {quickLinks.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className="group inline-flex items-center gap-2 text-sm text-slate-400 transition-colors duration-300 hover:text-white"
-                  >
-                    <span>{link.label}</span>
+                {quickLinks.map((link) => {
+                  if (link.isCatalog) {
+                    return (
+                      <button
+                        key={link.label}
+                        type="button"
+                        onClick={() => setCatalogsOpen(true)}
+                        className="group inline-flex items-center gap-2 text-sm text-slate-400 transition-colors duration-300 hover:text-white"
+                      >
+                        <span>{link.label}</span>
 
-                    <ArrowUpRight className="h-3 w-3 -translate-x-1 translate-y-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100" />
-                  </Link>
-                ))}
+                        <ArrowUpRight className="h-3 w-3 -translate-x-1 translate-y-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100" />
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="group inline-flex items-center gap-2 text-sm text-slate-400 transition-colors duration-300 hover:text-white"
+                    >
+                      <span>{link.label}</span>
+
+                      <ArrowUpRight className="h-3 w-3 -translate-x-1 translate-y-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100" />
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
@@ -496,7 +897,7 @@ export default function Footer() {
                   </div>
 
                   <div className="min-w-0 pt-0.5">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
                       Email
                     </p>
 
@@ -635,7 +1036,7 @@ export default function Footer() {
       </footer>
 
       {/* =========================================================
-          APPLICATION MODAL
+          APPLICATION MODAL (PARTNER / AFFILIATE)
       ========================================================= */}
 
       {applicationType && activeContent && ActiveIcon && (
@@ -1209,6 +1610,484 @@ export default function Footer() {
           </div>
         </div>
       )}
+
+      {/* =========================================================
+          CATALOG MODAL (EXACT SAME COMPONENT AS NAVBAR)
+      ========================================================= */}
+
+      <AnimatePresence>
+        {catalogsOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[500] flex items-center justify-center p-3 sm:p-5"
+          >
+            {/* BACKDROP */}
+
+            <motion.button
+              type="button"
+              aria-label="Close catalog popup"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleCloseCatalogs}
+              className="absolute inset-0 h-full w-full cursor-default bg-[#020817]/80 backdrop-blur-md"
+            />
+
+            {/* MODAL */}
+
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 30,
+                scale: 0.97,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                y: 20,
+                scale: 0.97,
+              }}
+              transition={{
+                duration: 0.3,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="relative z-[510] flex max-h-[94dvh] w-full max-w-6xl flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_40px_120px_rgba(0,0,0,0.4)]"
+            >
+              {/* MODAL HEADER */}
+
+              <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-4 sm:px-7">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0A2E6F] text-white">
+                    <FolderOpen className="h-5 w-5" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <h2 className="truncate text-lg font-bold text-[#071224] sm:text-xl">
+                      Simmply Perfect Catalogs
+                    </h2>
+
+                    <p className="mt-0.5 hidden text-xs text-slate-500 sm:block">
+                      Explore and download our product catalogues
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleCloseCatalogs}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* =================================================
+                  LEAD FORM
+              ================================================= */}
+
+              {!isCatalogSubmitted ? (
+                <div className="grid flex-1 overflow-y-auto lg:grid-cols-[0.9fr_1.1fr]">
+                  {/* LEFT INFORMATION */}
+
+                  <div className="relative hidden overflow-hidden bg-[#071224] p-10 text-white lg:block">
+                    <div
+                      className="absolute inset-0 opacity-[0.08]"
+                      style={{
+                        backgroundImage: `
+                          linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)
+                        `,
+                        backgroundSize: "45px 45px",
+                      }}
+                    />
+
+                    <div className="relative">
+                      <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-2">
+                        <Sparkles className="h-4 w-4 text-blue-300" />
+
+                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100">
+                          Product Library
+                        </span>
+                      </div>
+
+                      <h3 className="mt-8 text-4xl font-bold leading-tight tracking-[-0.04em]">
+                        Discover our complete product collection.
+                      </h3>
+
+                      <p className="mt-5 text-sm leading-7 text-slate-300">
+                        Access premium catalogues for railing systems, UPVC
+                        windows, UPVC doors, wooden doors, WPC doors, and WPVC
+                        solutions.
+                      </p>
+
+                      <div className="mt-10 space-y-4">
+                        {[
+                          "High-quality product catalogues",
+                          "Detailed product specifications",
+                          "Instant PDF preview and download",
+                        ].map((item) => (
+                          <div
+                            key={item}
+                            className="flex items-center gap-3"
+                          >
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
+                              <ArrowRight className="h-4 w-4 text-blue-300" />
+                            </div>
+
+                            <span className="text-sm font-semibold text-slate-200">
+                              {item}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* FORM */}
+
+                  <div className="flex items-center p-6 sm:p-10">
+                    <form
+                      onSubmit={handleCatalogSubmit}
+                      className="mx-auto w-full max-w-lg"
+                    >
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
+                        Catalogue Access
+                      </p>
+
+                      <h3 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-[#071224]">
+                        Enter your details
+                      </h3>
+
+                      <p className="mt-3 text-sm leading-6 text-slate-500">
+                        Complete the short form below to access our digital
+                        catalogue library.
+                      </p>
+
+                      <div className="mt-8 space-y-4">
+                        {/* NAME */}
+
+                        <div>
+                          <label className="mb-2 block text-xs font-bold text-slate-700">
+                            Full Name
+                          </label>
+
+                          <div
+                            className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
+                              catalogFocusedField === "name"
+                                ? "border-[#0A2E6F] ring-4 ring-blue-50"
+                                : "border-slate-200"
+                            }`}
+                          >
+                            <User className="h-4 w-4 shrink-0 text-slate-400" />
+
+                            <input
+                              required
+                              type="text"
+                              name="catalog_customer_name"
+                              value={catalogFormData.name}
+                              autoComplete="off"
+                              onFocus={() => setCatalogFocusedField("name")}
+                              onBlur={() => setCatalogFocusedField(null)}
+                              onChange={(event) =>
+                                setCatalogFormData((previous) => ({
+                                  ...previous,
+                                  name: event.target.value,
+                                }))
+                              }
+                              placeholder="Enter your full name"
+                              className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                            />
+                          </div>
+                        </div>
+
+                        {/* EMAIL */}
+
+                        <div>
+                          <label className="mb-2 block text-xs font-bold text-slate-700">
+                            Email Address
+                          </label>
+
+                          <div
+                            className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
+                              catalogFocusedField === "email"
+                                ? "border-[#0A2E6F] ring-4 ring-blue-50"
+                                : "border-slate-200"
+                            }`}
+                          >
+                            <Mail className="h-4 w-4 shrink-0 text-slate-400" />
+
+                            <input
+                              required
+                              type="email"
+                              name="catalog_customer_email"
+                              value={catalogFormData.email}
+                              autoComplete="off"
+                              onFocus={() => setCatalogFocusedField("email")}
+                              onBlur={() => setCatalogFocusedField(null)}
+                              onChange={(event) =>
+                                setCatalogFormData((previous) => ({
+                                  ...previous,
+                                  email: event.target.value,
+                                }))
+                              }
+                              placeholder="Enter your email address"
+                              className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                            />
+                          </div>
+                        </div>
+
+                        {/* PHONE */}
+
+                        <div>
+                          <label className="mb-2 block text-xs font-bold text-slate-700">
+                            Mobile Number
+                          </label>
+
+                          <div
+                            className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
+                              catalogFocusedField === "phone"
+                                ? "border-[#0A2E6F] ring-4 ring-blue-50"
+                                : "border-slate-200"
+                            }`}
+                          >
+                            <Phone className="h-4 w-4 shrink-0 text-slate-400" />
+
+                            <input
+                              required
+                              type="tel"
+                              name="catalog_customer_mobile"
+                              value={catalogFormData.phone}
+                              autoComplete="off"
+                              inputMode="numeric"
+                              onFocus={() => setCatalogFocusedField("phone")}
+                              onBlur={() => setCatalogFocusedField(null)}
+                              onChange={(event) =>
+                                handleCatalogPhoneChange(event.target.value)
+                              }
+                              placeholder="+91 98765 43210"
+                              className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {catalogSubmitError && (
+                        <p className="mt-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-xs font-medium text-red-600">
+                          {catalogSubmitError}
+                        </p>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={isCatalogSubmitting}
+                        className="mt-7 flex w-full items-center justify-center gap-3 rounded-xl bg-[#0A2E6F] px-5 py-4 text-sm font-bold text-white transition-all hover:bg-[#123D80] disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {isCatalogSubmitting ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            Access Catalogues
+                            <ArrowRight className="h-4 w-4" />
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              ) : (
+                /* =================================================
+                    CATALOG LIBRARY
+                ================================================= */
+
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
+                  {/* CATEGORIES */}
+
+                  <div className="shrink-0 border-b border-slate-200 bg-slate-50 p-4 lg:w-[310px] lg:border-b-0 lg:border-r lg:p-5">
+                    <p className="mb-3 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+                      Product Categories
+                    </p>
+
+                    <div className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
+                      {categoriesData.map((category) => {
+                        const Icon = category.icon;
+                        const active = activeFolderId === category.id;
+
+                        return (
+                          <button
+                            type="button"
+                            key={category.id}
+                            onClick={() => {
+                              setActiveFolderId(category.id);
+                              setActivePreviewPdf(null);
+                            }}
+                            className={`flex min-w-[210px] items-center gap-3 rounded-xl border px-3 py-3 text-left transition-all lg:min-w-0 ${
+                              active
+                                ? "border-[#0A2E6F] bg-[#0A2E6F] text-white shadow-md"
+                                : "border-transparent bg-white text-slate-600 hover:border-slate-200"
+                            }`}
+                          >
+                            <div
+                              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                                active
+                                  ? "bg-white/10"
+                                  : "bg-blue-50 text-[#0A2E6F]"
+                              }`}
+                            >
+                              <Icon className="h-4 w-4" />
+                            </div>
+
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-bold">
+                                {category.name}
+                              </p>
+
+                              <p
+                                className={`mt-0.5 truncate text-[10px] ${
+                                  active
+                                    ? "text-blue-100/70"
+                                    : "text-slate-400"
+                                }`}
+                              >
+                                {category.files.length} Catalogues
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* CONTENT */}
+
+                  <div className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-7">
+                    {!activeCategoryObject ? (
+                      <div className="flex min-h-[450px] flex-col items-center justify-center text-center">
+                        <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-blue-50 text-[#0A2E6F]">
+                          <Folder className="h-9 w-9" />
+                        </div>
+
+                        <h3 className="mt-6 text-2xl font-bold text-[#071224]">
+                          Select a product category
+                        </h3>
+
+                        <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
+                          Choose one of the available categories to browse,
+                          preview, and download product catalogues.
+                        </p>
+                      </div>
+                    ) : activePreviewPdf ? (
+                      <div className="flex h-full min-h-[550px] flex-col">
+                        <div className="mb-4 flex items-center justify-between gap-4">
+                          <button
+                            type="button"
+                            onClick={() => setActivePreviewPdf(null)}
+                            className="inline-flex items-center gap-2 text-sm font-bold text-[#0A2E6F]"
+                          >
+                            <ArrowLeft className="h-4 w-4" />
+                            Back to Catalogues
+                          </button>
+
+                          <a
+                            href={activePreviewPdf.url}
+                            download
+                            className="inline-flex items-center gap-2 rounded-xl bg-[#0A2E6F] px-4 py-2.5 text-xs font-bold text-white"
+                          >
+                            <Download className="h-4 w-4" />
+                            Download
+                          </a>
+                        </div>
+
+                        <div className="min-h-[500px] flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+                          <iframe
+                            src={activePreviewPdf.url}
+                            title={activePreviewPdf.title}
+                            className="h-full min-h-[500px] w-full"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="border-b border-slate-200 pb-5">
+                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
+                            Catalogue Collection
+                          </p>
+
+                          <h3 className="mt-2 text-2xl font-bold text-[#071224]">
+                            {activeCategoryObject.name}
+                          </h3>
+
+                          <p className="mt-2 text-sm text-slate-500">
+                            {activeCategoryObject.desc}
+                          </p>
+                        </div>
+
+                        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                          {activeCategoryObject.files.map((file) => (
+                            <div
+                              key={file.url}
+                              className="group rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:border-[#0A2E6F]/30 hover:shadow-md"
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-500">
+                                  <FileText className="h-5 w-5" />
+                                </div>
+
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="line-clamp-2 text-sm font-bold text-[#071224]">
+                                    {file.name}
+                                  </h4>
+
+                                  <p className="mt-1 text-[11px] text-slate-400">
+                                    PDF • {file.size}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="mt-4 grid grid-cols-2 gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setActivePreviewPdf({
+                                      title: file.name,
+                                      url: file.url,
+                                    })
+                                  }
+                                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2.5 text-xs font-bold text-slate-600 transition-colors hover:border-[#0A2E6F] hover:text-[#0A2E6F]"
+                                >
+                                  <Eye className="h-3.5 w-3.5" />
+                                  Preview
+                                </button>
+
+                                <a
+                                  href={file.url}
+                                  download
+                                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0A2E6F] px-3 py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#123D80]"
+                                >
+                                  <Download className="h-3.5 w-3.5" />
+                                  Download
+                                </a>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

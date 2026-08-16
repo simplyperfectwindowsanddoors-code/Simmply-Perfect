@@ -384,7 +384,7 @@ export default function Hero() {
                   muted
                   loop
                   playsInline
-                  preload="auto"
+                  preload="metadata"
                   aria-label="Simmply Perfect Group windows, doors, interiors, renovation and architectural solutions"
                   className="block h-auto w-full object-contain"
                 >
