@@ -20,10 +20,14 @@ const ALLOWED_FILE_TYPES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
-const ALLOWED_FILE_EXTENSIONS = ["pdf", "doc", "docx"];
+const ALLOWED_FILE_EXTENSIONS = [
+  "pdf",
+  "doc",
+  "docx",
+];
 
 /* =========================================================
-   HTML ESCAPE HELPER
+   HTML ESCAPE
 ========================================================= */
 
 function escapeHtml(value: string) {
@@ -42,7 +46,7 @@ function escapeHtml(value: string) {
 function getStringValue(
   formData: FormData,
   key: string,
-) {
+): string {
   const value = formData.get(key);
 
   if (typeof value !== "string") {
@@ -54,13 +58,6 @@ function getStringValue(
 
 /* =========================================================
    EXTRACT NUMBER
-
-   Handles:
-   "25"
-   "25 Years"
-   "2.5"
-   "2.5 Years"
-   "6 LPA"
 ========================================================= */
 
 function extractNumber(value: string) {
@@ -73,6 +70,48 @@ function extractNumber(value: string) {
   }
 
   return Number(normalized);
+}
+
+/* =========================================================
+   EMAIL TABLE ROW
+========================================================= */
+
+function createEmailRow(
+  label: string,
+  value: string,
+) {
+  return `
+    <tr>
+
+      <td
+        style="
+          width:35%;
+          padding:11px 12px;
+          background:#f8fafc;
+          border:1px solid #e2e8f0;
+          color:#64748b;
+          font-weight:bold;
+          vertical-align:top;
+        "
+      >
+        ${label}
+      </td>
+
+      <td
+        style="
+          padding:11px 12px;
+          border:1px solid #e2e8f0;
+          color:#071224;
+          font-weight:600;
+          word-break:break-word;
+          vertical-align:top;
+        "
+      >
+        ${value}
+      </td>
+
+    </tr>
+  `;
 }
 
 /* =========================================================
@@ -102,16 +141,6 @@ export async function POST(request: Request) {
       "email",
     );
 
-    /*
-     IMPORTANT:
-
-     Your JobApplicationForm.tsx sends:
-     phone
-
-     Therefore the API must also read:
-     phone
-    */
-
     const phone = getStringValue(
       formData,
       "phone",
@@ -137,30 +166,10 @@ export async function POST(request: Request) {
       "experience",
     );
 
-    /*
-     IMPORTANT:
-
-     Your frontend sends:
-     currentCtc
-
-     NOT:
-     currentCTC
-    */
-
     const currentCtc = getStringValue(
       formData,
       "currentCtc",
     );
-
-    /*
-     IMPORTANT:
-
-     Your frontend sends:
-     expectedCtc
-
-     NOT:
-     expectedCTC
-    */
 
     const expectedCtc = getStringValue(
       formData,
@@ -172,14 +181,11 @@ export async function POST(request: Request) {
       "noticePeriod",
     );
 
-    /*
-     Your frontend sends currentLocation.
-    */
-
-    const currentLocation = getStringValue(
-      formData,
-      "currentLocation",
-    );
+    const currentLocation =
+      getStringValue(
+        formData,
+        "currentLocation",
+      );
 
     const description = getStringValue(
       formData,
@@ -189,28 +195,30 @@ export async function POST(request: Request) {
     const resume = formData.get("resume");
 
     /* =====================================================
-       DEBUGGING
-
-       You can temporarily check your terminal to confirm
-       that all values are reaching the API correctly.
+       DEBUG LOG
     ===================================================== */
 
-    console.log("CAREER APPLICATION RECEIVED:", {
-      firstName,
-      lastName,
-      email,
-      phone,
-      age,
-      gender,
-      role,
-      experience,
-      currentCtc,
-      expectedCtc,
-      noticePeriod,
-      currentLocation,
-      descriptionLength: description.length,
-      hasResume: resume instanceof File,
-    });
+    console.log(
+      "CAREER APPLICATION RECEIVED:",
+      {
+        firstName,
+        lastName,
+        email,
+        phone,
+        age,
+        gender,
+        role,
+        experience,
+        currentCtc,
+        expectedCtc,
+        noticePeriod,
+        currentLocation,
+        descriptionLength:
+          description.length,
+        hasResume:
+          resume instanceof File,
+      },
+    );
 
     /* =====================================================
        REQUIRED FIELD VALIDATION
@@ -230,26 +238,6 @@ export async function POST(request: Request) {
       !currentLocation ||
       !description
     ) {
-      console.error(
-        "CAREER APPLICATION MISSING FIELDS:",
-        {
-          firstName: Boolean(firstName),
-          lastName: Boolean(lastName),
-          email: Boolean(email),
-          phone: Boolean(phone),
-          age: Boolean(age),
-          gender: Boolean(gender),
-          role: Boolean(role),
-          experience: Boolean(experience),
-          expectedCtc: Boolean(expectedCtc),
-          noticePeriod: Boolean(noticePeriod),
-          currentLocation:
-            Boolean(currentLocation),
-          description: Boolean(description),
-          resume: resume instanceof File,
-        },
-      );
-
       return NextResponse.json(
         {
           success: false,
@@ -303,13 +291,10 @@ export async function POST(request: Request) {
 
     /* =====================================================
        AGE VALIDATION
-
-       Supports:
-       25
-       25 Years
     ===================================================== */
 
-    const applicantAge = extractNumber(age);
+    const applicantAge =
+      extractNumber(age);
 
     if (
       Number.isNaN(applicantAge) ||
@@ -330,19 +315,15 @@ export async function POST(request: Request) {
 
     /* =====================================================
        EXPERIENCE VALIDATION
-
-       Supports:
-       2
-       2.5
-       2 Years
-       2.5 Years
     ===================================================== */
 
     const applicantExperience =
       extractNumber(experience);
 
     if (
-      Number.isNaN(applicantExperience) ||
+      Number.isNaN(
+        applicantExperience,
+      ) ||
       applicantExperience < 0 ||
       applicantExperience > 50
     ) {
@@ -360,14 +341,6 @@ export async function POST(request: Request) {
 
     /* =====================================================
        CURRENT CTC VALIDATION
-
-       Current CTC is optional.
-
-       Supports:
-       4
-       4.5
-       4 LPA
-       4.5 LPA
     ===================================================== */
 
     if (currentCtc) {
@@ -375,7 +348,9 @@ export async function POST(request: Request) {
         extractNumber(currentCtc);
 
       if (
-        Number.isNaN(currentCtcNumber) ||
+        Number.isNaN(
+          currentCtcNumber,
+        ) ||
         currentCtcNumber < 0
       ) {
         return NextResponse.json(
@@ -393,19 +368,15 @@ export async function POST(request: Request) {
 
     /* =====================================================
        EXPECTED CTC VALIDATION
-
-       Supports:
-       6
-       6.5
-       6 LPA
-       6.5 LPA
     ===================================================== */
 
     const expectedCtcNumber =
       extractNumber(expectedCtc);
 
     if (
-      Number.isNaN(expectedCtcNumber) ||
+      Number.isNaN(
+        expectedCtcNumber,
+      ) ||
       expectedCtcNumber <= 0
     ) {
       return NextResponse.json(
@@ -448,7 +419,8 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Please upload your resume.",
+          message:
+            "Please upload your resume.",
         },
         {
           status: 400,
@@ -457,7 +429,7 @@ export async function POST(request: Request) {
     }
 
     /* =====================================================
-       FILE EXTENSION VALIDATION
+       FILE EXTENSION
     ===================================================== */
 
     const fileExtension =
@@ -484,16 +456,14 @@ export async function POST(request: Request) {
     }
 
     /* =====================================================
-       MIME TYPE VALIDATION
-
-       Some browsers may provide an empty MIME type.
-       Therefore we only reject when a MIME type exists
-       and is unsupported.
+       MIME TYPE
     ===================================================== */
 
     if (
       resume.type &&
-      !ALLOWED_FILE_TYPES.includes(resume.type)
+      !ALLOWED_FILE_TYPES.includes(
+        resume.type,
+      )
     ) {
       return NextResponse.json(
         {
@@ -508,7 +478,7 @@ export async function POST(request: Request) {
     }
 
     /* =====================================================
-       FILE SIZE VALIDATION
+       FILE SIZE
     ===================================================== */
 
     if (resume.size > MAX_FILE_SIZE) {
@@ -525,22 +495,34 @@ export async function POST(request: Request) {
     }
 
     /* =====================================================
-       CHECK SMTP ENVIRONMENT VARIABLES
+       SMTP VARIABLES
     ===================================================== */
 
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpPort = process.env.SMTP_PORT;
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
+    const smtpHost =
+      process.env.SMTP_HOST;
+
+    const smtpPort =
+      Number(
+        process.env.SMTP_PORT || 587,
+      );
+
+    const smtpUser =
+      process.env.SMTP_USER;
+
+    const smtpPass =
+      process.env.SMTP_PASS;
+
+    const receiverEmail =
+      process.env.CAREERS_RECEIVER_EMAIL ||
+      "simplyperfectwindowsanddoors@gmail.com";
 
     if (
       !smtpHost ||
-      !smtpPort ||
       !smtpUser ||
       !smtpPass
     ) {
       console.error(
-        "Missing SMTP environment variables.",
+        "CAREERS ERROR: Missing SMTP environment variables.",
       );
 
       return NextResponse.json(
@@ -556,46 +538,59 @@ export async function POST(request: Request) {
     }
 
     /* =====================================================
-       CONVERT RESUME TO BUFFER
+       RESUME BUFFER
     ===================================================== */
 
     const resumeArrayBuffer =
       await resume.arrayBuffer();
 
-    const resumeBuffer = Buffer.from(
-      resumeArrayBuffer,
-    );
+    const resumeBuffer =
+      Buffer.from(
+        resumeArrayBuffer,
+      );
 
     /* =====================================================
-       CREATE EMAIL TRANSPORTER
+       CREATE SMTP TRANSPORTER
+
+       IMPORTANT:
+       We intentionally DO NOT call:
+
+       await transporter.verify();
+
+       That adds another SMTP request and can
+       significantly increase form submission time.
     ===================================================== */
 
-const transporter = nodemailer.createTransport({
-  host: smtpHost,
-  port: Number(smtpPort),
-  secure: Number(smtpPort) === 465,
+    const transporter =
+      nodemailer.createTransport({
+        host: smtpHost,
 
-  auth: {
-    user: smtpUser,
-    pass: smtpPass,
-  },
+        port: smtpPort,
 
-  pool: true,
-  maxConnections: 3,
-  maxMessages: 50,
+        secure:
+          smtpPort === 465,
 
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 20000,
-});
+        auth: {
+          user: smtpUser,
+
+          pass: smtpPass,
+        },
+
+        pool: true,
+
+        maxConnections: 3,
+
+        maxMessages: 50,
+
+        connectionTimeout: 8000,
+
+        greetingTimeout: 8000,
+
+        socketTimeout: 15000,
+      });
 
     /* =====================================================
-       VERIFY SMTP CONNECTION
-    ===================================================== */
-
-
-    /* =====================================================
-       SANITIZE USER CONTENT
+       SANITIZE VALUES
     ===================================================== */
 
     const safeFirstName =
@@ -624,341 +619,853 @@ const transporter = nodemailer.createTransport({
 
     const safeCurrentCtc =
       escapeHtml(
-        currentCtc || "Not Provided",
+        currentCtc ||
+          "Not Provided",
       );
 
     const safeExpectedCtc =
-      escapeHtml(expectedCtc);
+      escapeHtml(
+        expectedCtc,
+      );
 
     const safeNoticePeriod =
-      escapeHtml(noticePeriod);
+      escapeHtml(
+        noticePeriod,
+      );
 
     const safeCurrentLocation =
-      escapeHtml(currentLocation);
+      escapeHtml(
+        currentLocation,
+      );
 
     const safeDescription =
-      escapeHtml(description).replace(
+      escapeHtml(
+        description,
+      ).replace(
         /\n/g,
         "<br />",
       );
 
+    const safeResumeName =
+      escapeHtml(
+        resume.name,
+      );
+
+    const fullName =
+      `${firstName} ${lastName}`;
+
     /* =====================================================
-       SEND APPLICATION EMAIL
+       EMAIL 1
+       SEND APPLICATION TO SIMMPLY PERFECT
     ===================================================== */
 
-    await transporter.sendMail({
-      from: `"Simmply Perfect Careers" <${smtpUser}>`,
+    const companyEmail = {
+      from:
+        `"Simmply Perfect Careers" <${smtpUser}>`,
 
-      to:
-        process.env.CAREERS_RECEIVER_EMAIL ||
-        "simplyperfectwindowsanddoors@gmail.com",
+      to: receiverEmail,
+
+      /*
+       * If the company clicks Reply,
+       * the reply will go directly to
+       * the applicant.
+       */
 
       replyTo: email,
 
       subject:
-        `New Job Application | ${role} | ` +
-        `${firstName} ${lastName}`,
+        `New Job Application | ${role} | ${fullName}`,
+
+      text: `
+NEW JOB APPLICATION
+
+Candidate:
+${fullName}
+
+Role:
+${role}
+
+Email:
+${email}
+
+Phone:
++91 ${phone}
+
+Age:
+${age}
+
+Gender:
+${gender}
+
+Total Experience:
+${experience}
+
+Current CTC:
+${currentCtc || "Not Provided"}
+
+Expected CTC:
+${expectedCtc}
+
+Notice Period:
+${noticePeriod}
+
+Current Location:
+${currentLocation}
+
+Professional Summary:
+${description}
+
+Resume:
+${resume.name}
+      `.trim(),
 
       html: `
-        <!DOCTYPE html>
+<!DOCTYPE html>
 
-        <html lang="en">
+<html>
 
-        <head>
+<head>
 
-          <meta charset="UTF-8" />
+  <meta charset="UTF-8" />
 
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-          <title>New Job Application</title>
+  <title>
+    New Job Application
+  </title>
 
-        </head>
+</head>
 
-        <body
+<body
+  style="
+    margin:0;
+    padding:0;
+    background:#f1f5f9;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#172033;
+  "
+>
+
+  <div
+    style="
+      padding:30px 15px;
+    "
+  >
+
+    <div
+      style="
+        max-width:700px;
+        margin:0 auto;
+        background:#ffffff;
+        border-radius:16px;
+        overflow:hidden;
+        border:1px solid #e2e8f0;
+      "
+    >
+
+      <!-- HEADER -->
+
+      <div
+        style="
+          background:#0A2E6F;
+          padding:30px;
+        "
+      >
+
+        <p
+          style="
+            margin:0 0 8px;
+            color:#bfdbfe;
+            font-size:11px;
+            font-weight:bold;
+            letter-spacing:2px;
+            text-transform:uppercase;
+          "
+        >
+          Simmply Perfect Careers
+        </p>
+
+        <h1
           style="
             margin:0;
-            padding:0;
-            background:#f1f5f9;
-            font-family:Arial,Helvetica,sans-serif;
+            color:#ffffff;
+            font-size:25px;
+          "
+        >
+          New Job Application
+        </h1>
+
+        <p
+          style="
+            margin:10px 0 0;
+            color:#dbeafe;
+            font-size:14px;
+          "
+        >
+          ${safeRole}
+        </p>
+
+      </div>
+
+      <!-- CONTENT -->
+
+      <div
+        style="
+          padding:30px;
+        "
+      >
+
+        <h2
+          style="
+            margin:0;
+            color:#071224;
+            font-size:20px;
+          "
+        >
+          ${safeFirstName}
+          ${safeLastName}
+        </h2>
+
+        <p
+          style="
+            margin:7px 0 25px;
+            color:#64748b;
+            font-size:13px;
+          "
+        >
+          Candidate Application Details
+        </p>
+
+        <table
+          width="100%"
+          cellpadding="0"
+          cellspacing="0"
+          style="
+            border-collapse:collapse;
+            font-size:13px;
           "
         >
 
-          <div
+          ${createEmailRow(
+            "Applying Role",
+            safeRole,
+          )}
+
+          ${createEmailRow(
+            "Email Address",
+            safeEmail,
+          )}
+
+          ${createEmailRow(
+            "Contact Number",
+            `+91 ${safePhone}`,
+          )}
+
+          ${createEmailRow(
+            "Age",
+            safeAge,
+          )}
+
+          ${createEmailRow(
+            "Gender",
+            safeGender,
+          )}
+
+          ${createEmailRow(
+            "Total Experience",
+            safeExperience,
+          )}
+
+          ${createEmailRow(
+            "Current CTC",
+            safeCurrentCtc,
+          )}
+
+          ${createEmailRow(
+            "Expected CTC",
+            safeExpectedCtc,
+          )}
+
+          ${createEmailRow(
+            "Notice Period",
+            safeNoticePeriod,
+          )}
+
+          ${createEmailRow(
+            "Current Location",
+            safeCurrentLocation,
+          )}
+
+        </table>
+
+        <!-- PROFESSIONAL SUMMARY -->
+
+        <div
+          style="
+            margin-top:25px;
+          "
+        >
+
+          <p
             style="
-              padding:30px 15px;
+              margin:0 0 10px;
+              color:#071224;
+              font-size:13px;
+              font-weight:bold;
             "
           >
+            Professional Summary
+          </p>
 
-            <div
-              style="
-                max-width:700px;
-                margin:0 auto;
-                background:#ffffff;
-                border-radius:16px;
-                overflow:hidden;
-                border:1px solid #e2e8f0;
-              "
-            >
-
-              <!-- HEADER -->
-
-              <div
-                style="
-                  background:#0A2E6F;
-                  padding:30px;
-                "
-              >
-
-                <p
-                  style="
-                    margin:0 0 8px;
-                    color:#bfdbfe;
-                    font-size:11px;
-                    font-weight:bold;
-                    letter-spacing:2px;
-                    text-transform:uppercase;
-                  "
-                >
-                  Simmply Perfect Careers
-                </p>
-
-                <h1
-                  style="
-                    margin:0;
-                    color:#ffffff;
-                    font-size:25px;
-                  "
-                >
-                  New Job Application
-                </h1>
-
-                <p
-                  style="
-                    margin:10px 0 0;
-                    color:#dbeafe;
-                    font-size:14px;
-                  "
-                >
-                  ${safeRole}
-                </p>
-
-              </div>
-
-              <!-- CANDIDATE DETAILS -->
-
-              <div
-                style="
-                  padding:30px;
-                "
-              >
-
-                <h2
-                  style="
-                    margin:0;
-                    color:#071224;
-                    font-size:20px;
-                  "
-                >
-                  ${safeFirstName}
-                  ${safeLastName}
-                </h2>
-
-                <p
-                  style="
-                    margin:7px 0 25px;
-                    color:#64748b;
-                    font-size:13px;
-                  "
-                >
-                  Candidate Application Details
-                </p>
-
-                <!-- DETAILS TABLE -->
-
-                <table
-                  width="100%"
-                  cellpadding="0"
-                  cellspacing="0"
-                  style="
-                    border-collapse:collapse;
-                    font-size:13px;
-                  "
-                >
-
-                  ${createEmailRow(
-                    "Applying Role",
-                    safeRole,
-                  )}
-
-                  ${createEmailRow(
-                    "Email Address",
-                    safeEmail,
-                  )}
-
-                  ${createEmailRow(
-                    "Contact Number",
-                    `+91 ${safePhone}`,
-                  )}
-
-                  ${createEmailRow(
-                    "Age",
-                    safeAge,
-                  )}
-
-                  ${createEmailRow(
-                    "Gender",
-                    safeGender,
-                  )}
-
-                  ${createEmailRow(
-                    "Total Experience",
-                    safeExperience,
-                  )}
-
-                  ${createEmailRow(
-                    "Current CTC",
-                    safeCurrentCtc,
-                  )}
-
-                  ${createEmailRow(
-                    "Expected CTC",
-                    safeExpectedCtc,
-                  )}
-
-                  ${createEmailRow(
-                    "Notice Period",
-                    safeNoticePeriod,
-                  )}
-
-                  ${createEmailRow(
-                    "Current Location",
-                    safeCurrentLocation,
-                  )}
-
-                </table>
-
-                <!-- PROFESSIONAL SUMMARY -->
-
-                <div
-                  style="
-                    margin-top:25px;
-                  "
-                >
-
-                  <p
-                    style="
-                      margin:0 0 10px;
-                      color:#071224;
-                      font-size:13px;
-                      font-weight:bold;
-                    "
-                  >
-                    Professional Summary
-                  </p>
-
-                  <div
-                    style="
-                      padding:16px;
-                      background:#f8fafc;
-                      border-left:4px solid #0A2E6F;
-                      border-radius:8px;
-                      color:#475569;
-                      font-size:13px;
-                      line-height:1.7;
-                    "
-                  >
-                    ${safeDescription}
-                  </div>
-
-                </div>
-
-                <!-- RESUME -->
-
-                <div
-                  style="
-                    margin-top:25px;
-                    padding:16px;
-                    background:#eff6ff;
-                    border:1px solid #dbeafe;
-                    border-radius:10px;
-                  "
-                >
-
-                  <p
-                    style="
-                      margin:0;
-                      color:#0A2E6F;
-                      font-size:13px;
-                      font-weight:bold;
-                    "
-                  >
-                    Resume Attached
-                  </p>
-
-                  <p
-                    style="
-                      margin:5px 0 0;
-                      color:#64748b;
-                      font-size:12px;
-                    "
-                  >
-                    ${escapeHtml(resume.name)}
-                  </p>
-
-                </div>
-
-              </div>
-
-              <!-- FOOTER -->
-
-              <div
-                style="
-                  padding:18px 30px;
-                  background:#f8fafc;
-                  border-top:1px solid #e2e8f0;
-                "
-              >
-
-                <p
-                  style="
-                    margin:0;
-                    text-align:center;
-                    color:#94a3b8;
-                    font-size:11px;
-                  "
-                >
-                  Application submitted through
-                  Simmply Perfect Careers Portal
-                </p>
-
-              </div>
-
-            </div>
-
+          <div
+            style="
+              padding:16px;
+              background:#f8fafc;
+              border-left:4px solid #0A2E6F;
+              border-radius:8px;
+              color:#475569;
+              font-size:13px;
+              line-height:1.7;
+            "
+          >
+            ${safeDescription}
           </div>
 
-        </body>
+        </div>
 
-        </html>
+        <!-- RESUME -->
+
+        <div
+          style="
+            margin-top:25px;
+            padding:16px;
+            background:#eff6ff;
+            border:1px solid #dbeafe;
+            border-radius:10px;
+          "
+        >
+
+          <p
+            style="
+              margin:0;
+              color:#0A2E6F;
+              font-size:13px;
+              font-weight:bold;
+            "
+          >
+            Resume Attached
+          </p>
+
+          <p
+            style="
+              margin:5px 0 0;
+              color:#64748b;
+              font-size:12px;
+            "
+          >
+            ${safeResumeName}
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+
+      <div
+        style="
+          padding:18px 30px;
+          background:#f8fafc;
+          border-top:1px solid #e2e8f0;
+        "
+      >
+
+        <p
+          style="
+            margin:0;
+            text-align:center;
+            color:#94a3b8;
+            font-size:11px;
+          "
+        >
+          Application submitted through
+          Simmply Perfect Careers Portal
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+
+</html>
       `,
-
-      /* ===================================================
-         RESUME ATTACHMENT
-      =================================================== */
 
       attachments: [
         {
-          filename: resume.name,
-          content: resumeBuffer,
+          filename:
+            resume.name,
+
+          content:
+            resumeBuffer,
+
           contentType:
             resume.type ||
             "application/octet-stream",
         },
       ],
-    });
+    };
+
+    /* =====================================================
+       EMAIL 2
+       CONFIRMATION TO APPLICANT
+    ===================================================== */
+
+    const applicantEmail = {
+      from:
+        `"Simmply Perfect Group" <${smtpUser}>`,
+
+      to: email,
+
+      subject:
+        `Application Received | ${role} | Simmply Perfect`,
+
+      text: `
+Dear ${fullName},
+
+Thank you for applying to Simmply Perfect Group.
+
+We have successfully received your job application for the position of ${role}.
+
+Our recruitment team will review your application and contact you if your profile is shortlisted for the next stage.
+
+Application Details:
+
+Position:
+${role}
+
+Name:
+${fullName}
+
+Email:
+${email}
+
+Phone:
++91 ${phone}
+
+Current Location:
+${currentLocation}
+
+Expected CTC:
+${expectedCtc}
+
+Notice Period:
+${noticePeriod}
+
+Thank you for your interest in joining Simmply Perfect Group.
+
+Regards,
+Simmply Perfect Group
+Careers Team
+      `.trim(),
+
+      html: `
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Application Received
+  </title>
+
+</head>
+
+<body
+  style="
+    margin:0;
+    padding:0;
+    background:#f1f5f9;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#172033;
+  "
+>
+
+  <div
+    style="
+      padding:30px 15px;
+    "
+  >
+
+    <div
+      style="
+        max-width:650px;
+        margin:0 auto;
+        background:#ffffff;
+        border:1px solid #e2e8f0;
+        border-radius:16px;
+        overflow:hidden;
+      "
+    >
+
+      <!-- HEADER -->
+
+      <div
+        style="
+          background:#0A2E6F;
+          padding:32px 30px;
+        "
+      >
+
+        <p
+          style="
+            margin:0 0 8px;
+            color:#bfdbfe;
+            font-size:11px;
+            font-weight:bold;
+            letter-spacing:2px;
+            text-transform:uppercase;
+          "
+        >
+          Simmply Perfect Group
+        </p>
+
+        <h1
+          style="
+            margin:0;
+            color:#ffffff;
+            font-size:26px;
+            line-height:1.3;
+          "
+        >
+          Application Received
+        </h1>
+
+        <p
+          style="
+            margin:10px 0 0;
+            color:#dbeafe;
+            font-size:14px;
+            line-height:1.6;
+          "
+        >
+          Thank you for your interest
+          in joining our team.
+        </p>
+
+      </div>
+
+      <!-- CONTENT -->
+
+      <div
+        style="
+          padding:30px;
+        "
+      >
+
+        <p
+          style="
+            margin:0 0 18px;
+            font-size:16px;
+            line-height:1.7;
+          "
+        >
+          Dear
+          <strong>
+            ${safeFirstName}
+            ${safeLastName}
+          </strong>,
+        </p>
+
+        <p
+          style="
+            margin:0 0 18px;
+            color:#475569;
+            font-size:15px;
+            line-height:1.8;
+          "
+        >
+          Thank you for applying to
+          <strong>
+            Simmply Perfect Group
+          </strong>.
+        </p>
+
+        <p
+          style="
+            margin:0;
+            color:#475569;
+            font-size:15px;
+            line-height:1.8;
+          "
+        >
+          We have successfully received
+          your application for the position of
+          <strong>
+            ${safeRole}
+          </strong>.
+        </p>
+
+        <!-- SUCCESS BOX -->
+
+        <div
+          style="
+            margin-top:24px;
+            padding:18px;
+            background:#eff6ff;
+            border:1px solid #dbeafe;
+            border-radius:10px;
+          "
+        >
+
+          <p
+            style="
+              margin:0;
+              color:#0A2E6F;
+              font-size:14px;
+              font-weight:bold;
+            "
+          >
+            Application Successfully Submitted
+          </p>
+
+          <p
+            style="
+              margin:7px 0 0;
+              color:#475569;
+              font-size:13px;
+              line-height:1.7;
+            "
+          >
+            Our recruitment team will review
+            your application and contact you
+            if your profile is shortlisted for
+            the next stage.
+          </p>
+
+        </div>
+
+        <!-- APPLICATION DETAILS -->
+
+        <h2
+          style="
+            margin:28px 0 15px;
+            color:#071224;
+            font-size:18px;
+          "
+        >
+          Application Details
+        </h2>
+
+        <table
+          width="100%"
+          cellpadding="0"
+          cellspacing="0"
+          style="
+            border-collapse:collapse;
+            font-size:13px;
+          "
+        >
+
+          ${createEmailRow(
+            "Position",
+            safeRole,
+          )}
+
+          ${createEmailRow(
+            "Name",
+            `${safeFirstName} ${safeLastName}`,
+          )}
+
+          ${createEmailRow(
+            "Email",
+            safeEmail,
+          )}
+
+          ${createEmailRow(
+            "Phone",
+            `+91 ${safePhone}`,
+          )}
+
+          ${createEmailRow(
+            "Current Location",
+            safeCurrentLocation,
+          )}
+
+          ${createEmailRow(
+            "Expected CTC",
+            safeExpectedCtc,
+          )}
+
+          ${createEmailRow(
+            "Notice Period",
+            safeNoticePeriod,
+          )}
+
+        </table>
+
+        <!-- NEXT STEPS -->
+
+        <div
+          style="
+            margin-top:25px;
+            padding:18px;
+            background:#f8fafc;
+            border:1px solid #e2e8f0;
+            border-radius:10px;
+          "
+        >
+
+          <p
+            style="
+              margin:0;
+              color:#071224;
+              font-size:14px;
+              font-weight:bold;
+            "
+          >
+            What happens next?
+          </p>
+
+          <p
+            style="
+              margin:8px 0 0;
+              color:#64748b;
+              font-size:13px;
+              line-height:1.7;
+            "
+          >
+            Our recruitment team will review
+            your application. If your profile
+            matches our requirements, we will
+            contact you regarding the next
+            steps.
+          </p>
+
+        </div>
+
+        <p
+          style="
+            margin:28px 0 0;
+            color:#475569;
+            font-size:14px;
+            line-height:1.8;
+          "
+        >
+          Thank you for taking the time to
+          apply and for your interest in
+          <strong>
+            Simmply Perfect Group
+          </strong>.
+        </p>
+
+      </div>
+
+      <!-- FOOTER -->
+
+      <div
+        style="
+          padding:22px 30px;
+          background:#f8fafc;
+          border-top:1px solid #e2e8f0;
+        "
+      >
+
+        <p
+          style="
+            margin:0;
+            text-align:center;
+            color:#0A2E6F;
+            font-size:14px;
+            font-weight:bold;
+          "
+        >
+          Simmply Perfect Group
+        </p>
+
+        <p
+          style="
+            margin:6px 0 0;
+            text-align:center;
+            color:#64748b;
+            font-size:11px;
+          "
+        >
+          Careers Team
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+
+</html>
+      `,
+    };
+
+    /* =====================================================
+       SEND BOTH EMAILS AT THE SAME TIME
+       
+       This is important for speed.
+       
+       Instead of:
+       await companyEmail
+       await applicantEmail
+
+       we do:
+       Promise.all(...)
+    ===================================================== */
+
+    const [
+      companyResult,
+      applicantResult,
+    ] = await Promise.all([
+      transporter.sendMail(
+        companyEmail,
+      ),
+
+      transporter.sendMail(
+        applicantEmail,
+      ),
+    ]);
+
+    /* =====================================================
+       LOG SUCCESS
+    ===================================================== */
+
+    console.log(
+      "CAREER APPLICATION EMAILS SENT:",
+      {
+        applicant:
+          fullName,
+
+        email,
+
+        role,
+
+        companyMessageId:
+          companyResult.messageId,
+
+        applicantMessageId:
+          applicantResult.messageId,
+      },
+    );
 
     /* =====================================================
        SUCCESS RESPONSE
@@ -967,14 +1474,19 @@ const transporter = nodemailer.createTransport({
     return NextResponse.json(
       {
         success: true,
+
         message:
-          "Application submitted successfully.",
+          "Application submitted successfully. A confirmation email has been sent to you.",
       },
       {
         status: 200,
       },
     );
   } catch (error) {
+    /* =====================================================
+       ERROR HANDLING
+    ===================================================== */
+
     console.error(
       "CAREERS EMAIL API ERROR:",
       error,
@@ -994,44 +1506,4 @@ const transporter = nodemailer.createTransport({
       },
     );
   }
-}
-
-/* =========================================================
-   EMAIL TABLE ROW
-========================================================= */
-
-function createEmailRow(
-  label: string,
-  value: string,
-) {
-  return `
-    <tr>
-
-      <td
-        style="
-          width:35%;
-          padding:11px 12px;
-          background:#f8fafc;
-          border:1px solid #e2e8f0;
-          color:#64748b;
-          font-weight:bold;
-        "
-      >
-        ${label}
-      </td>
-
-      <td
-        style="
-          padding:11px 12px;
-          border:1px solid #e2e8f0;
-          color:#071224;
-          font-weight:600;
-          word-break:break-word;
-        "
-      >
-        ${value}
-      </td>
-
-    </tr>
-  `;
 }

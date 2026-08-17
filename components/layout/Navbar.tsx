@@ -919,484 +919,514 @@ export default function Navbar() {
       ===================================================== */}
 
       <AnimatePresence>
-        {catalogsOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[500] flex items-center justify-center p-3 sm:p-5"
+  {catalogsOpen && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[500] flex items-center justify-center p-3 sm:p-5"
+    >
+      {/* BACKDROP */}
+      <motion.button
+        type="button"
+        aria-label="Close catalog popup"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={handleCloseCatalogs}
+        className="absolute inset-0 h-full w-full cursor-default bg-[#020817]/80 backdrop-blur-md"
+      />
+
+      {/* MODAL */}
+      <motion.div
+        initial={{
+          opacity: 0,
+          y: 30,
+          scale: 0.97,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          scale: 1,
+        }}
+        exit={{
+          opacity: 0,
+          y: 20,
+          scale: 0.97,
+        }}
+        transition={{
+          duration: 0.3,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+        className="relative z-[510] flex max-h-[94dvh] w-full max-w-6xl flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_40px_120px_rgba(0,0,0,0.4)]"
+      >
+        {/* MODAL HEADER */}
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-4 sm:px-7">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0A2E6F] text-white shadow-sm">
+              <FolderOpen className="h-5 w-5" />
+            </div>
+
+            <div className="min-w-0">
+              <h2 className="truncate text-lg font-bold text-[#071224] sm:text-xl">
+                Simmply Perfect Catalogs
+              </h2>
+
+              <p className="mt-0.5 hidden text-xs text-slate-500 sm:block">
+                Explore and download our architectural product catalogues
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleCloseCatalogs}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900"
           >
-            {/* BACKDROP */}
+            <X className="h-5 w-5" />
+          </button>
+        </div>
 
-            <motion.button
-              type="button"
-              aria-label="Close catalog popup"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={handleCloseCatalogs}
-              className="absolute inset-0 h-full w-full cursor-default bg-[#020817]/80 backdrop-blur-md"
-            />
+        {/* =================================================
+            LEAD FORM / CATALOG ARCHIVE
+        ================================================= */}
+        {!isSubmitted ? (
+          <div className="grid flex-1 overflow-y-auto lg:grid-cols-[0.9fr_1.1fr]">
+            {/* LEFT INFORMATION PANEL */}
+            <div className="relative hidden overflow-hidden bg-[#071224] p-10 text-white lg:block">
+              <div
+                className="absolute inset-0 opacity-[0.08]"
+                style={{
+                  backgroundImage: `
+                    linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)
+                  `,
+                  backgroundSize: "45px 45px",
+                }}
+              />
 
-            {/* MODAL */}
+              <div className="relative">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5">
+                  <Sparkles className="h-4 w-4 text-blue-300" />
 
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 30,
-                scale: 0.97,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                scale: 1,
-              }}
-              exit={{
-                opacity: 0,
-                y: 20,
-                scale: 0.97,
-              }}
-              transition={{
-                duration: 0.3,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="relative z-[510] flex max-h-[94dvh] w-full max-w-6xl flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_40px_120px_rgba(0,0,0,0.4)]"
-            >
-              {/* MODAL HEADER */}
-
-              <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-4 sm:px-7">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0A2E6F] text-white">
-                    <FolderOpen className="h-5 w-5" />
-                  </div>
-
-                  <div className="min-w-0">
-                    <h2 className="truncate text-lg font-bold text-[#071224] sm:text-xl">
-                      Simmply Perfect Catalogs
-                    </h2>
-
-                    <p className="mt-0.5 hidden text-xs text-slate-500 sm:block">
-                      Explore and download our product catalogues
-                    </p>
-                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100">
+                    Product Library
+                  </span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleCloseCatalogs}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
+                <h3 className="mt-7 text-3xl font-extrabold leading-tight tracking-tight xl:text-4xl">
+                  Discover our complete product collection.
+                </h3>
 
-              {/* =================================================
-                  LEAD FORM
-              ================================================= */}
+                <p className="mt-4 text-sm leading-relaxed text-slate-300">
+                  Access premium specifications and blueprints for railing systems,
+                  UPVC windows, UPVC doors, solid wooden doors, WPC doors, and custom window grills.
+                </p>
 
-              {!isSubmitted ? (
-                <div className="grid flex-1 overflow-y-auto lg:grid-cols-[0.9fr_1.1fr]">
-                  {/* LEFT INFORMATION */}
-
-                  <div className="relative hidden overflow-hidden bg-[#071224] p-10 text-white lg:block">
+                <div className="mt-8 space-y-3.5">
+                  {[
+                    "High-resolution architectural catalogues",
+                    "Detailed profile and hardware specifications",
+                    "Instant online preview and direct PDF downloads",
+                  ].map((item) => (
                     <div
-                      className="absolute inset-0 opacity-[0.08]"
-                      style={{
-                        backgroundImage: `
-                          linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)
-                        `,
-                        backgroundSize: "45px 45px",
-                      }}
-                    />
-
-                    <div className="relative">
-                      <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-2">
-                        <Sparkles className="h-4 w-4 text-blue-300" />
-
-                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100">
-                          Product Library
-                        </span>
+                      key={item}
+                      className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-3"
+                    >
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-300">
+                        <ArrowRight className="h-3.5 w-3.5" />
                       </div>
 
-                      <h3 className="mt-8 text-4xl font-bold leading-tight tracking-[-0.04em]">
-                        Discover our complete product collection.
-                      </h3>
+                      <span className="text-xs font-semibold text-slate-200">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-                      <p className="mt-5 text-sm leading-7 text-slate-300">
-                        Access premium catalogues for railing systems,
-                        UPVC windows, UPVC doors, wooden doors, WPC
-                        doors, and WPVC solutions.
-                      </p>
+            {/* FORM PANEL */}
+            <div className="flex items-center p-6 sm:p-10">
+              <form
+                onSubmit={handleSubmit}
+                autoComplete="on"
+                className="mx-auto w-full max-w-lg"
+              >
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
+                  Catalogue Access
+                </p>
 
-                      <div className="mt-10 space-y-4">
-                        {[
-                          "High-quality product catalogues",
-                          "Detailed product specifications",
-                          "Instant PDF preview and download",
-                        ].map((item) => (
-                          <div
-                            key={item}
-                            className="flex items-center gap-3"
-                          >
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-                              <ArrowRight className="h-4 w-4 text-blue-300" />
-                            </div>
+                <h3 className="mt-2 text-2xl font-bold tracking-tight text-[#071224] sm:text-3xl">
+                  Enter your details
+                </h3>
 
-                            <span className="text-sm font-semibold text-slate-200">
-                              {item}
-                            </span>
-                          </div>
-                        ))}
+                <p className="mt-1.5 text-xs text-slate-500 sm:text-sm">
+                  Complete the short form below to unlock our complete digital catalogue library.
+                </p>
+
+                <div className="mt-6 space-y-4">
+                  {/* FULL NAME */}
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Full Name *
+                    </label>
+
+                    <div
+                      className={`group relative flex h-12 w-full items-center rounded-xl border bg-slate-50/50 transition-all duration-200 ${
+                        focusedField === "name"
+                          ? "border-[#0A2E6F] bg-white ring-4 ring-[#0A2E6F]/[0.05]"
+                          : "border-slate-200 hover:border-slate-300"
+                      }`}
+                    >
+                      <div className="relative z-20 flex shrink-0 items-center pl-3.5">
+                        <User className="h-4 w-4 text-slate-400" />
+                      </div>
+
+                      <div className="relative z-10 min-w-0 flex-1">
+                        <input
+                          required
+                          type="text"
+                          name="catalog_customer_name"
+                          autoComplete="name"
+                          value={formData.name}
+                          onFocus={() => setFocusedField("name")}
+                          onBlur={() => setFocusedField(null)}
+                          onChange={(event) =>
+                            setFormData((previous) => ({
+                              ...previous,
+                              name: event.target.value,
+                            }))
+                          }
+                          placeholder="e.g. John Doe"
+                          className="catalog-modal-input"
+                        />
                       </div>
                     </div>
                   </div>
 
-                  {/* FORM */}
+                  {/* EMAIL ADDRESS */}
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Email Address *
+                    </label>
 
-                  <div className="flex items-center p-6 sm:p-10">
-                    <form
-                      onSubmit={handleSubmit}
-                      className="mx-auto w-full max-w-lg"
+                    <div
+                      className={`group relative flex h-12 w-full items-center rounded-xl border bg-slate-50/50 transition-all duration-200 ${
+                        focusedField === "email"
+                          ? "border-[#0A2E6F] bg-white ring-4 ring-[#0A2E6F]/[0.05]"
+                          : "border-slate-200 hover:border-slate-300"
+                      }`}
                     >
-                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
-                        Catalogue Access
-                      </p>
-
-                      <h3 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-[#071224]">
-                        Enter your details
-                      </h3>
-
-                      <p className="mt-3 text-sm leading-6 text-slate-500">
-                        Complete the short form below to access our
-                        digital catalogue library.
-                      </p>
-
-                      <div className="mt-8 space-y-4">
-                        {/* NAME */}
-
-                        <div>
-                          <label className="mb-2 block text-xs font-bold text-slate-700">
-                            Full Name
-                          </label>
-
-                          <div
-                            className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
-                              focusedField === "name"
-                                ? "border-[#0A2E6F] ring-4 ring-blue-50"
-                                : "border-slate-200"
-                            }`}
-                          >
-                            <User className="h-4 w-4 shrink-0 text-slate-400" />
-
-                            <input
-                              required
-                              type="text"
-                              name="catalog_customer_name"
-                              value={formData.name}
-                              autoComplete="off"
-                              onFocus={() => setFocusedField("name")}
-                              onBlur={() => setFocusedField(null)}
-                              onChange={(event) =>
-                                setFormData((previous) => ({
-                                  ...previous,
-                                  name: event.target.value,
-                                }))
-                              }
-                              placeholder="Enter your full name"
-                              className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
-                            />
-                          </div>
-                        </div>
-
-                        {/* EMAIL */}
-
-                        <div>
-                          <label className="mb-2 block text-xs font-bold text-slate-700">
-                            Email Address
-                          </label>
-
-                          <div
-                            className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
-                              focusedField === "email"
-                                ? "border-[#0A2E6F] ring-4 ring-blue-50"
-                                : "border-slate-200"
-                            }`}
-                          >
-                            <Mail className="h-4 w-4 shrink-0 text-slate-400" />
-
-                            <input
-                              required
-                              type="email"
-                              name="catalog_customer_email"
-                              value={formData.email}
-                              autoComplete="off"
-                              onFocus={() => setFocusedField("email")}
-                              onBlur={() => setFocusedField(null)}
-                              onChange={(event) =>
-                                setFormData((previous) => ({
-                                  ...previous,
-                                  email: event.target.value,
-                                }))
-                              }
-                              placeholder="Enter your email address"
-                              className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
-                            />
-                          </div>
-                        </div>
-
-                        {/* PHONE */}
-
-                        <div>
-                          <label className="mb-2 block text-xs font-bold text-slate-700">
-                            Mobile Number
-                          </label>
-
-                          <div
-                            className={`flex items-center rounded-xl border bg-transparent px-4 transition-all duration-300 ${
-                              focusedField === "phone"
-                                ? "border-[#0A2E6F] ring-4 ring-blue-50"
-                                : "border-slate-200"
-                            }`}
-                          >
-                            <Phone className="h-4 w-4 shrink-0 text-slate-400" />
-
-                            <input
-                              required
-                              type="tel"
-                              name="catalog_customer_mobile"
-                              value={formData.phone}
-                              autoComplete="off"
-                              inputMode="numeric"
-                              onFocus={() => setFocusedField("phone")}
-                              onBlur={() => setFocusedField(null)}
-                              onChange={(event) =>
-                                handlePhoneChange(event.target.value)
-                              }
-                              placeholder="+91 98765 43210"
-                              className="w-full bg-transparent px-3 py-4 text-sm text-slate-800 outline-none placeholder:text-slate-400"
-                            />
-                          </div>
-                        </div>
+                      <div className="relative z-20 flex shrink-0 items-center pl-3.5">
+                        <Mail className="h-4 w-4 text-slate-400" />
                       </div>
 
-                      {submitError && (
-                        <p className="mt-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-xs font-medium text-red-600">
-                          {submitError}
-                        </p>
-                      )}
+                      <div className="relative z-10 min-w-0 flex-1">
+                        <input
+                          required
+                          type="email"
+                          name="catalog_customer_email"
+                          autoComplete="email"
+                          value={formData.email}
+                          onFocus={() => setFocusedField("email")}
+                          onBlur={() => setFocusedField(null)}
+                          onChange={(event) =>
+                            setFormData((previous) => ({
+                              ...previous,
+                              email: event.target.value,
+                            }))
+                          }
+                          placeholder="you@domain.com"
+                          className="catalog-modal-input"
+                        />
+                      </div>
+                    </div>
+                  </div>
 
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="mt-7 flex w-full items-center justify-center gap-3 rounded-xl bg-[#0A2E6F] px-5 py-4 text-sm font-bold text-white transition-all hover:bg-[#123D80] disabled:cursor-not-allowed disabled:opacity-60"
+                  {/* MOBILE NUMBER */}
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Mobile Number *
+                    </label>
+
+                    <div
+                      className={`group relative flex h-12 w-full items-center rounded-xl border bg-slate-50/50 transition-all duration-200 ${
+                        focusedField === "phone"
+                          ? "border-[#0A2E6F] bg-white ring-4 ring-[#0A2E6F]/[0.05]"
+                          : "border-slate-200 hover:border-slate-300"
+                      }`}
+                    >
+                      <div className="relative z-20 flex shrink-0 items-center pl-3.5">
+                        <Phone className="h-4 w-4 text-slate-400" />
+                      </div>
+
+                      <div className="relative z-10 min-w-0 flex-1">
+                        <input
+                          required
+                          type="tel"
+                          name="catalog_customer_mobile"
+                          autoComplete="tel"
+                          inputMode="numeric"
+                          value={formData.phone}
+                          onFocus={() => setFocusedField("phone")}
+                          onBlur={() => setFocusedField(null)}
+                          onChange={(event) =>
+                            handlePhoneChange(event.target.value)
+                          }
+                          placeholder="+91 98765 43210"
+                          className="catalog-modal-input"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {submitError && (
+                  <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-600">
+                    {submitError}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#0A2E6F] px-5 text-xs font-bold uppercase tracking-wider text-white shadow-[0_10px_25px_rgba(10,46,111,0.2)] transition-all duration-200 hover:bg-[#0c3784] hover:shadow-[0_15px_30px_rgba(10,46,111,0.3)] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Unlocking Library...
+                    </>
+                  ) : (
+                    <>
+                      Access Catalogues
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        ) : (
+          /* =================================================
+              CATALOG LIBRARY (WHEN SUBMITTED)
+          ================================================= */
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
+            {/* CATEGORIES SIDEBAR */}
+            <div className="shrink-0 border-b border-slate-200 bg-slate-50 p-4 lg:w-[310px] lg:border-b-0 lg:border-r lg:p-5">
+              <p className="mb-3 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+                Product Categories
+              </p>
+
+              <div className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
+                {categoriesData.map((category) => {
+                  const Icon = category.icon;
+                  const active = activeFolderId === category.id;
+
+                  return (
+                    <button
+                      type="button"
+                      key={category.id}
+                      onClick={() => {
+                        setActiveFolderId(category.id);
+                        setActivePreviewPdf(null);
+                      }}
+                      className={`flex min-w-[210px] items-center gap-3 rounded-xl border px-3 py-3 text-left transition-all lg:min-w-0 ${
+                        active
+                          ? "border-[#0A2E6F] bg-[#0A2E6F] text-white shadow-md"
+                          : "border-transparent bg-white text-slate-600 hover:border-slate-200"
+                      }`}
+                    >
+                      <div
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                          active
+                            ? "bg-white/10"
+                            : "bg-blue-50 text-[#0A2E6F]"
+                        }`}
                       >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            Access Catalogues
-                            <ArrowRight className="h-4 w-4" />
-                          </>
-                        )}
-                      </button>
-                    </form>
+                        <Icon className="h-4 w-4" />
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-bold">
+                          {category.name}
+                        </p>
+
+                        <p
+                          className={`mt-0.5 truncate text-[10px] ${
+                            active ? "text-blue-100/70" : "text-slate-400"
+                          }`}
+                        >
+                          {category.files.length} Catalogues
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* CATALOGS CONTENT GRID / PDF PREVIEW */}
+            <div className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-7">
+              {!activeCategoryObject ? (
+                <div className="flex min-h-[450px] flex-col items-center justify-center text-center">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-blue-50 text-[#0A2E6F]">
+                    <FolderOpen className="h-9 w-9" />
+                  </div>
+
+                  <h3 className="mt-6 text-2xl font-bold text-[#071224]">
+                    Select a product category
+                  </h3>
+
+                  <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
+                    Choose one of the available categories on the left to browse, preview, and download architectural catalogues.
+                  </p>
+                </div>
+              ) : activePreviewPdf ? (
+                <div className="flex h-full min-h-[550px] flex-col">
+                  <div className="mb-4 flex items-center justify-between gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setActivePreviewPdf(null)}
+                      className="inline-flex items-center gap-2 text-sm font-bold text-[#0A2E6F]"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      Back to Catalogues
+                    </button>
+
+                    <a
+                      href={activePreviewPdf.url}
+                      download
+                      className="inline-flex items-center gap-2 rounded-xl bg-[#0A2E6F] px-4 py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#0c3784]"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download PDF
+                    </a>
+                  </div>
+
+                  <div className="min-h-[500px] flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+                    <iframe
+                      src={activePreviewPdf.url}
+                      title={activePreviewPdf.title}
+                      className="h-full min-h-[500px] w-full"
+                    />
                   </div>
                 </div>
               ) : (
-                /* =================================================
-                    CATALOG LIBRARY
-                ================================================= */
-
-                <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
-                  {/* CATEGORIES */}
-
-                  <div className="shrink-0 border-b border-slate-200 bg-slate-50 p-4 lg:w-[310px] lg:border-b-0 lg:border-r lg:p-5">
-                    <p className="mb-3 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
-                      Product Categories
+                <>
+                  <div className="border-b border-slate-200 pb-5">
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
+                      Catalogue Collection
                     </p>
 
-                    <div className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
-                      {categoriesData.map((category) => {
-                        const Icon = category.icon;
-                        const active =
-                          activeFolderId === category.id;
+                    <h3 className="mt-2 text-2xl font-bold text-[#071224]">
+                      {activeCategoryObject.name}
+                    </h3>
 
-                        return (
-                          <button
-                            type="button"
-                            key={category.id}
-                            onClick={() => {
-                              setActiveFolderId(category.id);
-                              setActivePreviewPdf(null);
-                            }}
-                            className={`flex min-w-[210px] items-center gap-3 rounded-xl border px-3 py-3 text-left transition-all lg:min-w-0 ${
-                              active
-                                ? "border-[#0A2E6F] bg-[#0A2E6F] text-white shadow-md"
-                                : "border-transparent bg-white text-slate-600 hover:border-slate-200"
-                            }`}
-                          >
-                            <div
-                              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                                active
-                                  ? "bg-white/10"
-                                  : "bg-blue-50 text-[#0A2E6F]"
-                              }`}
-                            >
-                              <Icon className="h-4 w-4" />
-                            </div>
-
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-bold">
-                                {category.name}
-                              </p>
-
-                              <p
-                                className={`mt-0.5 truncate text-[10px] ${
-                                  active
-                                    ? "text-blue-100/70"
-                                    : "text-slate-400"
-                                }`}
-                              >
-                                {category.files.length} Catalogues
-                              </p>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <p className="mt-2 text-sm text-slate-500">
+                      {activeCategoryObject.desc}
+                    </p>
                   </div>
 
-                  {/* CONTENT */}
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {activeCategoryObject.files.map((file) => (
+                      <div
+                        key={file.url}
+                        className="group rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:border-[#0A2E6F]/30 hover:shadow-md"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-500">
+                            <FileText className="h-5 w-5" />
+                          </div>
 
-                  <div className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-7">
-                    {!activeCategoryObject ? (
-                      <div className="flex min-h-[450px] flex-col items-center justify-center text-center">
-                        <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-blue-50 text-[#0A2E6F]">
-                          <Folder className="h-9 w-9" />
+                          <div className="min-w-0 flex-1">
+                            <h4 className="line-clamp-2 text-sm font-bold text-[#071224]">
+                              {file.name}
+                            </h4>
+
+                            <p className="mt-1 text-[11px] text-slate-400">
+                              PDF • {file.size}
+                            </p>
+                          </div>
                         </div>
 
-                        <h3 className="mt-6 text-2xl font-bold text-[#071224]">
-                          Select a product category
-                        </h3>
-
-                        <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
-                          Choose one of the available categories to
-                          browse, preview, and download product
-                          catalogues.
-                        </p>
-                      </div>
-                    ) : activePreviewPdf ? (
-                      <div className="flex h-full min-h-[550px] flex-col">
-                        <div className="mb-4 flex items-center justify-between gap-4">
+                        <div className="mt-4 grid grid-cols-2 gap-2">
                           <button
                             type="button"
                             onClick={() =>
-                              setActivePreviewPdf(null)
+                              setActivePreviewPdf({
+                                title: file.name,
+                                url: file.url,
+                              })
                             }
-                            className="inline-flex items-center gap-2 text-sm font-bold text-[#0A2E6F]"
+                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2.5 text-xs font-bold text-slate-600 transition-colors hover:border-[#0A2E6F] hover:text-[#0A2E6F]"
                           >
-                            <ArrowLeft className="h-4 w-4" />
-                            Back to Catalogues
+                            <Eye className="h-3.5 w-3.5" />
+                            Preview
                           </button>
 
                           <a
-                            href={activePreviewPdf.url}
+                            href={file.url}
                             download
-                            className="inline-flex items-center gap-2 rounded-xl bg-[#0A2E6F] px-4 py-2.5 text-xs font-bold text-white"
+                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0A2E6F] px-3 py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#0c3784]"
                           >
-                            <Download className="h-4 w-4" />
+                            <Download className="h-3.5 w-3.5" />
                             Download
                           </a>
                         </div>
-
-                        <div className="min-h-[500px] flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-                          <iframe
-                            src={activePreviewPdf.url}
-                            title={activePreviewPdf.title}
-                            className="h-full min-h-[500px] w-full"
-                          />
-                        </div>
                       </div>
-                    ) : (
-                      <>
-                        <div className="border-b border-slate-200 pb-5">
-                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0A2E6F]">
-                            Catalogue Collection
-                          </p>
-
-                          <h3 className="mt-2 text-2xl font-bold text-[#071224]">
-                            {activeCategoryObject.name}
-                          </h3>
-
-                          <p className="mt-2 text-sm text-slate-500">
-                            {activeCategoryObject.desc}
-                          </p>
-                        </div>
-
-                        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                          {activeCategoryObject.files.map(
-                            (file) => (
-                              <div
-                                key={file.url}
-                                className="group rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:border-[#0A2E6F]/30 hover:shadow-md"
-                              >
-                                <div className="flex items-start gap-3">
-                                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-500">
-                                    <FileText className="h-5 w-5" />
-                                  </div>
-
-                                  <div className="min-w-0 flex-1">
-                                    <h4 className="line-clamp-2 text-sm font-bold text-[#071224]">
-                                      {file.name}
-                                    </h4>
-
-                                    <p className="mt-1 text-[11px] text-slate-400">
-                                      PDF • {file.size}
-                                    </p>
-                                  </div>
-                                </div>
-
-                                <div className="mt-4 grid grid-cols-2 gap-2">
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setActivePreviewPdf({
-                                        title: file.name,
-                                        url: file.url,
-                                      })
-                                    }
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2.5 text-xs font-bold text-slate-600 transition-colors hover:border-[#0A2E6F] hover:text-[#0A2E6F]"
-                                  >
-                                    <Eye className="h-3.5 w-3.5" />
-                                    Preview
-                                  </button>
-
-                                  <a
-                                    href={file.url}
-                                    download
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0A2E6F] px-3 py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#123D80]"
-                                  >
-                                    <Download className="h-3.5 w-3.5" />
-                                    Download
-                                  </a>
-                                </div>
-                              </div>
-                            ),
-                          )}
-                        </div>
-                      </>
-                    )}
+                    ))}
                   </div>
-                </div>
+                </>
               )}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
-      </AnimatePresence>
+      </motion.div>
+
+      {/* AUTOFILL CSS FIX SCOPED TO MODAL */}
+      <style jsx global>{`
+        .catalog-modal-input {
+          width: 100%;
+          min-width: 0;
+          border: 0;
+          outline: none;
+          background: transparent !important;
+          padding: 0.75rem 0.875rem;
+          font-size: 0.875rem;
+          line-height: 1.25rem;
+          color: #0f172a;
+          position: relative;
+          z-index: 10;
+          box-sizing: border-box;
+        }
+
+        .catalog-modal-input::placeholder {
+          color: #94a3b8;
+          opacity: 1;
+        }
+
+        .catalog-modal-input:-webkit-autofill,
+        .catalog-modal-input:-webkit-autofill:hover,
+        .catalog-modal-input:-webkit-autofill:focus,
+        .catalog-modal-input:-webkit-autofill:active {
+          -webkit-text-fill-color: #0f172a !important;
+          caret-color: #0f172a !important;
+          -webkit-box-shadow: none !important;
+          box-shadow: none !important;
+          background-color: transparent !important;
+          transition: background-color 600000s ease-in-out 0s, color 600000s ease-in-out 0s !important;
+        }
+
+        .catalog-modal-input:-webkit-autofill::first-line {
+          -webkit-text-fill-color: #0f172a !important;
+          color: #0f172a !important;
+        }
+      `}</style>
+    </motion.div>
+  )}
+</AnimatePresence>
     </>
   );
 }
