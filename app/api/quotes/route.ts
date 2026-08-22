@@ -29,7 +29,7 @@ const COMPANY_PHONE = "+91 93907 19623";
 const COMPANY_NAME = "Simmply Perfect Windows & Doors";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-/* In-memory logo cache for speed */
+/* In-memory logo cache */
 let cachedLogoBytes: Buffer | null = null;
 async function getLogoBytes(): Promise<Buffer | null> {
   if (cachedLogoBytes) return cachedLogoBytes;
@@ -49,28 +49,23 @@ async function getLogoBytes(): Promise<Buffer | null> {
 const SERVICE_BASE_CONFIG = [
   {
     id: "window-measurement",
-    name: "Window Measurement",
+    name: "Site visit for Window Measurement",
     hydAmount: 700,
     outsideAmount: 5000,
   },
   {
-    id: "service-request",
-    name: "Service Request",
+    id: "door-measurement",
+    name: "Site Visit for Door Measurement",
     hydAmount: 500,
     outsideAmount: 3000,
   },
   {
-    id: "maintenance",
-    name: "Maintenance",
+    id: "repair-maintenance",
+    name: "Site Visit for Repair and Maintenance",
     hydAmount: 500,
     outsideAmount: 3500,
   },
 ];
-
-function isHyderabadPincode(pincode: string): boolean {
-  const pin = parseInt(pincode.replace(/\D/g, ""), 10);
-  return pin >= 500001 && pin <= 500099;
-}
 
 function formatToDDMMYYYY(dateString: string): string {
   if (!dateString) return "";
@@ -160,10 +155,9 @@ function wrapText(text: string, maxCharacters: number): string[] {
 
 function normalizeServices(
   rawServices: unknown[],
-  pincode: string,
+  isHyderabad: boolean,
 ): NormalizedService[] {
   const normalized: NormalizedService[] = [];
-  const isHyd = isHyderabadPincode(pincode);
 
   for (const raw of rawServices) {
     if (!raw || typeof raw !== "object") continue;
@@ -179,7 +173,7 @@ function normalizeServices(
     normalized.push({
       id: baseConfig.id,
       name: baseConfig.name,
-      amount: isHyd ? baseConfig.hydAmount : baseConfig.outsideAmount,
+      amount: isHyderabad ? baseConfig.hydAmount : baseConfig.outsideAmount,
     });
   }
 
@@ -193,10 +187,8 @@ function normalizeServices(
 async function generateBookingSlipPdf({
   bookingId,
   fullName,
-  email,
   phone,
-  company,
-  pincode,
+  isHyderabad,
   address,
   problemStatement,
   remarks,
@@ -208,10 +200,8 @@ async function generateBookingSlipPdf({
 }: {
   bookingId: string;
   fullName: string;
-  email: string;
   phone: string;
-  company: string;
-  pincode: string;
+  isHyderabad: boolean;
   address: string;
   problemStatement: string;
   remarks: string;
@@ -237,7 +227,7 @@ async function generateBookingSlipPdf({
   const lightBg = rgb(0.97, 0.98, 0.99);
   const white = rgb(1, 1, 1);
 
-  // Background Canvas
+  // Background
   page.drawRectangle({
     x: 0,
     y: 0,
@@ -246,7 +236,7 @@ async function generateBookingSlipPdf({
     color: rgb(0.95, 0.965, 0.985),
   });
 
-  // Slip Container Card
+  // Slip Card
   const cardMargin = 30;
   const cardX = cardMargin;
   const cardY = cardMargin;
@@ -263,7 +253,7 @@ async function generateBookingSlipPdf({
     borderWidth: 0.8,
   });
 
-  // Logo Rendering
+  // Logo
   let logoDrawn = false;
   try {
     const logoBytes = await getLogoBytes();
@@ -370,14 +360,14 @@ async function generateBookingSlipPdf({
   drawField("CUSTOMER", fullName || "Customer Name", leftColX, cursorY, true);
   drawField("CONTACT (MOB)", phone || "Phone Number", rightColX, cursorY, true);
 
-  // Row 2: Email / Pincode
+  // Row 2: Location Tier
   cursorY -= 40;
-  drawField("EMAIL", email || "—", leftColX, cursorY);
   drawField(
-    "PINCODE & REGION",
-    `${pincode} (${isHyderabadPincode(pincode) ? "Hyderabad" : "Outside Hyderabad"})`,
-    rightColX,
+    "LOCATION REGION",
+    isHyderabad ? "In Hyderabad" : "Outside Hyderabad",
+    leftColX,
     cursorY,
+    true,
   );
 
   // Row 3: Site Location
@@ -636,10 +626,8 @@ export async function POST(req: Request) {
     ).trim();
 
     const fullName = String(formData.get("fullName") || "").trim();
-    const email = String(formData.get("email") || "").trim();
     const phone = String(formData.get("phone") || "").trim();
-    const company = String(formData.get("company") || "").trim();
-    const pincode = String(formData.get("pincode") || "").trim();
+    const isHyderabad = String(formData.get("isHyderabad") || "true") === "true";
     const address = String(formData.get("address") || "").trim();
     const problemStatement = String(formData.get("problemStatement") || "").trim();
     const remarks = String(formData.get("remarks") || "").trim();
@@ -653,12 +641,12 @@ export async function POST(req: Request) {
     const issuePhoto = formData.get("issuePhoto");
     const paymentScreenshot = formData.get("paymentScreenshot");
 
-    /* Form Validation */
-    if (!fullName || !phone || !pincode || !address || !problemStatement || !plannedDate || !rawServices.length) {
+    /* Validation */
+    if (!fullName || !phone || !address || !problemStatement || !plannedDate || !rawServices.length) {
       return NextResponse.json(
         {
           success: false,
-          message: "Please complete all required fields (Name, Mob, Pincode, Site Location, Problem Statement, Planned Date, and Service Category).",
+          message: "Please complete all required fields (Name, Mob, Site Location, Problem Statement, Planned Date, and Service Category).",
         },
         { status: 400 },
       );
@@ -671,16 +659,6 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
-
-    const pinDigits = pincode.replace(/\D/g, "");
-    if (pinDigits.length !== 6) {
-      return NextResponse.json(
-        { success: false, message: "Please enter a valid 6-digit Pincode." },
-        { status: 400 },
-      );
-    }
-
-    const isCustomerEmailValid = email ? /^\S+@\S+\.\S+$/.test(email) : false;
 
     if (!latitude || !longitude) {
       return NextResponse.json(
@@ -710,22 +688,16 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!(issuePhoto instanceof File) || issuePhoto.size === 0) {
-      return NextResponse.json(
-        { success: false, message: "Photo of the issue is required." },
-        { status: 400 },
-      );
-    }
-
-    if (issuePhoto.size > MAX_FILE_SIZE) {
+    const hasIssuePhoto = issuePhoto instanceof File && issuePhoto.size > 0;
+    if (hasIssuePhoto && issuePhoto.size > MAX_FILE_SIZE) {
       return NextResponse.json(
         { success: false, message: "Issue photo must be below 10MB." },
         { status: 400 },
       );
     }
 
-    // Dynamic Services based on Pincode
-    const services = normalizeServices(rawServices, pincode);
+    // Dynamic Services based on Region
+    const services = normalizeServices(rawServices, isHyderabad);
     if (!services.length) {
       return NextResponse.json(
         { success: false, message: "Please select at least one valid service." },
@@ -741,7 +713,7 @@ export async function POST(req: Request) {
     const smtpPass = (process.env.SMTP_PASS || "").replace(/\s+/g, "");
 
     if (!smtpHost || !smtpUser || !smtpPass) {
-      console.error("BOOKINGS API: SMTP configuration is missing in environment.");
+      console.error("BOOKINGS API: SMTP configuration is missing.");
       return NextResponse.json(
         { success: false, message: "Email service is not configured." },
         { status: 500 },
@@ -759,17 +731,14 @@ export async function POST(req: Request) {
     });
 
     const plannedDateFormatted = formatToDDMMYYYY(plannedDate);
-    const isHyd = isHyderabadPincode(pincode);
 
-    // Parallelize buffer generation for fast response times
+    // Parallel buffer loading
     const [pdfBuffer, screenshotBuffer, issuePhotoBuffer] = await Promise.all([
       generateBookingSlipPdf({
         bookingId,
         fullName,
-        email: email || "Not provided",
         phone,
-        company: company || "—",
-        pincode,
+        isHyderabad,
         address,
         problemStatement,
         remarks,
@@ -780,12 +749,11 @@ export async function POST(req: Request) {
         date: submittedDate,
       }),
       paymentScreenshot.arrayBuffer().then((buf) => Buffer.from(buf)),
-      issuePhoto.arrayBuffer().then((buf) => Buffer.from(buf)),
+      hasIssuePhoto ? issuePhoto.arrayBuffer().then((buf) => Buffer.from(buf)) : Promise.resolve(null),
     ]);
 
     const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${latitude},${longitude}`)}`;
 
-    /* High-Performance Transport */
     const transporter = nodemailer.createTransport({
       host: smtpHost,
       port: smtpPort,
@@ -800,10 +768,7 @@ export async function POST(req: Request) {
     });
 
     const safeName = escapeHtml(fullName);
-    const safeEmail = escapeHtml(email || "Not provided");
     const safePhone = escapeHtml(phone);
-    const safeCompany = escapeHtml(company || "Not provided");
-    const safePincode = escapeHtml(pincode);
     const safeAddress = escapeHtml(address);
     const safeProblem = escapeHtml(problemStatement).replace(/\n/g, "<br />");
     const safeRemarks = escapeHtml(remarks || "None").replace(/\n/g, "<br />");
@@ -830,29 +795,29 @@ export async function POST(req: Request) {
       contentType: "application/pdf",
     };
 
-    // Exactly 3 Attachments for Owner
-    const adminAttachments = [
+    const adminAttachments: any[] = [
       bookingPdfAttachment,
       {
         filename: paymentScreenshot.name || `Payment-${bookingId}.png`,
         content: screenshotBuffer,
         contentType: paymentScreenshot.type || "application/octet-stream",
       },
-      {
+    ];
+
+    if (issuePhotoBuffer && hasIssuePhoto) {
+      adminAttachments.push({
         filename: issuePhoto.name || `Issue-Photo-${bookingId}.png`,
         content: issuePhotoBuffer,
         contentType: issuePhoto.type || "application/octet-stream",
-      },
-    ];
+      });
+    }
 
-    /* Authenticated From Field (Mandatory for Gmail SPF/DMARC Delivery) */
     const senderHeader = `"${COMPANY_NAME}" <${SMTP_FROM}>`;
 
-    // 1. Owner Admin Email
     const adminMail = {
       from: senderHeader,
       to: ADMIN_EMAIL,
-      replyTo: isCustomerEmailValid ? email : SMTP_FROM,
+      replyTo: SMTP_FROM,
       subject: `🚨 NEW BOOKING: ${bookingId} - ${formatCurrency(total)} (UTR: ${utr}) - ${fullName}`,
       attachments: adminAttachments,
       html: `
@@ -872,16 +837,14 @@ export async function POST(req: Request) {
                 <div style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:18px;margin-bottom:24px;">
                   <div style="font-size:11px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:1px;">Verified Payment Reference</div>
                   <div style="font-size:26px;font-weight:900;color:#0A2E6F;margin-top:4px;letter-spacing:0.5px;">UTR: ${safeUtr}</div>
-                  <div style="font-size:14px;color:#1e3a8a;margin-top:4px;">Amount Paid: <strong>${formatCurrency(total)}</strong> (${isHyd ? "In Hyderabad" : "Outside Hyderabad"})</div>
+                  <div style="font-size:14px;color:#1e3a8a;margin-top:4px;">Amount Paid: <strong>${formatCurrency(total)}</strong> (${isHyderabad ? "In Hyderabad" : "Outside Hyderabad"})</div>
                 </div>
 
                 <h3 style="margin:0 0 12px;color:#0A2E6F;font-size:14px;text-transform:uppercase;">Customer & Site Details</h3>
                 <table style="width:100%;font-size:13px;line-height:1.6;margin-bottom:20px;">
                   <tr><td style="width:170px;color:#64748b;font-weight:600;">Name:</td><td><strong>${safeName}</strong></td></tr>
                   <tr><td style="color:#64748b;font-weight:600;">Mob:</td><td><strong>${safePhone}</strong></td></tr>
-                  <tr><td style="color:#64748b;font-weight:600;">Email:</td><td>${safeEmail}</td></tr>
-                  <tr><td style="color:#64748b;font-weight:600;">Company:</td><td>${safeCompany}</td></tr>
-                  <tr><td style="color:#64748b;font-weight:600;">Pincode:</td><td><strong>${safePincode} (${isHyd ? "In Hyderabad" : "Outside Hyderabad"})</strong></td></tr>
+                  <tr><td style="color:#64748b;font-weight:600;">Location Region:</td><td><strong>${isHyderabad ? "In Hyderabad" : "Outside Hyderabad"}</strong></td></tr>
                   <tr><td style="color:#64748b;font-weight:600;">Site Location:</td><td><strong>${safeAddress}</strong></td></tr>
                   <tr><td style="color:#64748b;font-weight:600;">Planned Site Visit Date:</td><td><strong style="color:#0A2E6F;font-size:15px;">${plannedDateFormatted}</strong></td></tr>
                 </table>
@@ -892,7 +855,7 @@ export async function POST(req: Request) {
                 <h3 style="margin:20px 0 8px;color:#0A2E6F;font-size:14px;text-transform:uppercase;">Remarks</h3>
                 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;font-size:13px;">${safeRemarks}</div>
 
-                <h3 style="margin:25px 0 10px;color:#0A2E6F;font-size:14px;text-transform:uppercase;">Booked Services (${isHyd ? "Hyderabad Rates" : "Outside Hyderabad Rates"})</h3>
+                <h3 style="margin:25px 0 10px;color:#0A2E6F;font-size:14px;text-transform:uppercase;">Booked Services (${isHyderabad ? "Hyderabad Rates" : "Outside Hyderabad Rates"})</h3>
                 <table style="width:100%;border-collapse:collapse;font-size:13px;">${serviceRows}
                   <tr>
                     <td style="padding:15px 0;font-weight:800;font-size:14px;">TOTAL PAID</td>
@@ -908,10 +871,7 @@ export async function POST(req: Request) {
                 </div>
 
                 <div style="margin-top:24px;padding:14px;background:#f1f5f9;border-radius:10px;font-size:12px;color:#475569;">
-                  📎 <strong>3 Attachments Included:</strong><br/>
-                  1. Official PDF Service Booking Slip<br/>
-                  2. User Payment Verification Screenshot<br/>
-                  3. Uploaded Issue Photo
+                  📎 <strong>Attachments Included:</strong> Service Booking Slip PDF, Payment Verification Screenshot${hasIssuePhoto ? ", Uploaded Issue Photo" : ""}.
                 </div>
 
                 <div style="margin-top:20px;padding:12px;background:#fffbeb;border:1px solid #fef3c7;border-radius:8px;font-size:12px;color:#92400e;">
@@ -931,8 +891,7 @@ NEW SERVICE BOOKING REQUEST
 Booking Number: ${bookingId}
 Customer: ${fullName}
 Mob: ${phone}
-Email: ${email || "Not provided"}
-Pincode: ${pincode} (${isHyd ? "In Hyderabad" : "Outside Hyderabad"})
+Location Region: ${isHyderabad ? "In Hyderabad" : "Outside Hyderabad"}
 Site Location: ${address}
 Planned Site Visit Date (DD-MM-YYYY): ${plannedDateFormatted}
 
@@ -950,110 +909,12 @@ PAYMENT UTR: ${utr}
 
 GPS Location: ${latitude}, ${longitude} (${mapUrl})
 
-Attachments:
-1. Service-Booking-Slip-${bookingId}.pdf
-2. Payment Screenshot
-3. Photo of the Issue
-
 Note: Our team will Respond promptly upon payment Confirmation.
 Submitted: ${submittedTimestamp}
       `,
     };
 
-    // 2. Customer Email (with PDF Slip)
-    const customerMail = isCustomerEmailValid
-      ? {
-          from: senderHeader,
-          to: email,
-          replyTo: SMTP_FROM,
-          subject: `Service Booking Slip — ${bookingId}`,
-          attachments: [bookingPdfAttachment],
-          html: `
-            <!doctype html>
-            <html>
-              <head><meta charset="UTF-8" /></head>
-              <body style="margin:0;padding:0;background:#f3f6fa;font-family:Arial,Helvetica,sans-serif;color:#172033;">
-                <div style="max-width:680px;margin:30px auto;background:#ffffff;border:1px solid #dfe6ef;border-radius:18px;overflow:hidden;">
-                  
-                  <div style="background:#071b43;padding:28px;color:#ffffff;">
-                    <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#9db5d9;text-transform:uppercase;">${COMPANY_NAME}</div>
-                    <h1 style="margin:8px 0 0;font-size:24px;">Service Booking Confirmed</h1>
-                  </div>
-
-                  <div style="padding:28px;">
-                    <p style="margin:0;font-size:15px;">Dear <strong>${safeName}</strong>,</p>
-                    <p style="margin:14px 0;color:#475569;font-size:13px;line-height:1.7;">
-                      Thank you for choosing <strong>${COMPANY_NAME}</strong>. We have received your service booking and payment details. Your official <strong>Service Booking Slip is attached as a PDF</strong>.
-                    </p>
-
-                    <div style="margin:20px 0;padding:16px;background:#f3f7fc;border:1px solid #dbe5f1;border-radius:14px;text-align:center;">
-                      <div style="font-size:9px;letter-spacing:1.5px;color:#64748b;text-transform:uppercase;font-weight:700;">Booking Number</div>
-                      <div style="margin-top:6px;color:#0A2E6F;font-size:22px;font-weight:900;">${escapeHtml(bookingId)}</div>
-                      <div style="margin-top:4px;font-size:12px;color:#1e40af;">Transaction UTR: <strong>${safeUtr}</strong></div>
-                    </div>
-
-                    <div style="margin-bottom:20px;font-size:13px;line-height:1.6;color:#334155;">
-                      <p style="margin:4px 0;"><strong>Planned Site Visit (DD-MM-YYYY):</strong> ${plannedDateFormatted}</p>
-                      <p style="margin:4px 0;"><strong>Site Location:</strong> ${safeAddress}</p>
-                    </div>
-
-                    <table style="width:100%;border-collapse:collapse;font-size:13px;">${serviceRows}
-                      <tr>
-                        <td style="padding:14px 0;font-weight:800;font-size:14px;">TOTAL PAID</td>
-                        <td style="padding:14px 0;text-align:right;font-size:18px;font-weight:900;color:#0A2E6F;">${formatCurrency(total)}</td>
-                      </tr>
-                    </table>
-
-                    <div style="margin-top:20px;padding:14px;background:#fffbeb;border:1px solid #fef3c7;border-radius:10px;font-size:12px;color:#92400e;line-height:1.5;">
-                      🔔 <strong>Note:</strong> Our team will Respond promptly upon payment Confirmation.
-                    </div>
-
-                    <p style="margin-top:22px;color:#64748b;font-size:12px;line-height:1.7;">
-                      Please find your official Service Booking Slip attached to this email for your records.
-                    </p>
-                  </div>
-
-                  <div style="padding:20px 28px;background:#f7f9fc;border-top:1px solid #e5e7eb;text-align:center;">
-                    <p style="margin:0;color:#64748b;font-size:11px;">${COMPANY_NAME}</p>
-                    <p style="margin:6px 0 0;color:#94a3b8;font-size:10px;">${COMPANY_PHONE} &nbsp;|&nbsp; ${SMTP_FROM}</p>
-                  </div>
-                </div>
-              </body>
-            </html>
-          `,
-          text: `
-Dear ${fullName},
-
-Thank you for choosing ${COMPANY_NAME}.
-Your service booking and payment details have been received successfully.
-
-Booking Number: ${bookingId}
-Planned Site Visit (DD-MM-YYYY): ${plannedDateFormatted}
-Total Paid: ${formatCurrency(total)}
-Transaction UTR: ${utr}
-
-Note: Our team will Respond promptly upon payment Confirmation.
-Your official Service Booking Slip is attached as a PDF.
-
-Regards,
-${COMPANY_NAME}
-${COMPANY_PHONE}
-          `,
-        }
-      : null;
-
-    /* Execute both sends sequentially or in parallel with detailed error reporting */
-    const dispatchPromises: Promise<any>[] = [transporter.sendMail(adminMail)];
-    if (customerMail) {
-      dispatchPromises.push(transporter.sendMail(customerMail));
-    }
-
-    const outcomes = await Promise.allSettled(dispatchPromises);
-    outcomes.forEach((outcome, idx) => {
-      if (outcome.status === "rejected") {
-        console.error(`Email dispatch error for ${idx === 0 ? "Owner" : "Customer"}:`, outcome.reason);
-      }
-    });
+    await transporter.sendMail(adminMail);
 
     return NextResponse.json(
       {

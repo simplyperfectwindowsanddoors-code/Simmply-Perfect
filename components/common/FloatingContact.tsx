@@ -29,7 +29,6 @@ import {
   ChevronRight,
   ArrowLeft,
   Loader2,
-  Building2,
   ClipboardList,
   Upload,
   Calendar,
@@ -51,31 +50,25 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 export const SERVICE_BASE_CONFIG = [
   {
     id: "window-measurement",
-    name: "Window Measurement",
+    name: "Site visit for Window Measurement",
     hydAmount: 700,
     outsideAmount: 5000,
   },
   {
-    id: "service-request",
-    name: "Service Request",
+    id: "door-measurement",
+    name: "Site Visit for Door Measurement",
     hydAmount: 500,
     outsideAmount: 3000,
   },
   {
-    id: "maintenance",
-    name: "Maintenance",
+    id: "repair-maintenance",
+    name: "Site Visit for Repair and Maintenance",
     hydAmount: 500,
     outsideAmount: 3500,
   },
 ];
 
-// Helper: Check if pincode belongs to Hyderabad (500001 - 500099)
-export function isHyderabadPincode(pincode: string): boolean {
-  const pin = parseInt(pincode.replace(/\D/g, ""), 10);
-  return pin >= 500001 && pin <= 500099;
-}
-
-// Helper: Format YYYY-MM-DD or ISO string to DD-MM-YYYY
+// Helper: Format YYYY-MM-DD to DD-MM-YYYY
 export function formatToDDMMYYYY(dateString: string): string {
   if (!dateString) return "";
   const parts = dateString.split("-");
@@ -112,10 +105,8 @@ type TicketApiResponse = {
 
 type BookingFormData = {
   fullName: string;
-  email: string;
   phone: string;
-  company: string;
-  pincode: string;
+  isHyderabad: boolean;
   address: string;
   problemStatement: string;
   remarks: string;
@@ -147,10 +138,8 @@ const initialTicketForm: TicketFormData = {
 
 const initialBookingForm: BookingFormData = {
   fullName: "",
-  email: "",
   phone: "",
-  company: "",
-  pincode: "",
+  isHyderabad: true,
   address: "",
   problemStatement: "",
   remarks: "",
@@ -205,19 +194,14 @@ export default function FloatingContact() {
 
   const bookingNumber = useMemo(() => generateBookingNumber(), [bookingOpen]);
 
-  // Determine Location Tier based on Pincode
-  const isHyd = useMemo(() => {
-    return isHyderabadPincode(bookingForm.pincode);
-  }, [bookingForm.pincode]);
-
-  // Compute Active Services with Dynamic Price
+  // Compute Active Services with Dynamic Price based on Hyderabad Toggle
   const computedServices = useMemo(() => {
     return SERVICE_BASE_CONFIG.map((srv) => ({
       id: srv.id,
       name: srv.name,
-      amount: isHyd ? srv.hydAmount : srv.outsideAmount,
+      amount: bookingForm.isHyderabad ? srv.hydAmount : srv.outsideAmount,
     }));
-  }, [isHyd]);
+  }, [bookingForm.isHyderabad]);
 
   const selectedServices = useMemo(() => {
     return computedServices.filter((service) =>
@@ -395,17 +379,12 @@ export default function FloatingContact() {
     if (phoneDigits.length < 10 || phoneDigits.length > 15) {
       return "Please enter a valid 10-digit Mobile Number.";
     }
-    const pin = bookingForm.pincode.replace(/\D/g, "");
-    if (pin.length !== 6) {
-      return "Please enter a valid 6-digit Pincode.";
-    }
     if (!bookingForm.address.trim()) return "Please enter your Site Location address.";
     if (!bookingForm.problemStatement.trim()) return "Please enter the Problem Statement.";
     if (!bookingForm.plannedDate.trim()) {
       return "Please select a planned Date for the Site Visit / Service.";
     }
-    if (!bookingForm.issuePhoto) return "Please upload a photo of the Issue.";
-    if (bookingForm.issuePhoto.size > MAX_FILE_SIZE) {
+    if (bookingForm.issuePhoto && bookingForm.issuePhoto.size > MAX_FILE_SIZE) {
       return "Issue photo must be less than 10MB.";
     }
     if (!bookingForm.services.length) {
@@ -451,10 +430,8 @@ export default function FloatingContact() {
       form.append("quoteId", bookingNumber);
       form.append("bookingId", bookingNumber);
       form.append("fullName", bookingForm.fullName.trim());
-      form.append("email", bookingForm.email.trim());
       form.append("phone", bookingForm.phone.trim());
-      form.append("company", bookingForm.company.trim());
-      form.append("pincode", bookingForm.pincode.trim());
+      form.append("isHyderabad", String(bookingForm.isHyderabad));
       form.append("address", bookingForm.address.trim());
       form.append("problemStatement", bookingForm.problemStatement.trim());
       form.append("remarks", bookingForm.remarks.trim());
@@ -642,7 +619,7 @@ export default function FloatingContact() {
                   </h3>
 
                   <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-slate-500">
-                    Your service request and payment proof have been received. An official PDF Service Booking Slip has been sent to your email.
+                    Your service request and payment proof have been received. An official PDF Service Booking Slip has been generated.
                   </p>
 
                   <div className="mx-auto mt-6 max-w-sm rounded-2xl border border-blue-100 bg-blue-50 p-5">
@@ -684,7 +661,7 @@ export default function FloatingContact() {
                         Service Request Details
                       </h3>
                       <p className="mt-1 text-xs leading-5 text-slate-500">
-                        Enter your location pincode for auto-updated pricing.
+                        Choose your location category to see adjusted service pricing.
                       </p>
                     </div>
 
@@ -699,7 +676,7 @@ export default function FloatingContact() {
                         />
                       </FormField>
 
-                      <FormField label="Mob" required icon={Phone}>
+                      <FormField label="Mobile" required icon={Phone}>
                         <input
                           className={quoteInputStyles}
                           type="tel"
@@ -714,73 +691,49 @@ export default function FloatingContact() {
                       </FormField>
                     </div>
 
-                    <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                      <FormField label="Email" icon={FileText}>
-                        <input
-                          className={quoteInputStyles}
-                          type="email"
-                          value={bookingForm.email}
-                          onChange={(e) => updateBookingField("email", e.target.value)}
-                          placeholder="Optional"
-                        />
-                      </FormField>
+                    {/* LOCATION REGION TOGGLE */}
+                    <div className="mt-4">
+                      <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold text-[#071224]">
+                        <MapPin className="h-3.5 w-3.5 shrink-0 text-[#0A2E6F]" />
+                        <span>Location Region</span>
+                        <span className="text-red-500">*</span>
+                      </label>
 
-                      <FormField label="Company" icon={Building2}>
-                        <input
-                          className={quoteInputStyles}
-                          value={bookingForm.company}
-                          onChange={(e) => updateBookingField("company", e.target.value)}
-                          placeholder="Optional"
-                        />
-                      </FormField>
-
-                      {/* Pincode with dynamic tier banner */}
-                      <FormField label="Pincode" required icon={MapPin}>
-                        <input
-                          className={quoteInputStyles}
-                          type="text"
-                          maxLength={6}
-                          value={bookingForm.pincode}
-                          onChange={(e) =>
-                            updateBookingField("pincode", e.target.value.replace(/\D/g, ""))
-                          }
-                          placeholder="e.g. 500081"
-                        />
-                      </FormField>
-                    </div>
-
-                    {/* Dynamic Pincode Pricing Banner */}
-                    <div className="mt-3">
-                      {bookingForm.pincode.length === 6 ? (
-                        <div
-                          className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-semibold ${
-                            isHyd
-                              ? "border border-green-200 bg-green-50 text-green-800"
-                              : "border border-blue-200 bg-blue-50 text-blue-800"
+                      <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1.5">
+                        <button
+                          type="button"
+                          onClick={() => updateBookingField("isHyderabad", true)}
+                          className={`rounded-lg py-2.5 text-xs font-bold transition-all ${
+                            bookingForm.isHyderabad
+                              ? "bg-[#0A2E6F] text-white shadow-sm"
+                              : "text-slate-600 hover:text-slate-900"
                           }`}
                         >
-                          <span>
-                            📍 Location: <strong>{isHyd ? "In Hyderabad" : "Outside Hyderabad"}</strong>
-                          </span>
-                          <span className="text-[11px] font-normal underline">
-                            {isHyd ? "Hyderabad rates applied" : "Regional travel rates applied"}
-                          </span>
-                        </div>
-                      ) : (
-                        <p className="text-[11px] text-slate-400">
-                          * Enter 6-digit Pincode to verify Hyderabad / Outside Hyderabad rates.
-                        </p>
-                      )}
+                          📍 In Hyderabad
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => updateBookingField("isHyderabad", false)}
+                          className={`rounded-lg py-2.5 text-xs font-bold transition-all ${
+                            !bookingForm.isHyderabad
+                              ? "bg-[#0A2E6F] text-white shadow-sm"
+                              : "text-slate-600 hover:text-slate-900"
+                          }`}
+                        >
+                          🚗 Outside Hyderabad
+                        </button>
+                      </div>
                     </div>
 
                     {/* Site Location */}
                     <div className="mt-4">
-                      <FormField label="Site Location" required icon={MapPin}>
+                      <FormField label="Postal Address" required icon={MapPin}>
                         <textarea
                           className={`${quoteInputStyles} min-h-[70px] resize-none`}
                           value={bookingForm.address}
                           onChange={(e) => updateBookingField("address", e.target.value)}
-                          placeholder="Complete Site Address & Landmarks"
+                          placeholder="Complete Site Address, Area & Landmarks"
                         />
                       </FormField>
                     </div>
@@ -794,7 +747,7 @@ export default function FloatingContact() {
                           onChange={(e) =>
                             updateBookingField("problemStatement", e.target.value)
                           }
-                          placeholder="Describe the issue / repair needed in detail..."
+                          placeholder="Describe the issue / repair / measurement needed..."
                         />
                       </FormField>
                     </div>
@@ -819,28 +772,28 @@ export default function FloatingContact() {
                           className={quoteInputStyles}
                           value={bookingForm.remarks}
                           onChange={(e) => updateBookingField("remarks", e.target.value)}
-                          placeholder="Any specific instructions"
+                          placeholder="Any specific instructions (Optional)"
                         />
                       </FormField>
                     </div>
 
-                    {/* Upload Issue Photo */}
+                    {/* Upload Issue Photo (OPTIONAL) */}
                     <div className="mt-5">
                       <label className="mb-2 flex items-center gap-2 text-xs font-bold text-[#071224]">
                         <ImageIcon className="h-3.5 w-3.5 shrink-0 text-[#0A2E6F]" />
                         <span>Upload Photo of the Issue</span>
-                        <span className="text-red-500">*</span>
+                        <span className="text-xs font-normal text-slate-400">(Optional)</span>
                       </label>
 
                       <label
                         htmlFor="issuePhoto"
-                        className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-center transition hover:border-[#0A2E6F] hover:bg-blue-50/40"
+                        className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-center transition hover:border-[#0A2E6F] hover:bg-blue-50/40"
                       >
-                        <Upload className="mb-1.5 h-5 w-5 text-slate-400" />
+                        <Upload className="mb-1 h-5 w-5 text-slate-400" />
                         <span className="text-xs font-semibold text-slate-700">
                           {bookingForm.issuePhoto
                             ? "Change Photo"
-                            : "Click to upload issue photo / video"}
+                            : "Click to upload issue photo / video (Optional)"}
                         </span>
                         <span className="mt-0.5 text-[10px] text-slate-400">
                           PNG, JPG, JPEG, PDF or MP4 (Max 10MB)
@@ -906,7 +859,7 @@ export default function FloatingContact() {
                                     {service.name}
                                   </span>
                                   <span className="text-[10px] text-slate-400">
-                                    {isHyd ? "In Hyderabad Rate" : "Outside Hyderabad Rate"}
+                                    {bookingForm.isHyderabad ? "In Hyderabad Rate" : "Outside Hyderabad Rate"}
                                   </span>
                                 </div>
                               </span>
@@ -1039,7 +992,7 @@ export default function FloatingContact() {
                       </div>
                     </div>
 
-                    {/* RIGHT: PAYMENT INSTRUCTIONS & PROOF FORM */}
+                    {/* RIGHT: PAYMENT FORM */}
                     <div className="min-h-0 overflow-y-auto overscroll-contain bg-white px-5 py-6 sm:px-7">
                       <div className="mx-auto w-full max-w-[420px]">
                         {/* Amount Due */}
@@ -1080,7 +1033,6 @@ export default function FloatingContact() {
 
                         {/* Proof Submission */}
                         <div className="mt-5 space-y-4">
-                          {/* Screenshot Upload */}
                           <div>
                             <label className="mb-1.5 block text-xs font-bold text-slate-700">
                               Payment Screenshot <span className="text-red-500">*</span>
@@ -1119,7 +1071,6 @@ export default function FloatingContact() {
                             />
                           </div>
 
-                          {/* UTR Input */}
                           <div>
                             <label
                               htmlFor="utr"
@@ -1448,23 +1399,12 @@ function ServiceBookingSlip({
             </p>
           </div>
 
-          <div>
+          <div className="col-span-2">
             <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-slate-400">
-              Email
-            </p>
-            <p className="mt-1 break-all text-xs font-semibold text-slate-700">
-              {customer.email || "—"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-slate-400">
-              Pincode & Region
+              Location Tier
             </p>
             <p className="mt-1 break-words text-xs font-bold text-[#0A2E6F]">
-              {customer.pincode
-                ? `${customer.pincode} (${isHyderabadPincode(customer.pincode) ? "Hyderabad" : "Outside Hyd"})`
-                : "—"}
+              {customer.isHyderabad ? "In Hyderabad (Standard Rate)" : "Outside Hyderabad (Regional Travel Rate)"}
             </p>
           </div>
         </div>
