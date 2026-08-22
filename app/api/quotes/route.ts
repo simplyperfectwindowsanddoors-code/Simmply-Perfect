@@ -276,7 +276,6 @@ async function generateBookingSlipPdf({
     size: 8,
     font: fontBold,
     color: navy,
-    characterSpacing: 1.4,
   });
 
   page.drawText("Service Booking Slip", {
@@ -298,7 +297,6 @@ async function generateBookingSlipPdf({
     size: 8,
     font: fontBold,
     color: muted,
-    characterSpacing: 1.1,
   });
 
   const bookingWidth = fontBold.widthOfTextAtSize(bookingId, 13);
@@ -340,7 +338,6 @@ async function generateBookingSlipPdf({
       size: 7.5,
       font: fontBold,
       color: muted,
-      characterSpacing: 1.1,
     });
     page.drawText(value || "—", {
       x,
@@ -373,7 +370,6 @@ async function generateBookingSlipPdf({
     size: 7.5,
     font: fontBold,
     color: muted,
-    characterSpacing: 1.1,
   });
 
   const addressLines = wrapText(address || "Project / site address", 68).slice(0, 2);
@@ -444,7 +440,6 @@ async function generateBookingSlipPdf({
     size: 8,
     font: fontBold,
     color: muted,
-    characterSpacing: 1.1,
   });
 
   const amtHeader = "AMOUNT";
@@ -455,7 +450,6 @@ async function generateBookingSlipPdf({
     size: 8,
     font: fontBold,
     color: muted,
-    characterSpacing: 1.1,
   });
 
   cursorY -= 10;
@@ -513,7 +507,6 @@ async function generateBookingSlipPdf({
     size: 8,
     font: fontBold,
     color: muted,
-    characterSpacing: 1.1,
   });
 
   page.drawText("Selected service charges", {
@@ -569,7 +562,6 @@ async function generateBookingSlipPdf({
     size: 7.5,
     font: fontBold,
     color: muted,
-    characterSpacing: 1.1,
   });
 
   page.drawText(COMPANY_PHONE, {
@@ -588,7 +580,6 @@ async function generateBookingSlipPdf({
     size: 7.5,
     font: fontBold,
     color: muted,
-    characterSpacing: 1.1,
   });
 
   const emailTextWidth = fontBold.widthOfTextAtSize(COMPANY_EMAIL, 9.5);
