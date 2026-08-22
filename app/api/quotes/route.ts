@@ -358,7 +358,7 @@ async function generateBookingSlipPdf({
 
   // Row 1: Customer / Contact
   drawField("CUSTOMER", fullName || "Customer Name", leftColX, cursorY, true);
-  drawField("CONTACT (MOB)", phone || "Phone Number", rightColX, cursorY, true);
+  drawField("CONTACT (MOBILE)", phone || "Phone Number", rightColX, cursorY, true);
 
   // Row 2: Location Tier
   cursorY -= 40;
@@ -646,7 +646,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Please complete all required fields (Name, Mob, Site Location, Problem Statement, Planned Date, and Service Category).",
+          message: "Please complete all required fields (Name, Mobile, Postal Address, Problem Statement, Planned Date, and Service Category).",
         },
         { status: 400 },
       );
@@ -843,9 +843,9 @@ export async function POST(req: Request) {
                 <h3 style="margin:0 0 12px;color:#0A2E6F;font-size:14px;text-transform:uppercase;">Customer & Site Details</h3>
                 <table style="width:100%;font-size:13px;line-height:1.6;margin-bottom:20px;">
                   <tr><td style="width:170px;color:#64748b;font-weight:600;">Name:</td><td><strong>${safeName}</strong></td></tr>
-                  <tr><td style="color:#64748b;font-weight:600;">Mob:</td><td><strong>${safePhone}</strong></td></tr>
+                  <tr><td style="color:#64748b;font-weight:600;">Mobile:</td><td><strong>${safePhone}</strong></td></tr>
                   <tr><td style="color:#64748b;font-weight:600;">Location Region:</td><td><strong>${isHyderabad ? "In Hyderabad" : "Outside Hyderabad"}</strong></td></tr>
-                  <tr><td style="color:#64748b;font-weight:600;">Site Location:</td><td><strong>${safeAddress}</strong></td></tr>
+                  <tr><td style="color:#64748b;font-weight:600;">Postal Address:</td><td><strong>${safeAddress}</strong></td></tr>
                   <tr><td style="color:#64748b;font-weight:600;">Planned Site Visit Date:</td><td><strong style="color:#0A2E6F;font-size:15px;">${plannedDateFormatted}</strong></td></tr>
                 </table>
 
@@ -890,9 +890,9 @@ NEW SERVICE BOOKING REQUEST
 
 Booking Number: ${bookingId}
 Customer: ${fullName}
-Mob: ${phone}
+Mobile: ${phone}
 Location Region: ${isHyderabad ? "In Hyderabad" : "Outside Hyderabad"}
-Site Location: ${address}
+Postal Address: ${address}
 Planned Site Visit Date (DD-MM-YYYY): ${plannedDateFormatted}
 
 Problem Statement:

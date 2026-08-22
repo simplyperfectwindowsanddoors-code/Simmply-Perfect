@@ -1392,7 +1392,7 @@ function ServiceBookingSlip({
 
           <div>
             <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-slate-400">
-              Contact (Mob)
+              Contact (Mobible)
             </p>
             <p className="mt-1 break-all text-sm font-bold text-slate-900">
               {customer.phone || "Phone Number"}
