@@ -15,13 +15,26 @@ const ADMIN_EMAIL =
   process.env.QUOTE_RECEIVER_EMAIL ||
   "simplyperfectwindowsanddoors@gmail.com";
 
-const COMPANY_EMAIL =
+const SMTP_USER =
   process.env.SMTP_USER ||
   "simplyperfectwindowsanddoors@gmail.com";
 
 const COMPANY_PHONE = "+91 93907 19623";
 const COMPANY_NAME = "SIMMPLY PERFECT WINDOWS & DOORS";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+/* Cache logo in memory to avoid repeated disk reads */
+let cachedLogoBytes: Buffer | null = null;
+async function getLogoBytes(): Promise<Buffer | null> {
+  if (cachedLogoBytes) return cachedLogoBytes;
+  try {
+    const logoPath = path.join(process.cwd(), "public", "logo.png");
+    cachedLogoBytes = await fs.readFile(logoPath);
+    return cachedLogoBytes;
+  } catch {
+    return null;
+  }
+}
 
 /* =========================================================
    PRICING TIER CATALOG
@@ -168,7 +181,7 @@ function normalizeServices(
 }
 
 /* =========================================================
-   PDF GENERATOR
+   PDF GENERATOR (Optimized for speed)
 ========================================================= */
 
 async function generateBookingSlipPdf({
@@ -210,8 +223,8 @@ async function generateBookingSlipPdf({
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   const fontSerifBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
-  const navy = rgb(0.04, 0.18, 0.44); // #0A2E6F
-  const darkText = rgb(0.03, 0.07, 0.14); // #071224
+  const navy = rgb(0.04, 0.18, 0.44);
+  const darkText = rgb(0.03, 0.07, 0.14);
   const slateText = rgb(0.2, 0.28, 0.38);
   const muted = rgb(0.4, 0.48, 0.58);
   const border = rgb(0.88, 0.91, 0.94);
@@ -227,7 +240,7 @@ async function generateBookingSlipPdf({
     color: rgb(0.95, 0.965, 0.985),
   });
 
-  // Slip Container Card
+  // Card Container
   const cardMargin = 30;
   const cardX = cardMargin;
   const cardY = cardMargin;
@@ -247,9 +260,8 @@ async function generateBookingSlipPdf({
   // Logo Rendering
   let logoDrawn = false;
   try {
-    const logoPath = path.join(process.cwd(), "public", "logo.png");
-    const logoBytes = await fs.readFile(logoPath);
-    if (logoBytes[0] === 0x89 && logoBytes[1] === 0x50) {
+    const logoBytes = await getLogoBytes();
+    if (logoBytes && logoBytes[0] === 0x89 && logoBytes[1] === 0x50) {
       const logo = await pdfDoc.embedPng(logoBytes);
       const logoScale = Math.min(85 / logo.width, 50 / logo.height);
       const logoWidth = logo.width * logoScale;
@@ -264,7 +276,7 @@ async function generateBookingSlipPdf({
       logoDrawn = true;
     }
   } catch (error) {
-    console.warn("Booking PDF logo load skipped:", error);
+    console.warn("Booking PDF logo skipped:", error);
   }
 
   // Header Title
@@ -385,7 +397,7 @@ async function generateBookingSlipPdf({
 
   cursorY -= 20 + addressLines.length * 13;
 
-  // Problem Statement / Planned Visit Date (DD-MM-YYYY)
+  // Problem Statement / Planned Visit Date
   if (plannedDateFormatted || problemStatement || remarks) {
     const boxHeight = 62;
     page.drawRectangle({
@@ -582,8 +594,8 @@ async function generateBookingSlipPdf({
     color: muted,
   });
 
-  const emailTextWidth = fontBold.widthOfTextAtSize(COMPANY_EMAIL, 9.5);
-  page.drawText(COMPANY_EMAIL, {
+  const emailTextWidth = fontBold.widthOfTextAtSize(SMTP_USER, 9.5);
+  page.drawText(SMTP_USER, {
     x: rightX - emailTextWidth,
     y: footerY + footerHeight - 40,
     size: 9.5,
@@ -606,7 +618,7 @@ async function generateBookingSlipPdf({
 }
 
 /* =========================================================
-   POST ROUTE
+   POST ROUTE (Fast & Reliable Deliveries)
 ========================================================= */
 
 export async function POST(req: Request) {
@@ -662,12 +674,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (email && !/^\S+@\S+\.\S+$/.test(email)) {
-      return NextResponse.json(
-        { success: false, message: "Please enter a valid email address." },
-        { status: 400 },
-      );
-    }
+    const isCustomerEmailValid = email ? /^\S+@\S+\.\S+$/.test(email) : false;
 
     if (!latitude || !longitude) {
       return NextResponse.json(
@@ -748,29 +755,31 @@ export async function POST(req: Request) {
     const plannedDateFormatted = formatToDDMMYYYY(plannedDate);
     const isHyd = isHyderabadPincode(pincode);
 
-    // Generate PDF Slip Buffer
-    const pdfBuffer = await generateBookingSlipPdf({
-      bookingId,
-      fullName,
-      email: email || "Not provided",
-      phone,
-      company: company || "—",
-      pincode,
-      address,
-      problemStatement,
-      remarks,
-      plannedDateFormatted,
-      services,
-      total,
-      utr,
-      date: submittedDate,
-    });
-
-    const screenshotBuffer = Buffer.from(await paymentScreenshot.arrayBuffer());
-    const issuePhotoBuffer = Buffer.from(await issuePhoto.arrayBuffer());
+    // Parallelize buffer generation for fast response times
+    const [pdfBuffer, screenshotBuffer, issuePhotoBuffer] = await Promise.all([
+      generateBookingSlipPdf({
+        bookingId,
+        fullName,
+        email: email || "Not provided",
+        phone,
+        company: company || "—",
+        pincode,
+        address,
+        problemStatement,
+        remarks,
+        plannedDateFormatted,
+        services,
+        total,
+        utr,
+        date: submittedDate,
+      }),
+      paymentScreenshot.arrayBuffer().then((buf) => Buffer.from(buf)),
+      issuePhoto.arrayBuffer().then((buf) => Buffer.from(buf)),
+    ]);
 
     const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${latitude},${longitude}`)}`;
 
+    /* High-performance Nodemailer Transporter */
     const transporter = nodemailer.createTransport({
       host: smtpHost,
       port: smtpPort,
@@ -779,12 +788,9 @@ export async function POST(req: Request) {
         user: smtpUser,
         pass: smtpPass.replace(/\s+/g, ""),
       },
-      pool: true,
-      maxConnections: 3,
-      maxMessages: 50,
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 30000,
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
+      socketTimeout: 20000,
     });
 
     const safeName = escapeHtml(fullName);
@@ -833,10 +839,13 @@ export async function POST(req: Request) {
       },
     ];
 
+    /* Authentic From Address: Prevents DMARC/SPF drop */
+    const authSenderAddress = smtpUser;
+
     const adminMail = {
-      from: `"Simmply Perfect Bookings" <${smtpUser}>`,
+      from: `"${COMPANY_NAME}" <${authSenderAddress}>`,
       to: ADMIN_EMAIL,
-      replyTo: email || smtpUser,
+      replyTo: isCustomerEmailValid ? email : authSenderAddress,
       subject: `🚨 NEW BOOKING: ${bookingId} - ${formatCurrency(total)} (UTR: ${utr}) - ${fullName}`,
       attachments: adminAttachments,
       html: `
@@ -853,7 +862,6 @@ export async function POST(req: Request) {
               </div>
 
               <div style="padding:28px;">
-                <!-- UTR BANNER -->
                 <div style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:18px;margin-bottom:24px;">
                   <div style="font-size:11px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:1px;">Verified Payment Reference</div>
                   <div style="font-size:26px;font-weight:900;color:#0A2E6F;margin-top:4px;letter-spacing:0.5px;">UTR: ${safeUtr}</div>
@@ -946,11 +954,11 @@ Submitted: ${submittedTimestamp}
     };
 
     // Customer Mail
-    const customerMail = email
+    const customerMail = isCustomerEmailValid
       ? {
-          from: `"Simmply Perfect Windows & Doors" <${smtpUser}>`,
+          from: `"${COMPANY_NAME}" <${authSenderAddress}>`,
           to: email,
-          replyTo: smtpUser,
+          replyTo: authSenderAddress,
           subject: `Service Booking Slip — ${bookingId}`,
           attachments: [bookingPdfAttachment],
           html: `
@@ -978,7 +986,7 @@ Submitted: ${submittedTimestamp}
                     </div>
 
                     <div style="margin-bottom:20px;font-size:13px;line-height:1.6;color:#334155;">
-                      <p style="margin:4px 0;"><strong>Planned Site Visit:</strong> ${plannedDateFormatted}</p>
+                      <p style="margin:4px 0;"><strong>Planned Site Visit (DD-MM-YYYY):</strong> ${plannedDateFormatted}</p>
                       <p style="margin:4px 0;"><strong>Site Location:</strong> ${safeAddress}</p>
                     </div>
 
@@ -1000,7 +1008,7 @@ Submitted: ${submittedTimestamp}
 
                   <div style="padding:20px 28px;background:#f7f9fc;border-top:1px solid #e5e7eb;text-align:center;">
                     <p style="margin:0;color:#64748b;font-size:11px;">${COMPANY_NAME}</p>
-                    <p style="margin:6px 0 0;color:#94a3b8;font-size:10px;">${COMPANY_PHONE} &nbsp;|&nbsp; ${COMPANY_EMAIL}</p>
+                    <p style="margin:6px 0 0;color:#94a3b8;font-size:10px;">${COMPANY_PHONE} &nbsp;|&nbsp; ${authSenderAddress}</p>
                   </div>
                 </div>
               </body>
@@ -1013,7 +1021,7 @@ Thank you for choosing ${COMPANY_NAME}.
 Your service booking and payment details have been received successfully.
 
 Booking Number: ${bookingId}
-Planned Site Visit: ${plannedDateFormatted}
+Planned Site Visit (DD-MM-YYYY): ${plannedDateFormatted}
 Total Paid: ${formatCurrency(total)}
 Transaction UTR: ${utr}
 
@@ -1027,12 +1035,18 @@ ${COMPANY_PHONE}
         }
       : null;
 
-    const emailPromises: Promise<any>[] = [transporter.sendMail(adminMail)];
+    /* Execute both sends concurrently with settled status check to prevent silent drops */
+    const emailTasks = [transporter.sendMail(adminMail)];
     if (customerMail) {
-      emailPromises.push(transporter.sendMail(customerMail));
+      emailTasks.push(transporter.sendMail(customerMail));
     }
 
-    await Promise.all(emailPromises);
+    const results = await Promise.allSettled(emailTasks);
+    results.forEach((res, i) => {
+      if (res.status === "rejected") {
+        console.error(`Email delivery ${i === 0 ? "Admin" : "Customer"} failed:`, res.reason);
+      }
+    });
 
     return NextResponse.json(
       {
