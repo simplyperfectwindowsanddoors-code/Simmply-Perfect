@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 ========================================================= */
 
 const ADMIN_EMAIL =
+  process.env.OWNER_EMAIL ||
   process.env.QUOTE_RECEIVER_EMAIL ||
   "simplyperfectwindowsanddoors@gmail.com";
 
@@ -19,11 +20,16 @@ const SMTP_USER =
   process.env.SMTP_USER ||
   "simplyperfectwindowsanddoors@gmail.com";
 
+const SMTP_FROM =
+  process.env.SMTP_FROM ||
+  process.env.SMTP_USER ||
+  "simplyperfectwindowsanddoors@gmail.com";
+
 const COMPANY_PHONE = "+91 93907 19623";
-const COMPANY_NAME = "SIMMPLY PERFECT WINDOWS & DOORS";
+const COMPANY_NAME = "Simmply Perfect Windows & Doors";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-/* Cache logo in memory to avoid repeated disk reads */
+/* In-memory logo cache for speed */
 let cachedLogoBytes: Buffer | null = null;
 async function getLogoBytes(): Promise<Buffer | null> {
   if (cachedLogoBytes) return cachedLogoBytes;
@@ -181,7 +187,7 @@ function normalizeServices(
 }
 
 /* =========================================================
-   PDF GENERATOR (Optimized for speed)
+   PDF GENERATOR
 ========================================================= */
 
 async function generateBookingSlipPdf({
@@ -231,7 +237,7 @@ async function generateBookingSlipPdf({
   const lightBg = rgb(0.97, 0.98, 0.99);
   const white = rgb(1, 1, 1);
 
-  // Background
+  // Background Canvas
   page.drawRectangle({
     x: 0,
     y: 0,
@@ -240,7 +246,7 @@ async function generateBookingSlipPdf({
     color: rgb(0.95, 0.965, 0.985),
   });
 
-  // Card Container
+  // Slip Container Card
   const cardMargin = 30;
   const cardX = cardMargin;
   const cardY = cardMargin;
@@ -282,7 +288,7 @@ async function generateBookingSlipPdf({
   // Header Title
   const headerTextX = logoDrawn ? cardX + 115 : cardX + 28;
 
-  page.drawText(COMPANY_NAME, {
+  page.drawText(COMPANY_NAME.toUpperCase(), {
     x: headerTextX,
     y: cardY + cardHeight - 38,
     size: 8,
@@ -397,7 +403,7 @@ async function generateBookingSlipPdf({
 
   cursorY -= 20 + addressLines.length * 13;
 
-  // Problem Statement / Planned Visit Date
+  // Problem Statement / Planned Visit Date (DD-MM-YYYY)
   if (plannedDateFormatted || problemStatement || remarks) {
     const boxHeight = 62;
     page.drawRectangle({
@@ -594,8 +600,8 @@ async function generateBookingSlipPdf({
     color: muted,
   });
 
-  const emailTextWidth = fontBold.widthOfTextAtSize(SMTP_USER, 9.5);
-  page.drawText(SMTP_USER, {
+  const emailTextWidth = fontBold.widthOfTextAtSize(SMTP_FROM, 9.5);
+  page.drawText(SMTP_FROM, {
     x: rightX - emailTextWidth,
     y: footerY + footerHeight - 40,
     size: 9.5,
@@ -618,7 +624,7 @@ async function generateBookingSlipPdf({
 }
 
 /* =========================================================
-   POST ROUTE (Fast & Reliable Deliveries)
+   POST ROUTE
 ========================================================= */
 
 export async function POST(req: Request) {
@@ -647,7 +653,7 @@ export async function POST(req: Request) {
     const issuePhoto = formData.get("issuePhoto");
     const paymentScreenshot = formData.get("paymentScreenshot");
 
-    /* Validation */
+    /* Form Validation */
     if (!fullName || !phone || !pincode || !address || !problemStatement || !plannedDate || !rawServices.length) {
       return NextResponse.json(
         {
@@ -729,13 +735,13 @@ export async function POST(req: Request) {
 
     const total = services.reduce((sum, service) => sum + service.amount, 0);
 
-    const smtpHost = process.env.SMTP_HOST;
+    const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
     const smtpPort = Number(process.env.SMTP_PORT || 587);
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
+    const smtpUser = process.env.SMTP_USER || SMTP_USER;
+    const smtpPass = (process.env.SMTP_PASS || "").replace(/\s+/g, "");
 
     if (!smtpHost || !smtpUser || !smtpPass) {
-      console.error("BOOKINGS API: SMTP configuration is missing.");
+      console.error("BOOKINGS API: SMTP configuration is missing in environment.");
       return NextResponse.json(
         { success: false, message: "Email service is not configured." },
         { status: 500 },
@@ -779,18 +785,18 @@ export async function POST(req: Request) {
 
     const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${latitude},${longitude}`)}`;
 
-    /* High-performance Nodemailer Transporter */
+    /* High-Performance Transport */
     const transporter = nodemailer.createTransport({
       host: smtpHost,
       port: smtpPort,
       secure: smtpPort === 465,
       auth: {
         user: smtpUser,
-        pass: smtpPass.replace(/\s+/g, ""),
+        pass: smtpPass,
       },
-      connectionTimeout: 8000,
-      greetingTimeout: 8000,
-      socketTimeout: 20000,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 25000,
     });
 
     const safeName = escapeHtml(fullName);
@@ -839,13 +845,14 @@ export async function POST(req: Request) {
       },
     ];
 
-    /* Authentic From Address: Prevents DMARC/SPF drop */
-    const authSenderAddress = smtpUser;
+    /* Authenticated From Field (Mandatory for Gmail SPF/DMARC Delivery) */
+    const senderHeader = `"${COMPANY_NAME}" <${SMTP_FROM}>`;
 
+    // 1. Owner Admin Email
     const adminMail = {
-      from: `"${COMPANY_NAME}" <${authSenderAddress}>`,
+      from: senderHeader,
       to: ADMIN_EMAIL,
-      replyTo: isCustomerEmailValid ? email : authSenderAddress,
+      replyTo: isCustomerEmailValid ? email : SMTP_FROM,
       subject: `🚨 NEW BOOKING: ${bookingId} - ${formatCurrency(total)} (UTR: ${utr}) - ${fullName}`,
       attachments: adminAttachments,
       html: `
@@ -953,12 +960,12 @@ Submitted: ${submittedTimestamp}
       `,
     };
 
-    // Customer Mail
+    // 2. Customer Email (with PDF Slip)
     const customerMail = isCustomerEmailValid
       ? {
-          from: `"${COMPANY_NAME}" <${authSenderAddress}>`,
+          from: senderHeader,
           to: email,
-          replyTo: authSenderAddress,
+          replyTo: SMTP_FROM,
           subject: `Service Booking Slip — ${bookingId}`,
           attachments: [bookingPdfAttachment],
           html: `
@@ -1008,7 +1015,7 @@ Submitted: ${submittedTimestamp}
 
                   <div style="padding:20px 28px;background:#f7f9fc;border-top:1px solid #e5e7eb;text-align:center;">
                     <p style="margin:0;color:#64748b;font-size:11px;">${COMPANY_NAME}</p>
-                    <p style="margin:6px 0 0;color:#94a3b8;font-size:10px;">${COMPANY_PHONE} &nbsp;|&nbsp; ${authSenderAddress}</p>
+                    <p style="margin:6px 0 0;color:#94a3b8;font-size:10px;">${COMPANY_PHONE} &nbsp;|&nbsp; ${SMTP_FROM}</p>
                   </div>
                 </div>
               </body>
@@ -1035,16 +1042,16 @@ ${COMPANY_PHONE}
         }
       : null;
 
-    /* Execute both sends concurrently with settled status check to prevent silent drops */
-    const emailTasks = [transporter.sendMail(adminMail)];
+    /* Execute both sends sequentially or in parallel with detailed error reporting */
+    const dispatchPromises: Promise<any>[] = [transporter.sendMail(adminMail)];
     if (customerMail) {
-      emailTasks.push(transporter.sendMail(customerMail));
+      dispatchPromises.push(transporter.sendMail(customerMail));
     }
 
-    const results = await Promise.allSettled(emailTasks);
-    results.forEach((res, i) => {
-      if (res.status === "rejected") {
-        console.error(`Email delivery ${i === 0 ? "Admin" : "Customer"} failed:`, res.reason);
+    const outcomes = await Promise.allSettled(dispatchPromises);
+    outcomes.forEach((outcome, idx) => {
+      if (outcome.status === "rejected") {
+        console.error(`Email dispatch error for ${idx === 0 ? "Owner" : "Customer"}:`, outcome.reason);
       }
     });
 
