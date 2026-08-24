@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
 import FloatingContact from "@/components/common/FloatingContact";
+import { siteUrl } from "@/lib/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-const siteUrl = "https://simmplyperfect.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -96,6 +95,14 @@ export const metadata: Metadata = {
       "Simmply Perfect Group | Windows, Doors, Interiors & Architectural Solutions",
     description:
       "Premium aluminium and UPVC windows and doors, luxury interiors, home and commercial renovation, custom metal works, and architectural solutions from Simmply Perfect Group.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1618,
+        height: 972,
+        alt: "Simmply Perfect Group",
+      },
+    ],
   },
 
   twitter: {
@@ -104,6 +111,7 @@ export const metadata: Metadata = {
       "Simmply Perfect Group | Windows, Doors, Interiors & Architectural Solutions",
     description:
       "Premium windows and doors, luxury interiors, renovation, metal works and architectural solutions by Simmply Perfect Group.",
+    images: ["/logo.png"],
   },
 
   category: "Architecture, Windows, Doors, Interiors and Renovation",
@@ -125,6 +133,48 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": `${siteUrl}/#organization`,
+                  name: "Simmply Perfect Group",
+                  url: siteUrl,
+                  logo: `${siteUrl}/logo.png`,
+                  email: "simplyperfectwindowsanddoors@gmail.com",
+                  telephone: "+91 93907 19623",
+                  sameAs: [
+                    "https://www.facebook.com/profile.php?id=61575006093316",
+                    "https://www.instagram.com/thesimmply.perfect/",
+                    "https://x.com/simply1perfect",
+                    "https://www.youtube.com/@SimmplyPerfectWindowsandDoors",
+                    "https://www.linkedin.com/company/simmply-perfect-windows-doors/",
+                  ],
+                  founder: { "@id": `${siteUrl}/about#founder` },
+                },
+                {
+                  "@type": "Person",
+                  "@id": `${siteUrl}/about#founder`,
+                  name: "Aakaash Deep Shrivastava",
+                  jobTitle: "Founder & Technical Director",
+                  image: `${siteUrl}/founder.jpg`,
+                  worksFor: { "@id": `${siteUrl}/#organization` },
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": `${siteUrl}/#website`,
+                  url: siteUrl,
+                  name: "Simmply Perfect Group",
+                  publisher: { "@id": `${siteUrl}/#organization` },
+                },
+              ],
+            }).replace(/</g, "\\u003c"),
+          }}
+        />
         {children}
 
         {/* Floating Contact Buttons */}

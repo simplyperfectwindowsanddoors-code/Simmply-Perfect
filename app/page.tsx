@@ -28,6 +28,14 @@ export const metadata: Metadata = {
     siteName: "Simmply Perfect Group",
     type: "website",
     locale: "en_IN",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1618,
+        height: 972,
+        alt: "Simmply Perfect Group",
+      },
+    ],
   },
 
   twitter: {
@@ -36,6 +44,7 @@ export const metadata: Metadata = {
       "Simmply Perfect Group | Windows, Doors, Interiors & Architectural Solutions",
     description:
       "Premium windows and doors, luxury interiors, renovation, metal works and architectural solutions in Hyderabad.",
+    images: ["/logo.png"],
   },
 };
 
