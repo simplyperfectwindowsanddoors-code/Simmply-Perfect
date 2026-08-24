@@ -5,7 +5,6 @@ export const metadata: Metadata = createPageMetadata({
   title: "Partnership Application",
   description: "Apply to partner with Simmply Perfect Group.",
   path: "/partner",
-  noIndex: true,
 });
 
 export default function PartnerLayout({ children }: { children: React.ReactNode }) {

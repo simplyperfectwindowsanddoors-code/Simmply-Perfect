@@ -5,7 +5,6 @@ export const metadata: Metadata = createPageMetadata({
   title: "Affiliate Application",
   description: "Apply to the Simmply Perfect Group affiliate programme.",
   path: "/affiliate",
-  noIndex: true,
 });
 
 export default function AffiliateLayout({ children }: { children: React.ReactNode }) {

@@ -16,7 +16,8 @@ import {
   Headphones,
   CheckCircle2,
   ChevronDown,
-  Quote
+  Quote,
+  ArrowUpRight
 } from "lucide-react";
 
 const fadeUp = {
@@ -1045,20 +1046,39 @@ export default function WindowsDoorsPage() {
                   Discover premium uPVC, Aluminum, Wooden, WPC and Steel windows &
                   doors designed for security, comfort and timeless elegance.
                 </p>
-                <div className="flex flex-wrap gap-4 mt-10">
-                  <Link
-                    href="/contact"
-                    className="bg-[#0A2E6F] text-white px-8 py-4 rounded-full font-semibold hover:scale-105 transition-all"
-                  >
-                    Book Consultation
-                  </Link>
-                  <Link
-                    href="#materials"
-                    className="border border-slate-300 px-8 py-4 rounded-full font-semibold hover:bg-slate-100 transition-all"
-                  >
-                    Explore Collection
-                  </Link>
-                </div>
+                <div className="mt-10 flex flex-col sm:flex-row sm:flex-nowrap items-stretch sm:items-center gap-3 sm:gap-3.5 py-2.5 px-0.5">
+  {/* Book Consultation */}
+  <Link
+    href="/contact"
+    className="group relative inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-full bg-[#0A2E6F] px-6 sm:px-7 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-300 ease-out hover:-translate-y-1 hover:bg-[#082559] active:translate-y-0"
+  >
+    <span className="whitespace-nowrap">Book Consultation</span>
+  </Link>
+
+  {/* Explore Collection */}
+  <Link
+    href="#materials"
+    className="group inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-6 sm:px-7 py-3.5 text-sm font-semibold tracking-wide text-[#0A1A35] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#0A2E6F]/30 hover:bg-slate-50 active:translate-y-0"
+  >
+    <span className="whitespace-nowrap">Explore Collection</span>
+  </Link>
+
+  {/* Explore Products */}
+  <a
+    href="https://shop.simmplyperfect.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Explore Simmply Perfect online store"
+    className="group inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-full border border-[#0A2E6F]/20 bg-blue-50/50 px-6 sm:px-7 py-3.5 text-sm font-semibold tracking-wide text-[#0A2E6F] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#0A2E6F] hover:bg-[#0A2E6F] hover:text-white active:translate-y-0"
+  >
+    <span className="whitespace-nowrap">Explore Products</span>
+    <ArrowUpRight
+      size={16}
+      strokeWidth={2.2}
+      className="shrink-0 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+    />
+  </a>
+</div>
               </motion.div>
               <motion.div {...fadeRight} className="relative">
                 <img

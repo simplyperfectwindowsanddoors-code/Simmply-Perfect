@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import Image from "next/image";
+import React, { useState, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
+  ArrowUpRight,
   Building2,
   Clock,
   ExternalLink,
@@ -21,7 +23,7 @@ import {
 } from "lucide-react";
 
 /* =========================================================
-   YOUTUBE VIDEOS
+   YOUTUBE VIDEOS DATA
 ========================================================= */
 
 const youtubeVideos = [
@@ -34,8 +36,7 @@ const youtubeVideos = [
   },
   {
     id: "vid-2",
-    title:
-      "Customer Positive Feedback about Simmply Perfect Windows & Doors",
+    title: "Customer Positive Feedback about Simmply Perfect Windows & Doors",
     duration: "00:13",
     embedId: "vLjkmSap5V4",
     category: "Customer Reviews",
@@ -52,12 +53,6 @@ const youtubeVideos = [
 
 /* =========================================================
    PROJECT GALLERY CATEGORIES
-
-   Add these images:
-
-   public/images/projects/villa-projects.jpg
-   public/images/projects/commercial-projects.jpg
-   public/images/projects/residential-projects.jpg
 ========================================================= */
 
 const projectCategories = [
@@ -133,75 +128,65 @@ const statistics = [
 export default function Hero() {
   const [activeEmbedId, setActiveEmbedId] = useState<string | null>(null);
 
-  const getYouTubeThumbnail = (embedId: string) => {
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (activeEmbedId) {
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setActiveEmbedId(null);
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+    document.body.style.overflow = "";
+  }, [activeEmbedId]);
+
+  const getYouTubeThumbnail = useCallback((embedId: string) => {
     return `https://img.youtube.com/vi/${embedId}/maxresdefault.jpg`;
-  };
+  }, []);
 
   return (
     <>
       {/* =====================================================
           HERO SECTION
       ===================================================== */}
-
       <section
         aria-labelledby="hero-heading"
-        className="relative overflow-hidden bg-white pb-16 pt-28 text-slate-900 antialiased"
+        className="relative overflow-hidden bg-white pb-14 pt-24 sm:pb-16 sm:pt-28 lg:pt-32 text-slate-900 antialiased"
       >
-        <div className="mx-auto max-w-[1600px] px-6 lg:px-12">
-          <div className="grid items-start gap-10 lg:grid-cols-[0.65fr_1.35fr] xl:gap-12">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12">
+          <div className="grid items-start gap-10 lg:grid-cols-[0.7fr_1.3fr] xl:grid-cols-[0.65fr_1.35fr] xl:gap-14">
             {/* =================================================
-                LEFT COLUMN
+                LEFT COLUMN: TEXT & ACTIONS
             ================================================= */}
-
-            <div className="flex flex-col justify-center xl:pr-6">
+            <div className="flex flex-col justify-center xl:pr-4">
               {/* BRAND BADGE */}
-
               <motion.div
-                initial={{
-                  opacity: 0,
-                  x: -20,
-                }}
-                animate={{
-                  opacity: 1,
-                  x: 0,
-                }}
-                transition={{
-                  duration: 0.5,
-                }}
-                className="mb-6 inline-flex self-start items-center gap-2 rounded-xl border border-[#0A2E6F]/10 bg-[#0A2E6F]/5 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0A2E6F]"
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.45 }}
+                className="mb-5 sm:mb-6 inline-flex self-start items-center gap-2 rounded-xl border border-[#0A2E6F]/15 bg-[#0A2E6F]/5 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0A2E6F]"
               >
-                <Sparkles size={12} className="animate-pulse" />
-
+                <Sparkles size={13} className="animate-pulse text-[#0A2E6F]" />
                 Simmply Perfect Group
               </motion.div>
 
               {/* MAIN HEADING */}
-
               <motion.h1
                 id="hero-heading"
-                initial={{
-                  opacity: 0,
-                  y: 30,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  duration: 0.6,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="text-5xl font-black leading-[0.95] tracking-[-2px] text-[#0A1A35] md:text-6xl xl:text-8xl"
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                className="text-4xl font-black leading-[1.02] tracking-[-1.5px] text-[#0A1A35] sm:text-6xl sm:leading-[0.98] lg:text-5xl xl:text-7xl 2xl:text-8xl"
               >
                 Transforming <br />
-
                 Spaces Into <br />
-
                 <span className="bg-gradient-to-r from-[#0A2E6F] via-[#1E4ED8] to-indigo-600 bg-clip-text text-transparent">
                   Experiences
                 </span>
-
-                {/* SEO CONTEXT — visually hidden, not a UI change */}
                 <span className="sr-only">
                   Simmply Perfect Group provides premium aluminium and UPVC
                   windows and doors, luxury interior design, home and
@@ -211,173 +196,136 @@ export default function Hero() {
               </motion.h1>
 
               {/* DESCRIPTION */}
-
               <motion.p
-                initial={{
-                  opacity: 0,
-                  y: 15,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  delay: 0.2,
-                  duration: 0.6,
-                }}
-                className="mt-8 max-w-xl text-lg font-medium leading-relaxed text-slate-600"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.5 }}
+                className="mt-5 sm:mt-7 max-w-xl text-base sm:text-lg font-medium leading-relaxed text-slate-600"
               >
-                One trusted destination for premium aluminium and UPVC
-                Windows & Doors, Luxury Interiors, Custom Metal Fabrication,
-                Home & Commercial Renovations, and turnkey architectural
-                solutions in Hyderabad.
+                One trusted destination for premium aluminium and UPVC Windows &
+                Doors, Luxury Interiors, Custom Metal Fabrication, Home &
+                Commercial Renovations, and turnkey architectural solutions in
+                Hyderabad.
               </motion.p>
 
-              {/* SERVICES */}
-
+              {/* SERVICE PILLS */}
               <motion.div
-                initial={{
-                  opacity: 0,
-                }}
-                animate={{
-                  opacity: 1,
-                }}
-                transition={{
-                  delay: 0.3,
-                  duration: 0.5,
-                }}
-                className="mt-8 flex flex-wrap gap-2.5"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.25, duration: 0.4 }}
+                className="mt-6 sm:mt-7 flex flex-wrap gap-2 sm:gap-2.5"
                 aria-label="Simmply Perfect Group services"
               >
                 {services.map((service) => {
                   const Icon = service.icon;
-
                   return (
                     <span
                       key={service.label}
-                      className="inline-flex cursor-default items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-700 transition-all duration-300 hover:border-[#0A2E6F]/30 hover:bg-white hover:text-[#0A2E6F]"
+                      className="inline-flex cursor-default items-center gap-1.5 sm:gap-2 rounded-xl border border-slate-200/80 bg-slate-50 px-3.5 py-2 text-[11px] sm:text-xs font-bold text-slate-700 transition-all duration-200 hover:border-[#0A2E6F]/30 hover:bg-white hover:text-[#0A2E6F]"
                     >
-                      <Icon
-                        size={13}
-                        className="shrink-0 text-[#0A2E6F]"
-                      />
-
+                      <Icon size={13} className="shrink-0 text-[#0A2E6F]" />
                       {service.label}
                     </span>
                   );
                 })}
               </motion.div>
 
-              {/* BUTTONS */}
-
+              {/* CTA ACTION BUTTONS */}
               <motion.div
-                initial={{
-                  opacity: 0,
-                  y: 15,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  delay: 0.4,
-                  duration: 0.6,
+                  delay: 0.35,
+                  duration: 0.5,
+                  ease: [0.22, 1, 0.36, 1],
                 }}
-                className="mt-10 flex flex-wrap gap-4 sm:flex-nowrap"
+                className="mt-8 sm:mt-10 flex flex-col sm:flex-row sm:flex-nowrap items-stretch sm:items-center gap-3 sm:gap-3 xl:gap-3.5 py-2.5 px-0.5"
               >
+                {/* Get In Touch */}
                 <Link
                   href="/contact"
-                  className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0A2E6F] px-8 py-4 text-sm font-bold tracking-wide text-white shadow-[0_10px_25px_rgba(10,46,111,0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#072456] sm:w-auto"
+                  className="group relative inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#0A2E6F] px-5 py-3.5 xl:px-6 text-sm font-bold tracking-wide text-white transition-all duration-300 ease-out hover:-translate-y-1 hover:bg-[#082559] active:translate-y-0"
                 >
-                  Get In Touch
-
+                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
+                  <span className="relative z-10 whitespace-nowrap">
+                    Get In Touch
+                  </span>
                   <ArrowRight
                     size={16}
-                    className="transition-transform duration-300 group-hover:translate-x-1"
+                    strokeWidth={2.2}
+                    className="relative z-10 shrink-0 transition-transform duration-300 ease-out group-hover:translate-x-1"
                   />
                 </Link>
 
+                {/* Explore Services */}
                 <Link
                   href="/windows-doors"
-                  className="flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-8 py-4 text-sm font-bold tracking-wide text-[#0A1A35] transition-all duration-300 hover:bg-slate-50 sm:w-auto"
+                  className="group inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3.5 xl:px-6 text-sm font-bold tracking-wide text-[#0A1A35] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#0A2E6F]/30 hover:bg-slate-50 active:translate-y-0"
                 >
-                  Explore Services
+                  <span className="whitespace-nowrap">Explore Services</span>
+                  <ArrowRight
+                    size={16}
+                    strokeWidth={2}
+                    className="shrink-0 text-[#0A2E6F] transition-transform duration-300 ease-out group-hover:translate-x-1"
+                  />
                 </Link>
+
+                {/* Explore Products */}
+                <a
+                  href="https://shop.simmplyperfect.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Explore Simmply Perfect online store"
+                  className="group inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-xl border border-[#0A2E6F]/20 bg-blue-50/50 px-5 py-3.5 xl:px-6 text-sm font-bold tracking-wide text-[#0A2E6F] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#0A2E6F] hover:bg-[#0A2E6F] hover:text-white active:translate-y-0"
+                >
+                  <span className="whitespace-nowrap">Explore Products</span>
+                  <ArrowUpRight
+                    size={16}
+                    strokeWidth={2.2}
+                    className="shrink-0 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </a>
               </motion.div>
 
               {/* STATISTICS */}
-
               <motion.div
-                initial={{
-                  opacity: 0,
-                  y: 20,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  delay: 0.45,
-                  duration: 0.6,
-                }}
-                className="mt-10"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45, duration: 0.5 }}
+                className="mt-8 sm:mt-10"
               >
-                <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.06)]">
+                <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.05)]">
                   {statistics.map((stat, index) => (
-                    <motion.div
+                    <div
                       key={stat.label}
-                      whileHover={{
-                        y: -4,
-                        scale: 1.02,
-                      }}
-                      transition={{
-                        duration: 0.25,
-                      }}
-                      className={`group relative flex flex-col items-center justify-center px-3 py-5 text-center ${
-                        index !== statistics.length - 1
-                          ? "border-r border-slate-200"
-                          : ""
+                      className={`group relative flex flex-col items-center justify-center p-3 sm:py-5 text-center transition-colors hover:bg-slate-50/50 ${
+                        index !== statistics.length - 1 ? "border-r border-slate-200/80" : ""
                       }`}
                     >
                       <div className="absolute left-1/2 top-0 h-[2px] w-0 -translate-x-1/2 rounded-full bg-[#0A2E6F] transition-all duration-300 group-hover:w-12" />
-
-                      <h3 className="text-2xl font-extrabold tracking-tight text-[#0A2E6F] sm:text-3xl">
+                      <h3 className="text-lg font-extrabold tracking-tight text-[#0A2E6F] sm:text-2xl lg:text-3xl">
                         {stat.value}
                       </h3>
-
-                      <div className="my-2 h-[2px] w-7 rounded-full bg-[#0A2E6F]/20" />
-
-                      <p className="text-[10px] font-semibold uppercase leading-tight tracking-[0.15em] text-slate-500 sm:text-[11px]">
+                      <div className="my-1.5 sm:my-2 h-[2px] w-6 rounded-full bg-[#0A2E6F]/20" />
+                      <p className="text-[9px] font-bold uppercase leading-tight tracking-[0.12em] text-slate-500 sm:text-[10px] md:text-[11px]">
                         {stat.label}
                       </p>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </motion.div>
             </div>
 
             {/* =================================================
-                RIGHT COLUMN
+                RIGHT COLUMN: HERO MEDIA & GALLERY
             ================================================= */}
-
-            <div className="min-w-0 lg:mt-8 xl:mt-10">
-              {/* =================================================
-                  HERO VIDEO
-              ================================================= */}
-
+            <div className="min-w-0 lg:mt-2 xl:mt-4">
+              {/* HERO VIDEO CONTAINER */}
               <motion.div
-                initial={{
-                  opacity: 0,
-                  x: 80,
-                }}
-                animate={{
-                  opacity: 1,
-                  x: 0,
-                }}
-                transition={{
-                  duration: 0.7,
-                }}
-                className="relative"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6 }}
+                className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-slate-900 shadow-xl"
               >
                 <video
                   autoPlay
@@ -385,63 +333,40 @@ export default function Hero() {
                   loop
                   playsInline
                   preload="metadata"
-                  aria-label="Simmply Perfect Group windows, doors, interiors, renovation and architectural solutions"
-                  className="block h-auto w-full object-contain"
+                  aria-label="Simmply Perfect Group architectural showcase video"
+                  className="block aspect-video h-auto w-full object-cover"
                 >
-                  <source
-                    src="/videos/hero-video.mp4"
-                    type="video/mp4"
-                  />
-
+                  <source src="/videos/hero-video.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               </motion.div>
 
-              {/* =================================================
-                  PROJECT GALLERY
-              ================================================= */}
-
+              {/* PROJECT GALLERY */}
               <motion.div
-                initial={{
-                  opacity: 0,
-                  y: 25,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  delay: 0.5,
-                  duration: 0.7,
-                }}
-                className="mt-20 overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45, duration: 0.6 }}
+                className="mt-12 sm:mt-16 overflow-hidden"
               >
                 {/* GALLERY HEADER */}
-
                 <div className="mb-4 flex items-end justify-between">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <Images
-                        size={15}
-                        className="text-[#0A2E6F]"
-                      />
-
+                    <div className="flex items-center gap-1.5">
+                      <Images size={14} className="text-[#0A2E6F]" />
                       <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#0A2E6F]">
                         Selected Works
                       </span>
                     </div>
-
-                    <h2 className="mt-1 text-xl font-black tracking-tight text-[#0A1A35]">
+                    <h2 className="mt-1 text-lg sm:text-xl font-black tracking-tight text-[#0A1A35]">
                       Explore Our Projects
                     </h2>
                   </div>
 
                   <Link
                     href="/gallery"
-                    className="group hidden items-center gap-1.5 text-xs font-bold text-[#0A2E6F] sm:flex"
+                    className="group hidden items-center gap-1.5 text-xs font-bold text-[#0A2E6F] transition-colors hover:text-[#072456] sm:flex"
                   >
                     View Gallery
-
                     <ArrowRight
                       size={13}
                       className="transition-transform duration-300 group-hover:translate-x-1"
@@ -449,20 +374,13 @@ export default function Hero() {
                   </Link>
                 </div>
 
-                {/* =================================================
-                    AUTO SCROLLING GALLERY
-                ================================================= */}
-
-                <div className="relative overflow-hidden">
-                  {/* SCROLLING TRACK */}
-
+                {/* AUTO-SCROLLING INFINITE CAROUSEL */}
+                <div className="group relative overflow-hidden rounded-2xl [mask-image:linear-gradient(to_right,transparent,white_8%,white_92%,transparent)]">
                   <motion.div
-                    className="flex w-max gap-4"
-                    animate={{
-                      x: ["0%", "-50%"],
-                    }}
+                    className="flex w-max gap-4 py-1 hover:[animation-play-state:paused]"
+                    animate={{ x: ["0%", "-50%"] }}
                     transition={{
-                      duration: 25,
+                      duration: 30,
                       ease: "linear",
                       repeat: Infinity,
                     }}
@@ -479,48 +397,42 @@ export default function Hero() {
                         <Link
                           key={`${project.id}-${index}`}
                           href="/gallery"
-                          className="group relative h-[175px] w-[280px] shrink-0 overflow-hidden rounded-2xl bg-slate-100 xl:h-[190px] xl:w-[310px]"
+                          className="group/card relative h-[175px] w-[260px] sm:w-[290px] xl:h-[190px] xl:w-[310px] shrink-0 overflow-hidden rounded-2xl bg-slate-100 shadow-sm"
                           aria-label={`View ${project.title} by Simmply Perfect Group`}
                         >
-                          {/* PROJECT IMAGE */}
-
-                          <img
+                          <Image
                             src={project.image}
                             alt={`${project.title} by Simmply Perfect Group`}
-                            loading="lazy"
-                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            fill
+                            sizes="(max-width: 768px) 260px, 310px"
+                            className="object-cover transition-transform duration-700 group-hover/card:scale-110"
                           />
 
-                          {/* DARK GRADIENT */}
-
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#06152d]/95 via-[#06152d]/25 to-transparent" />
+                          {/* GRADIENT OVERLAY */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#06152d]/95 via-[#06152d]/30 to-transparent" />
 
                           {/* TOP ICON */}
-
-                          <div className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-black/20 text-white backdrop-blur-md">
-                            <Icon size={17} />
+                          <div className="absolute left-3.5 top-3.5 flex h-8 w-8 items-center justify-center rounded-xl border border-white/20 bg-black/25 text-white backdrop-blur-md">
+                            <Icon size={15} />
                           </div>
 
-                          {/* PROJECT INFORMATION */}
-
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <div className="flex items-end justify-between gap-4">
-                              <div>
-                                <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-white/60">
+                          {/* CARD CONTENT */}
+                          <div className="absolute bottom-0 left-0 right-0 p-3.5">
+                            <div className="flex items-end justify-between gap-3">
+                              <div className="min-w-0">
+                                <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-white/70">
                                   Explore Projects
                                 </p>
-
-                                <h3 className="mt-1 text-base font-extrabold text-white">
+                                <h3 className="mt-0.5 truncate text-sm sm:text-base font-extrabold text-white">
                                   {project.title}
                                 </h3>
-
-                                <p className="mt-1 line-clamp-1 text-[10px] font-medium text-white/60">
+                                <p className="mt-0.5 truncate text-[10px] font-medium text-white/70">
                                   {project.description}
                                 </p>
                               </div>
 
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all duration-300 group-hover:bg-white group-hover:text-[#0A2E6F]">
-                                <ArrowRight size={13} />
+                              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all duration-300 group-hover/card:bg-white group-hover/card:text-[#0A2E6F]">
+                                <ArrowRight size={12} />
                               </div>
                             </div>
                           </div>
@@ -531,13 +443,11 @@ export default function Hero() {
                 </div>
 
                 {/* MOBILE BUTTON */}
-
                 <Link
                   href="/gallery"
-                  className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-3 text-xs font-bold text-[#0A2E6F] sm:hidden"
+                  className="mt-3.5 flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-3 text-xs font-bold text-[#0A2E6F] transition-colors active:bg-slate-50 sm:hidden"
                 >
                   View Complete Gallery
-
                   <ArrowRight size={13} />
                 </Link>
               </motion.div>
@@ -547,33 +457,29 @@ export default function Hero() {
       </section>
 
       {/* =========================================================
-          MEDIA SECTION
+          MEDIA & BROADCAST HUB
       ========================================================= */}
-
       <section
         aria-labelledby="media-heading"
-        className="relative z-10 border-t border-slate-100 bg-[#FAFBFD] py-24"
+        className="relative z-10 border-t border-slate-100 bg-[#FAFBFD] py-16 sm:py-20 lg:py-24"
       >
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* HEADER */}
-
-          <div className="flex flex-col justify-between gap-6 border-b border-slate-200/60 pb-12 md:flex-row md:items-end">
+          <div className="flex flex-col justify-between gap-4 border-b border-slate-200/70 pb-8 md:flex-row md:items-end">
             <div>
               <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#0A2E6F]">
                 <Tv size={14} />
-
                 Media & Broadcast Hub
               </span>
-
               <h2
                 id="media-heading"
-                className="mt-3 text-3xl font-black tracking-tight text-[#0A1A35] md:text-4xl"
+                className="mt-2 text-2xl font-black tracking-tight text-[#0A1A35] sm:text-3xl md:text-4xl"
               >
                 Featured Video Presentations
               </h2>
             </div>
 
-            <p className="max-w-md text-sm leading-relaxed text-slate-500">
+            <p className="max-w-md text-xs sm:text-sm leading-relaxed text-slate-500">
               Explore dynamic product overviews, customer stories, Windows &
               Doors presentations, design walkthroughs, and media stories
               produced directly by Simmply Perfect Group.
@@ -581,15 +487,11 @@ export default function Hero() {
           </div>
 
           {/* MEDIA GRID */}
-
-          <div className="mt-12 grid items-stretch gap-8 lg:grid-cols-12">
+          <div className="mt-8 sm:mt-12 grid items-stretch gap-6 lg:grid-cols-12 lg:gap-8">
             {/* FEATURED VIDEO */}
-
-            <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_12px_40px_rgba(0,0,0,0.02)] lg:col-span-7">
+            <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-sm lg:col-span-7">
               <div
-                onClick={() =>
-                  setActiveEmbedId(youtubeVideos[0].embedId)
-                }
+                onClick={() => setActiveEmbedId(youtubeVideos[0].embedId)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(event) => {
@@ -598,66 +500,50 @@ export default function Hero() {
                   }
                 }}
                 aria-label={`Play ${youtubeVideos[0].title}`}
-                className="relative aspect-video cursor-pointer overflow-hidden rounded-xl bg-slate-900"
+                className="relative aspect-video w-full cursor-pointer overflow-hidden rounded-xl bg-slate-900"
               >
-                <img
-                  src={getYouTubeThumbnail(
-                    youtubeVideos[0].embedId
-                  )}
+                <Image
+                  src={getYouTubeThumbnail(youtubeVideos[0].embedId)}
                   alt={youtubeVideos[0].title}
-                  loading="lazy"
-                  className="h-full w-full object-cover opacity-85 transition-transform duration-500 group-hover:scale-105"
-                  onError={(event) => {
-                    event.currentTarget.src = `https://img.youtube.com/vi/${youtubeVideos[0].embedId}/hqdefault.jpg`;
-                  }}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 55vw"
+                  className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+                  priority={false}
                 />
-
                 <div className="absolute inset-0 bg-slate-950/20 transition-colors duration-300 group-hover:bg-slate-950/40" />
 
                 <div className="absolute inset-0 flex items-center justify-center">
                   <motion.div
-                    whileHover={{
-                      scale: 1.1,
-                    }}
-                    whileTap={{
-                      scale: 0.95,
-                    }}
-                    className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-[#0A2E6F] shadow-xl"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-white/95 text-[#0A2E6F] shadow-xl"
                   >
-                    <Play
-                      size={24}
-                      className="ml-1 fill-current"
-                    />
+                    <Play size={22} className="ml-1 fill-current" />
                   </motion.div>
                 </div>
 
-                <span className="absolute bottom-4 right-4 flex items-center gap-1 rounded-md bg-slate-900/80 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
+                <span className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex items-center gap-1 rounded-md bg-slate-900/80 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white backdrop-blur-md">
                   <Clock size={10} />
-
                   {youtubeVideos[0].duration}
                 </span>
               </div>
 
-              <div className="mt-5">
+              <div className="mt-4 sm:mt-5">
                 <span className="rounded-md bg-blue-50 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-widest text-[#0A2E6F]">
                   {youtubeVideos[0].category}
                 </span>
-
-                <h3 className="mt-3 text-xl font-extrabold leading-snug tracking-tight text-[#0A1A35] transition-colors duration-200 group-hover:text-[#0A2E6F]">
+                <h3 className="mt-2.5 text-lg sm:text-xl font-extrabold leading-snug tracking-tight text-[#0A1A35] transition-colors duration-200 group-hover:text-[#0A2E6F]">
                   {youtubeVideos[0].title}
                 </h3>
               </div>
             </div>
 
-            {/* RIGHT VIDEO COLUMN */}
-
+            {/* RIGHT SIDE VIDEO LIST & CTA */}
             <div className="flex flex-col gap-4 lg:col-span-5">
               {youtubeVideos.slice(1).map((video) => (
                 <div
                   key={video.id}
-                  onClick={() =>
-                    setActiveEmbedId(video.embedId)
-                  }
+                  onClick={() => setActiveEmbedId(video.embedId)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(event) => {
@@ -666,59 +552,47 @@ export default function Hero() {
                     }
                   }}
                   aria-label={`Play ${video.title}`}
-                  className="group flex cursor-pointer items-center gap-4 rounded-2xl border border-slate-200/60 bg-white p-4 transition-all duration-300 hover:border-[#0A2E6F]/20 hover:shadow-lg"
+                  className="group flex cursor-pointer items-center gap-3.5 sm:gap-4 rounded-2xl border border-slate-200/80 bg-white p-3 sm:p-4 transition-all duration-300 hover:border-[#0A2E6F]/30 hover:shadow-md"
                 >
-                  <div className="relative aspect-video w-32 shrink-0 overflow-hidden rounded-xl bg-slate-800 sm:w-40">
-                    <img
+                  <div className="relative aspect-video w-28 sm:w-36 shrink-0 overflow-hidden rounded-xl bg-slate-900">
+                    <Image
                       src={getYouTubeThumbnail(video.embedId)}
                       alt={video.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105"
-                      onError={(event) => {
-                        event.currentTarget.src = `https://img.youtube.com/vi/${video.embedId}/hqdefault.jpg`;
-                      }}
+                      fill
+                      sizes="(max-width: 640px) 120px, 150px"
+                      className="object-cover opacity-90 transition-transform duration-300 group-hover:scale-105"
                     />
-
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-[#0A2E6F]">
-                        <Play
-                          size={12}
-                          className="ml-0.5 fill-current"
-                        />
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/95 text-[#0A2E6F] shadow-md">
+                        <Play size={11} className="ml-0.5 fill-current" />
                       </div>
                     </div>
                   </div>
 
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
                       {video.category}
                     </span>
-
-                    <h4 className="mt-1 line-clamp-2 text-sm font-bold leading-snug text-[#0A1A35]">
+                    <h4 className="mt-0.5 line-clamp-2 text-xs sm:text-sm font-bold leading-snug text-[#0A1A35] group-hover:text-[#0A2E6F] transition-colors">
                       {video.title}
                     </h4>
-
-                    <p className="mt-1.5 flex items-center gap-1 text-[11px] text-slate-400">
+                    <p className="mt-1 flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-400">
                       <Clock size={10} />
-
                       {video.duration} Mins
                     </p>
                   </div>
                 </div>
               ))}
 
-              {/* YOUTUBE CTA */}
-
-              <div className="flex min-h-[140px] flex-1 flex-col justify-between rounded-2xl bg-gradient-to-br from-slate-900 to-[#0A1A35] p-5 text-white">
+              {/* YOUTUBE CTA BOX */}
+              <div className="flex min-h-[130px] flex-1 flex-col justify-between rounded-2xl bg-gradient-to-br from-slate-900 to-[#0A1A35] p-4 sm:p-5 text-white">
                 <div>
-                  <h4 className="text-base font-extrabold">
+                  <h4 className="text-sm sm:text-base font-extrabold">
                     Access Digital Streams
                   </h4>
-
                   <p className="mt-1 text-xs leading-relaxed text-white/70">
                     Subscribe to our corporate channels for Windows & Doors
-                    product releases, customer stories, project showcases,
-                    and engineering insights.
+                    product releases, customer stories, and engineering insights.
                   </p>
                 </div>
 
@@ -727,10 +601,9 @@ export default function Hero() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Visit Simmply Perfect Windows and Doors YouTube channel"
-                  className="mt-4 inline-flex items-center gap-1.5 self-start text-xs font-bold text-blue-400"
+                  className="mt-3 inline-flex items-center gap-1.5 self-start text-xs font-bold text-blue-400 transition-colors hover:text-blue-300"
                 >
                   Visit Main YouTube Channel
-
                   <ExternalLink size={12} />
                 </a>
               </div>
@@ -740,65 +613,45 @@ export default function Hero() {
       </section>
 
       {/* =========================================================
-          VIDEO MODAL
+          ACCESSIBLE VIDEO MODAL
       ========================================================= */}
-
       <AnimatePresence>
         {activeEmbedId && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10"
+            className="fixed inset-0 z-[600] flex items-center justify-center p-3 sm:p-6 md:p-10"
             role="dialog"
             aria-modal="true"
             aria-label="Simmply Perfect Group video player"
           >
+            {/* BACKDROP */}
             <motion.div
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              exit={{
-                opacity: 0,
-              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setActiveEmbedId(null)}
               className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
             />
 
+            {/* MODAL WINDOW */}
             <motion.div
-              initial={{
-                opacity: 0,
-                scale: 0.95,
-                y: 15,
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                y: 0,
-              }}
-              exit={{
-                opacity: 0,
-                scale: 0.95,
-                y: 15,
-              }}
-              transition={{
-                type: "spring",
-                duration: 0.4,
-              }}
-              className="relative aspect-video w-full max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_25px_70px_rgba(0,0,0,0.5)]"
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: "spring", duration: 0.35 }}
+              className="relative aspect-video w-full max-w-5xl overflow-hidden rounded-2xl border border-white/15 bg-black shadow-[0_25px_70px_rgba(0,0,0,0.6)]"
             >
               <button
                 type="button"
                 onClick={() => setActiveEmbedId(null)}
-                className="absolute right-4 top-4 z-10 rounded-full border border-white/10 bg-black/60 p-2 text-white transition-colors hover:bg-black"
-                aria-label="Close Video"
+                className="absolute right-3 top-3 z-20 rounded-full border border-white/20 bg-black/70 p-2 text-white transition-colors hover:bg-black"
+                aria-label="Close video modal"
               >
                 <X size={18} />
               </button>
 
               <iframe
-                src={`https://www.youtube.com/embed/${activeEmbedId}?autoplay=1&rel=0`}
-                title="Simmply Perfect Group YouTube Video Player"
+                src={`https://www.youtube-nocookie.com/embed/${activeEmbedId}?autoplay=1&rel=0`}
+                title="Simmply Perfect Group Video Presentation"
                 className="h-full w-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen

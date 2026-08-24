@@ -123,6 +123,8 @@ export default function Companies() {
                   <img
                     src={company.image}
                     alt={company.title}
+                    loading="lazy"
+                    decoding="async"
                     className="
                       h-[600px]
                       w-full
@@ -179,6 +181,8 @@ export default function Companies() {
                     <img
                       src={company.image}
                       alt={company.title}
+                      loading="lazy"
+                      decoding="async"
                       className="
                         h-[400px]
                         w-full
