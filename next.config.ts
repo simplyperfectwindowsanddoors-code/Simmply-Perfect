@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -9,6 +10,15 @@ const nextConfig = {
       },
     ],
   },
+
+  // Keep production builds clean and deterministic.
+  poweredByHeader: false,
+
+  // Compress server responses.
+  compress: true,
+
+  // Prevent unnecessary source-map generation in production.
+  productionBrowserSourceMaps: false,
 };
 
-module.exports = nextConfig; // or `export default nextConfig;` if using ES modules
+export default nextConfig;
