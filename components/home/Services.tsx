@@ -881,7 +881,7 @@ export default function Services() {
       ===================================================== */}
 
       <section
-        id="services"
+        id="all-services"
         aria-labelledby="services-heading"
         className="py-24 sm:py-32 bg-[#FAFBFD] relative overflow-visible antialiased text-slate-900 select-none"
       >
@@ -990,11 +990,12 @@ export default function Services() {
         </div>
 
         {/* =================================================
-            GENERAL SERVICES
+            GENERAL SERVICES (TARGET ANCHOR)
         ================================================= */}
 
         <div
-          className="max-w-7xl mx-auto px-6 pt-32 pb-8"
+          id="general-services"
+          className="max-w-7xl mx-auto px-6 pt-32 pb-8 scroll-mt-28"
           aria-labelledby="general-services-heading"
         >
           <div className="flex flex-col items-center text-center pb-6 space-y-3">

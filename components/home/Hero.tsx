@@ -20,6 +20,7 @@ import {
   Warehouse,
   Wrench,
   X,
+  ShoppingCart,
 } from "lucide-react";
 
 /* =========================================================
@@ -257,12 +258,13 @@ export default function Hero() {
                   />
                 </Link>
 
-                {/* Explore Services */}
+                {/* Explore Services -> Targets General Services on Home */}
                 <Link
-                  href="/windows-doors"
+                  href="/#general-services"
                   className="group inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3.5 xl:px-6 text-sm font-bold tracking-wide text-[#0A1A35] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#0A2E6F]/30 hover:bg-slate-50 active:translate-y-0"
                 >
                   <span className="whitespace-nowrap">Explore Services</span>
+
                   <ArrowRight
                     size={16}
                     strokeWidth={2}
@@ -275,10 +277,17 @@ export default function Hero() {
                   href="https://shop.simmplyperfect.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Explore Simmply Perfect online store"
-                  className="group inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-xl border border-[#0A2E6F]/20 bg-blue-50/50 px-5 py-3.5 xl:px-6 text-sm font-bold tracking-wide text-[#0A2E6F] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#0A2E6F] hover:bg-[#0A2E6F] hover:text-white active:translate-y-0"
+                  aria-label="Buy Simmply Perfect products online"
+                  className="group inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-full border border-[#0A2E6F]/20 bg-blue-50/50 px-6 sm:px-7 py-3.5 text-sm font-semibold tracking-wide text-[#0A2E6F] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#0A2E6F] hover:bg-[#0A2E6F] hover:text-white active:translate-y-0"
                 >
-                  <span className="whitespace-nowrap">Explore Products</span>
+                  <ShoppingCart
+                    size={17}
+                    strokeWidth={2.2}
+                    className="shrink-0 transition-transform duration-300 ease-out group-hover:scale-105"
+                  />
+
+                  <span className="whitespace-nowrap">Buy Online</span>
+
                   <ArrowUpRight
                     size={16}
                     strokeWidth={2.2}
@@ -299,7 +308,9 @@ export default function Hero() {
                     <div
                       key={stat.label}
                       className={`group relative flex flex-col items-center justify-center p-3 sm:py-5 text-center transition-colors hover:bg-slate-50/50 ${
-                        index !== statistics.length - 1 ? "border-r border-slate-200/80" : ""
+                        index !== statistics.length - 1
+                          ? "border-r border-slate-200/80"
+                          : ""
                       }`}
                     >
                       <div className="absolute left-1/2 top-0 h-[2px] w-0 -translate-x-1/2 rounded-full bg-[#0A2E6F] transition-all duration-300 group-hover:w-12" />

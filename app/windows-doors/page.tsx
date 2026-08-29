@@ -7,6 +7,7 @@ import Footer from "@/components/home/Footer";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { useRef, useState, useEffect } from "react";
+
 import {
   MessageSquare,
   Ruler,
@@ -17,7 +18,8 @@ import {
   CheckCircle2,
   ChevronDown,
   Quote,
-  ArrowUpRight
+  ArrowUpRight,
+  ShoppingCart
 } from "lucide-react";
 
 const fadeUp = {
@@ -1065,19 +1067,26 @@ export default function WindowsDoorsPage() {
 
   {/* Explore Products */}
   <a
-    href="https://shop.simmplyperfect.com/"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Explore Simmply Perfect online store"
-    className="group inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-full border border-[#0A2E6F]/20 bg-blue-50/50 px-6 sm:px-7 py-3.5 text-sm font-semibold tracking-wide text-[#0A2E6F] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#0A2E6F] hover:bg-[#0A2E6F] hover:text-white active:translate-y-0"
-  >
-    <span className="whitespace-nowrap">Explore Products</span>
-    <ArrowUpRight
-      size={16}
-      strokeWidth={2.2}
-      className="shrink-0 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-    />
-  </a>
+  href="https://shop.simmplyperfect.com/"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Buy Simmply Perfect products online"
+  className="group inline-flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-full border border-[#0A2E6F]/20 bg-blue-50/50 px-6 sm:px-7 py-3.5 text-sm font-semibold tracking-wide text-[#0A2E6F] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#0A2E6F] hover:bg-[#0A2E6F] hover:text-white active:translate-y-0"
+>
+  <ShoppingCart
+    size={17}
+    strokeWidth={2.2}
+    className="shrink-0 transition-transform duration-300 ease-out group-hover:scale-105"
+  />
+
+  <span className="whitespace-nowrap">Buy Online</span>
+
+  <ArrowUpRight
+    size={16}
+    strokeWidth={2.2}
+    className="shrink-0 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+  />
+</a>
 </div>
               </motion.div>
               <motion.div {...fadeRight} className="relative">
