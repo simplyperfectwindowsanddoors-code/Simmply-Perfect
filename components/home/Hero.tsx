@@ -336,7 +336,7 @@ export default function Hero() {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6 }}
-                className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-slate-900 shadow-xl"
+                className="relative flex items-center justify-center overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-slate-900 shadow-xl"
               >
                 <video
                   autoPlay
@@ -345,7 +345,7 @@ export default function Hero() {
                   playsInline
                   preload="metadata"
                   aria-label="Simmply Perfect Group architectural showcase video"
-                  className="block aspect-video h-auto w-full object-cover"
+                  className="block h-auto w-full max-h-[540px] object-contain"
                 >
                   <source src="/videos/hero-video.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
