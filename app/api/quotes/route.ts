@@ -197,6 +197,9 @@ async function generateBookingSlipPdf({
   total,
   utr,
   date,
+  locationMode,
+  latitude,
+  longitude,
 }: {
   bookingId: string;
   fullName: string;
@@ -210,6 +213,9 @@ async function generateBookingSlipPdf({
   total: number;
   utr: string;
   date: string;
+  locationMode: string;
+  latitude: string;
+  longitude: string;
 }): Promise<Buffer> {
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([595.28, 841.89]);
@@ -360,14 +366,21 @@ async function generateBookingSlipPdf({
   drawField("CUSTOMER", fullName || "Customer Name", leftColX, cursorY, true);
   drawField("CONTACT (MOBILE)", phone || "Phone Number", rightColX, cursorY, true);
 
-  // Row 2: Location Tier
+  // Row 2: Location Tier & Mode
   cursorY -= 40;
+  let locText = isHyderabad ? "In Hyderabad" : "Outside Hyderabad";
+  if (locationMode === "at-site") {
+    locText += ` (At Site - GPS: ${latitude || "Pending"})`;
+  } else if (locationMode === "away-from-site") {
+    locText += ` (Away from Site - Map Pin Provided)`;
+  }
+
   drawField(
-    "LOCATION REGION",
-    isHyderabad ? "In Hyderabad" : "Outside Hyderabad",
+    "LOCATION REGION & MODE",
+    locText,
     leftColX,
     cursorY,
-    true,
+    false,
   );
 
   // Row 3: Site Location
@@ -632,11 +645,15 @@ export async function POST(req: Request) {
     const problemStatement = String(formData.get("problemStatement") || "").trim();
     const remarks = String(formData.get("remarks") || "").trim();
     const plannedDate = String(formData.get("plannedDate") || "").trim();
+    const rawServices = safeJson(String(formData.get("services") || "[]"));
+    const utr = String(formData.get("utr") || "").trim();
+
+    // New Location Fields
+    const locationMode = String(formData.get("locationMode") || "at-site").trim();
+    const locationLink = String(formData.get("locationLink") || "").trim();
     const latitude = String(formData.get("latitude") || "").trim();
     const longitude = String(formData.get("longitude") || "").trim();
     const locationAccuracy = String(formData.get("locationAccuracy") || "").trim();
-    const utr = String(formData.get("utr") || "").trim();
-    const rawServices = safeJson(String(formData.get("services") || "[]"));
 
     const issuePhoto = formData.get("issuePhoto");
     const paymentScreenshot = formData.get("paymentScreenshot");
@@ -660,11 +677,21 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!latitude || !longitude) {
-      return NextResponse.json(
-        { success: false, message: "Pin location is required." },
-        { status: 400 },
-      );
+    // New Location Validation
+    if (locationMode === "at-site") {
+      if (!latitude || !longitude) {
+        return NextResponse.json(
+          { success: false, message: "Pin location is required for at-site bookings." },
+          { status: 400 },
+        );
+      }
+    } else if (locationMode === "away-from-site") {
+      if (!locationLink) {
+        return NextResponse.json(
+          { success: false, message: "Location link is required for away-from-site bookings." },
+          { status: 400 },
+        );
+      }
     }
 
     if (!utr) {
@@ -747,12 +774,13 @@ export async function POST(req: Request) {
         total,
         utr,
         date: submittedDate,
+        locationMode,
+        latitude,
+        longitude,
       }),
       paymentScreenshot.arrayBuffer().then((buf) => Buffer.from(buf)),
       hasIssuePhoto ? issuePhoto.arrayBuffer().then((buf) => Buffer.from(buf)) : Promise.resolve(null),
     ]);
-
-    const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${latitude},${longitude}`)}`;
 
     const transporter = nodemailer.createTransport({
       host: smtpHost,
@@ -814,6 +842,42 @@ export async function POST(req: Request) {
 
     const senderHeader = `"${COMPANY_NAME}" <${SMTP_FROM}>`;
 
+    // Format Location Email HTML
+    let locationHtml = `
+      <h3 style="margin:25px 0 10px;color:#0A2E6F;font-size:14px;text-transform:uppercase;">Site Location</h3>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px;font-size:13px;">
+        <p style="margin:0 0 10px;"><strong>Mode:</strong> ${locationMode === 'at-site' ? 'Client is at the site' : 'Client is away from the site'}</p>
+    `;
+
+    if (locationMode === 'at-site') {
+      const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${latitude},${longitude}`)}`;
+      locationHtml += `
+        <p style="margin:0 0 6px;"><strong>Coordinates:</strong> ${escapeHtml(latitude)}, ${escapeHtml(longitude)}</p>
+        <p style="margin:0 0 10px;color:#64748b;font-size:12px;">Accuracy: ~${safeAccuracy} meters</p>
+        <a href="${mapUrl}" target="_blank" style="display:inline-block;background:#0A2E6F;color:#fff;text-decoration:none;font-weight:bold;font-size:12px;padding:8px 16px;border-radius:8px;">Open Site Location &rarr;</a>
+      `;
+    } else {
+      locationHtml += `
+        <p style="margin:0 0 10px;"><strong>Google Maps Pin:</strong> <a href="${escapeHtml(locationLink)}" target="_blank" style="color:#0A2E6F;font-weight:bold;text-decoration:underline;">Open Site Location</a></p>
+      `;
+      if (latitude && longitude) {
+        locationHtml += `<p style="margin:0 0 6px;color:#64748b;font-size:12px;"><strong>Extracted Coordinates:</strong> ${escapeHtml(latitude)}, ${escapeHtml(longitude)}</p>`;
+      }
+    }
+    locationHtml += `</div>`;
+
+    // Format Location Email Text
+    let locationText = `Site Location:\nMode: ${locationMode === 'at-site' ? 'Client is at the site' : 'Client is away from the site'}\n`;
+    if (locationMode === 'at-site') {
+      const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${latitude},${longitude}`)}`;
+      locationText += `Coordinates: ${latitude}, ${longitude}\nAccuracy: ${locationAccuracy}m\nGoogle Maps Pin: ${mapUrl}`;
+    } else {
+      locationText += `Google Maps Pin: ${locationLink}`;
+      if (latitude && longitude) {
+        locationText += `\nExtracted Coordinates: ${latitude}, ${longitude}`;
+      }
+    }
+
     const adminMail = {
       from: senderHeader,
       to: ADMIN_EMAIL,
@@ -863,12 +927,7 @@ export async function POST(req: Request) {
                   </tr>
                 </table>
 
-                <h3 style="margin:25px 0 10px;color:#0A2E6F;font-size:14px;text-transform:uppercase;">GPS Site Location</h3>
-                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px;font-size:13px;">
-                  <p style="margin:0 0 6px;"><strong>Coordinates:</strong> ${escapeHtml(latitude)}, ${escapeHtml(longitude)}</p>
-                  <p style="margin:0 0 10px;color:#64748b;font-size:12px;">Accuracy: ~${safeAccuracy} meters</p>
-                  <a href="${mapUrl}" target="_blank" style="display:inline-block;background:#0A2E6F;color:#fff;text-decoration:none;font-weight:bold;font-size:12px;padding:8px 16px;border-radius:8px;">Open Location in Google Maps &rarr;</a>
-                </div>
+                ${locationHtml}
 
                 <div style="margin-top:24px;padding:14px;background:#f1f5f9;border-radius:10px;font-size:12px;color:#475569;">
                   📎 <strong>Attachments Included:</strong> Service Booking Slip PDF, Payment Verification Screenshot${hasIssuePhoto ? ", Uploaded Issue Photo" : ""}.
@@ -907,7 +966,7 @@ ${serviceText}
 TOTAL PAID: ${formatCurrency(total)}
 PAYMENT UTR: ${utr}
 
-GPS Location: ${latitude}, ${longitude} (${mapUrl})
+${locationText}
 
 Note: Our team will Respond promptly upon payment Confirmation.
 Submitted: ${submittedTimestamp}

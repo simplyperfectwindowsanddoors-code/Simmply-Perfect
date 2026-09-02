@@ -51,8 +51,8 @@ export const SERVICE_BASE_CONFIG = [
   {
     id: "door-measurement",
     name: "Site Visit for Door Measurement",
-    hydAmount: 500,
-    outsideAmount: 3000,
+    hydAmount: 700,
+    outsideAmount: 5000,
   },
   {
     id: "repair-maintenance",
@@ -77,6 +77,22 @@ export function formatToDDMMYYYY(dateString: string): string {
   return `${day}-${month}-${year}`;
 }
 
+export function extractCoordinatesFromMapsLink(url: string): { latitude: string; longitude: string } | null {
+  if (!url) return null;
+  try {
+    const regex = /@?(-?\d+\.\d+),(-?\d+\.\d+)/;
+    const match = url.match(regex);
+    if (match) {
+      return { latitude: match[1], longitude: match[2] };
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+type LocationMode = "at-site" | "away-from-site";
+
 type BookingFormData = {
   fullName: string;
   phone: string;
@@ -87,9 +103,14 @@ type BookingFormData = {
   plannedDate: string;
   issuePhoto: File | null;
   services: string[];
+
+  /* SITE LOCATION */
+  locationMode: LocationMode;
   latitude: string;
   longitude: string;
   locationAccuracy: string;
+  locationLink: string;
+
   paymentScreenshot: File | null;
   utr: string;
 };
@@ -111,9 +132,13 @@ const initialBookingForm: BookingFormData = {
   plannedDate: "",
   issuePhoto: null,
   services: [],
+
+  locationMode: "at-site",
   latitude: "",
   longitude: "",
   locationAccuracy: "",
+  locationLink: "",
+
   paymentScreenshot: null,
   utr: "",
 };
@@ -210,7 +235,9 @@ export default function BookServicePage() {
 
   const captureLocation = () => {
     if (!navigator.geolocation) {
-      setBookingError("Location services are not supported by this browser.");
+      setBookingError(
+        "Location services are not supported by this browser.",
+      );
       return;
     }
 
@@ -219,27 +246,49 @@ export default function BookServicePage() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        updateBookingField("latitude", position.coords.latitude.toFixed(7));
-        updateBookingField("longitude", position.coords.longitude.toFixed(7));
-        updateBookingField(
-          "locationAccuracy",
-          Math.round(position.coords.accuracy).toString(),
-        );
+        const latitude = position.coords.latitude.toFixed(7);
+        const longitude = position.coords.longitude.toFixed(7);
+        const accuracy = Math.round(position.coords.accuracy).toString();
+        const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+        setBookingForm((previous) => ({
+          ...previous,
+          locationMode: "at-site",
+          latitude,
+          longitude,
+          locationAccuracy: accuracy,
+          locationLink: mapUrl,
+        }));
+
         setLocationLoading(false);
       },
       (error) => {
         console.error("Location error:", error);
         setLocationLoading(false);
         setBookingError(
-          "Unable to get your location. Please allow location access and try again.",
+          "Unable to get your current location. Please allow location access and try again.",
         );
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 15000,
         maximumAge: 0,
       },
     );
+  };
+
+  const handleMapsLinkChange = (value: string) => {
+    setBookingError("");
+    const coordinates = extractCoordinatesFromMapsLink(value);
+
+    setBookingForm((previous) => ({
+      ...previous,
+      locationMode: "away-from-site",
+      locationLink: value,
+      latitude: coordinates?.latitude ?? "",
+      longitude: coordinates?.longitude ?? "",
+      locationAccuracy: coordinates ? "Coordinates from Google Maps pin" : "",
+    }));
   };
 
   const validateBookingDetails = () => {
@@ -417,13 +466,15 @@ export default function BookServicePage() {
       drawField("CONTACT (MOB)", bookingForm.phone || "Phone Number", rightColX, cursorY, true);
 
       cursorY -= 40;
-      drawField(
-        "LOCATION REGION",
-        bookingForm.isHyderabad ? "In Hyderabad" : "Outside Hyderabad",
-        leftColX,
-        cursorY,
-        true,
-      );
+      
+      let locationText = bookingForm.isHyderabad ? "In Hyderabad" : "Outside Hyderabad";
+      if (bookingForm.locationMode === "at-site") {
+        locationText += ` (At Site - GPS: ${bookingForm.latitude || 'Pending'})`;
+      } else {
+        locationText += ` (Away from Site - Map Pin Provided)`;
+      }
+
+      drawField("LOCATION REGION & MODE", locationText, leftColX, cursorY, false);
 
       cursorY -= 40;
       page.drawText("PROJECT / SITE ADDRESS", {
@@ -682,6 +733,18 @@ export default function BookServicePage() {
     event.preventDefault();
     if (isSubmittingBooking) return;
 
+    if (bookingForm.locationMode === "at-site") {
+      if (!bookingForm.latitude || !bookingForm.longitude) {
+        setBookingError("Please capture your current location before submitting.");
+        return;
+      }
+    } else if (bookingForm.locationMode === "away-from-site") {
+      if (!bookingForm.locationLink.trim() || !bookingForm.locationLink.startsWith("http")) {
+        setBookingError("Please provide a valid Google Maps link (http/https).");
+        return;
+      }
+    }
+
     if (!bookingForm.paymentScreenshot) {
       setBookingError("Please upload your payment screenshot.");
       return;
@@ -692,10 +755,6 @@ export default function BookServicePage() {
     }
     if (!bookingForm.utr.trim()) {
       setBookingError("Please enter the UTR / transaction reference number.");
-      return;
-    }
-    if (!bookingForm.latitude || !bookingForm.longitude) {
-      setBookingError("Please share your pin location before submitting.");
       return;
     }
     if (!hasDownloadedSlip) {
@@ -719,9 +778,14 @@ export default function BookServicePage() {
       form.append("plannedDate", bookingForm.plannedDate.trim());
       form.append("services", JSON.stringify(selectedServices));
       form.append("total", String(bookingTotal));
-      form.append("latitude", bookingForm.latitude);
-      form.append("longitude", bookingForm.longitude);
-      form.append("locationAccuracy", bookingForm.locationAccuracy);
+      
+      // New Location Fields
+      form.append("locationMode", bookingForm.locationMode);
+      form.append("locationLink", bookingForm.locationLink.trim());
+      form.append("latitude", bookingForm.latitude || "");
+      form.append("longitude", bookingForm.longitude || "");
+      form.append("locationAccuracy", bookingForm.locationAccuracy || "");
+
       form.append("utr", bookingForm.utr.trim());
 
       if (bookingForm.issuePhoto) {
@@ -760,7 +824,7 @@ export default function BookServicePage() {
   return (
     <div className="flex h-screen w-full flex-col overflow-hidden bg-[#f5f7fb]">
       {/* FIXED TOP NAVIGATION BAR */}
-      <header className="z-30 flex shrink-0 items-center justify-between border-b border-slate-200/90 bg-white px-3 py-2.5 sm:px-8 sm:py-3.5">
+      <header className="z-30 flex shrink-0 items-center justify-between border-b border-slate-200/90 bg-white px-3 py-2.5 sm:px-8 sm:py-3.5 print:hidden">
         <div className="flex items-center">
           <button
             type="button"
@@ -821,9 +885,9 @@ export default function BookServicePage() {
       </header>
 
       {/* VIEWPORT BODY */}
-      <div className="flex min-h-0 flex-1 overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden print:overflow-visible">
         {bookingStep === "success" ? (
-          <div className="flex flex-1 items-center justify-center overflow-y-auto p-4 sm:p-6">
+          <div className="flex flex-1 items-center justify-center overflow-y-auto p-4 sm:p-6 print:hidden">
             <div className="w-full max-w-lg rounded-[26px] border border-slate-200 bg-white p-6 text-center shadow-lg sm:p-10">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-50 text-green-600 sm:h-16 sm:w-16">
                 <CheckCircle2 className="h-7 w-7 sm:h-8 sm:w-8" />
@@ -878,7 +942,7 @@ export default function BookServicePage() {
           </div>
         ) : bookingStep === "details" ? (
           /* STEP 1: FORM ONLY */
-          <div className="h-full w-full overflow-y-auto bg-[#f5f7fb] p-3 sm:p-8">
+          <div className="h-full w-full overflow-y-auto bg-[#f5f7fb] p-3 sm:p-8 print:hidden">
             <div className="mx-auto max-w-2xl rounded-[26px] border border-slate-200/90 bg-white p-5 shadow-sm sm:p-10">
               <div className="mb-5 sm:mb-6">
                 <h2 className="text-xl font-bold text-[#071224] sm:text-2xl">
@@ -1097,36 +1161,227 @@ export default function BookServicePage() {
                 </div>
               </div>
 
-              {/* GPS LOCATION PIN */}
-              <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+              {/* =========================================================
+                 SITE LOCATION
+              ========================================================= */}
+              <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#0A2E6F]" />
-                  <div className="flex-1">
-                    <p className="text-xs font-bold text-[#071224]">
-                      Site Location GPS Pin
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#0A2E6F]">
+                    <MapPin className="h-4 w-4" />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-[#071224]">
+                      Site Location
+                      <span className="ml-1 text-red-500">*</span>
                     </p>
+
                     <p className="mt-1 text-[11px] leading-5 text-slate-500">
-                      Share GPS location so our field technician reaches your site accurately.
+                      Tell us where the service will take place.
+                      Choose whether you are currently at the site or
+                      away from the site.
                     </p>
 
-                    <button
-                      type="button"
-                      onClick={captureLocation}
-                      disabled={locationLoading}
-                      className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#0A2E6F] px-4 py-2 text-[11px] font-bold text-white disabled:opacity-60"
-                    >
-                      <Navigation className="h-3.5 w-3.5" />
-                      {locationLoading
-                        ? "Getting Location..."
-                        : bookingForm.latitude
-                          ? "Location Captured"
-                          : "Use My Current Location"}
-                    </button>
+                    {/* LOCATION MODE */}
+                    <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      {/* AT SITE */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setBookingError("");
+                          setBookingForm((previous) => ({
+                            ...previous,
+                            locationMode: "at-site",
+                            locationLink: "",
+                            latitude: "",
+                            longitude: "",
+                            locationAccuracy: "",
+                          }));
+                        }}
+                        className={`rounded-xl border p-3 text-left transition-all ${
+                          bookingForm.locationMode === "at-site"
+                            ? "border-[#0A2E6F] bg-[#0A2E6F]/5 ring-1 ring-[#0A2E6F]"
+                            : "border-slate-200 bg-white hover:border-slate-300"
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <div
+                            className={`mt-0.5 flex h-4 w-4 items-center justify-center rounded-full border ${
+                              bookingForm.locationMode === "at-site"
+                                ? "border-[#0A2E6F]"
+                                : "border-slate-300"
+                            }`}
+                          >
+                            {bookingForm.locationMode === "at-site" && (
+                              <div className="h-2 w-2 rounded-full bg-[#0A2E6F]" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-slate-900">
+                              I am at the site
+                            </p>
+                            <p className="mt-1 text-[10px] leading-4 text-slate-500">
+                              Use my current phone location.
+                            </p>
+                          </div>
+                        </div>
+                      </button>
 
-                    {bookingForm.latitude && bookingForm.longitude && (
-                      <p className="mt-2 text-[10px] text-green-700">
-                        ✓ Location captured ({bookingForm.latitude}, {bookingForm.longitude}).
-                      </p>
+                      {/* AWAY FROM SITE */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setBookingError("");
+                          setBookingForm((previous) => ({
+                            ...previous,
+                            locationMode: "away-from-site",
+                            latitude: "",
+                            longitude: "",
+                            locationAccuracy: "",
+                          }));
+                        }}
+                        className={`rounded-xl border p-3 text-left transition-all ${
+                          bookingForm.locationMode === "away-from-site"
+                            ? "border-[#0A2E6F] bg-[#0A2E6F]/5 ring-1 ring-[#0A2E6F]"
+                            : "border-slate-200 bg-white hover:border-slate-300"
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <div
+                            className={`mt-0.5 flex h-4 w-4 items-center justify-center rounded-full border ${
+                              bookingForm.locationMode === "away-from-site"
+                                ? "border-[#0A2E6F]"
+                                : "border-slate-300"
+                            }`}
+                          >
+                            {bookingForm.locationMode === "away-from-site" && (
+                              <div className="h-2 w-2 rounded-full bg-[#0A2E6F]" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-slate-900">
+                              I am away from the site
+                            </p>
+                            <p className="mt-1 text-[10px] leading-4 text-slate-500">
+                              Paste the Google Maps pin link.
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+
+                    {/* =====================================================
+                        AT SITE
+                    ===================================================== */}
+                    {bookingForm.locationMode === "at-site" && (
+                      <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/60 p-3">
+                        <div className="flex items-start gap-3">
+                          <Navigation className="mt-0.5 h-4 w-4 shrink-0 text-[#0A2E6F]" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-bold text-[#071224]">
+                              Capture Current Location
+                            </p>
+                            <p className="mt-1 text-[10px] leading-4 text-slate-500">
+                              Your browser will ask for location permission.
+                              Your current GPS position will be used as the
+                              service location.
+                            </p>
+
+                            <button
+                              type="button"
+                              onClick={captureLocation}
+                              disabled={locationLoading}
+                              className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-[#0A2E6F] px-4 py-2.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-[#08265d] disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {locationLoading ? (
+                                <>
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  Getting Location...
+                                </>
+                              ) : (
+                                <>
+                                  <Navigation className="h-3.5 w-3.5" />
+                                  Use My Current Location
+                                </>
+                              )}
+                            </button>
+
+                            {bookingForm.latitude && bookingForm.longitude && (
+                               <div className="mt-3 rounded-lg bg-white px-3 py-2 border border-green-100">
+                                 <div className="flex items-center gap-2">
+                                   <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
+                                   <p className="text-[10px] font-bold text-green-700">Location captured</p>
+                                 </div>
+                                 <p className="mt-1 break-all text-[9px] text-slate-500">
+                                   {bookingForm.latitude}, {bookingForm.longitude} (Accuracy: {bookingForm.locationAccuracy}m)
+                                 </p>
+                               </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* =====================================================
+                        AWAY FROM SITE
+                    ===================================================== */}
+                    {bookingForm.locationMode === "away-from-site" && (
+                      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/70 p-3">
+                        <div className="flex items-start gap-3">
+                          <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-bold text-slate-900">
+                              Google Maps Site Pin
+                            </p>
+                            <p className="mt-1 text-[10px] leading-4 text-slate-600">
+                              Open Google Maps, drop a pin on the project
+                              location, copy the link and paste it below.
+                            </p>
+
+                            <input
+                              type="url"
+                              value={bookingForm.locationLink}
+                              onChange={(event) =>
+                                handleMapsLinkChange(event.target.value)
+                              }
+                              placeholder="Paste Google Maps location link"
+                              className="mt-3 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#0A2E6F] focus:ring-2 focus:ring-[#0A2E6F]/10"
+                            />
+
+                            <p className="mt-2 text-[9px] leading-4 text-slate-500">
+                              Example: https://maps.app.goo.gl/XXXXXXXX or https://maps.google.com/?q=...
+                            </p>
+
+                            {bookingForm.latitude && bookingForm.longitude && (
+                              <div className="mt-3 rounded-lg bg-white px-3 py-2">
+                                <div className="flex items-center gap-2">
+                                  <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
+                                  <p className="text-[10px] font-bold text-green-700">
+                                    Site pin coordinates detected
+                                  </p>
+                                </div>
+                                <p className="mt-1 break-all text-[9px] text-slate-500">
+                                  {bookingForm.latitude}, {bookingForm.longitude}
+                                </p>
+                              </div>
+                            )}
+
+                            {bookingForm.locationLink && !bookingForm.latitude && !bookingForm.longitude && (
+                              <div className="mt-3 rounded-lg bg-white px-3 py-2">
+                                <div className="flex items-center gap-2">
+                                  <CheckCircle2 className="h-3.5 w-3.5 text-amber-600" />
+                                  <p className="text-[10px] font-bold text-amber-700">
+                                    Maps link saved
+                                  </p>
+                                </div>
+                                <p className="mt-1 text-[9px] leading-4 text-slate-500">
+                                  The exact link will be sent to our team.
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -1155,12 +1410,14 @@ export default function BookServicePage() {
           </div>
         ) : (
           /* STEP 2: PAYMENT & PREVIEW */
-          <form onSubmit={submitBooking} className="h-full min-h-0 w-full overflow-hidden">
-            <div className="grid h-full min-h-0 w-full lg:grid-cols-[1fr_1.1fr]">
-              {/* LEFT: SLIP PREVIEW (DESKTOP) */}
-              <div className="hidden h-full overflow-y-auto border-r border-slate-200 bg-slate-100 p-5 sm:p-8 lg:block">
-                <div className="mx-auto max-w-lg">
-                  <div className="mb-4 flex items-center justify-between">
+          <form onSubmit={submitBooking} className="h-full min-h-0 w-full overflow-hidden print:overflow-visible">
+            <div className="grid h-full min-h-0 w-full lg:grid-cols-[1fr_1.1fr] print:block print:w-full">
+              
+              {/* LEFT: SLIP PREVIEW (DESKTOP) AND PRINT VIEW */}
+              <div className="hidden h-full overflow-y-auto border-r border-slate-200 bg-slate-100 p-5 sm:p-8 lg:block print:block print:w-full print:bg-white print:p-0 print:border-none print:overflow-visible">
+                {/* Ensure the receipt only is fully visible on print via class mapping */}
+                <div className="mx-auto max-w-lg print-receipt-only">
+                  <div className="mb-4 flex items-center justify-between print:hidden">
                     <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
                       Live Booking Slip Preview
                     </p>
@@ -1182,12 +1439,12 @@ export default function BookServicePage() {
                     total={bookingTotal}
                     hasMounted={hasMounted}
                   />
-                  <div className="h-8" />
+                  <div className="h-8 print:hidden" />
                 </div>
               </div>
 
               {/* RIGHT: PAYMENT PROOF FORM */}
-              <div className="h-full overflow-y-auto bg-white p-4 sm:p-8">
+              <div className="h-full overflow-y-auto bg-white p-4 sm:p-8 print:hidden">
                 <div className="mx-auto max-w-md">
                   <div className="mb-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-center">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
@@ -1455,6 +1712,15 @@ function ServiceBookingSlip({
             </p>
             <p className="mt-1 break-words text-xs font-bold text-[#0A2E6F]">
               {customer.isHyderabad ? "In Hyderabad (Standard Rate)" : "Outside Hyderabad (Regional Travel Rate)"}
+            </p>
+            
+            {/* Show specific location metadata directly underneath */}
+            <p className="mt-1 text-[10px] text-slate-500 font-medium">
+              {customer.locationMode === "at-site" && customer.latitude
+                ? `📍 Client at site (GPS: ${customer.latitude}, ${customer.longitude})`
+                : customer.locationMode === "away-from-site" && customer.locationLink 
+                  ? `📍 Client away from site (Google Maps Pin Provided)`
+                  : "📍 Location pending"}
             </p>
           </div>
         </div>
