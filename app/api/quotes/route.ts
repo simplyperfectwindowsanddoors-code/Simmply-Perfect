@@ -195,7 +195,6 @@ async function generateBookingSlipPdf({
   plannedDateFormatted,
   services,
   total,
-  utr,
   date,
   locationMode,
   latitude,
@@ -211,7 +210,6 @@ async function generateBookingSlipPdf({
   plannedDateFormatted: string;
   services: NormalizedService[];
   total: number;
-  utr: string;
   date: string;
   locationMode: string;
   latitude: string;
@@ -548,16 +546,6 @@ async function generateBookingSlipPdf({
     color: navy,
   });
 
-  if (utr) {
-    page.drawText(`VERIFIED PAYMENT UTR: ${utr}`, {
-      x: leftColX,
-      y: totalDividerY - 52,
-      size: 8,
-      font: fontBold,
-      color: navy,
-    });
-  }
-
   // Footer Card
   const footerHeight = 88;
   const footerY = cardY;
@@ -646,7 +634,6 @@ export async function POST(req: Request) {
     const remarks = String(formData.get("remarks") || "").trim();
     const plannedDate = String(formData.get("plannedDate") || "").trim();
     const rawServices = safeJson(String(formData.get("services") || "[]"));
-    const utr = String(formData.get("utr") || "").trim();
 
     // New Location Fields
     const locationMode = String(formData.get("locationMode") || "at-site").trim();
@@ -692,13 +679,6 @@ export async function POST(req: Request) {
           { status: 400 },
         );
       }
-    }
-
-    if (!utr) {
-      return NextResponse.json(
-        { success: false, message: "Payment UTR is required." },
-        { status: 400 },
-      );
     }
 
     if (!(paymentScreenshot instanceof File) || paymentScreenshot.size === 0) {
@@ -772,7 +752,6 @@ export async function POST(req: Request) {
         plannedDateFormatted,
         services,
         total,
-        utr,
         date: submittedDate,
         locationMode,
         latitude,
@@ -800,7 +779,6 @@ export async function POST(req: Request) {
     const safeAddress = escapeHtml(address);
     const safeProblem = escapeHtml(problemStatement).replace(/\n/g, "<br />");
     const safeRemarks = escapeHtml(remarks || "None").replace(/\n/g, "<br />");
-    const safeUtr = escapeHtml(utr);
     const safeAccuracy = escapeHtml(locationAccuracy || "Not provided");
 
     const serviceRows = services
@@ -882,7 +860,7 @@ export async function POST(req: Request) {
       from: senderHeader,
       to: ADMIN_EMAIL,
       replyTo: SMTP_FROM,
-      subject: `🚨 NEW BOOKING: ${bookingId} - ${formatCurrency(total)} (UTR: ${utr}) - ${fullName}`,
+      subject: `🚨 NEW BOOKING: ${bookingId} - ${formatCurrency(total)} - ${fullName}`,
       attachments: adminAttachments,
       html: `
         <!doctype html>
@@ -899,9 +877,9 @@ export async function POST(req: Request) {
 
               <div style="padding:28px;">
                 <div style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:18px;margin-bottom:24px;">
-                  <div style="font-size:11px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:1px;">Verified Payment Reference</div>
-                  <div style="font-size:26px;font-weight:900;color:#0A2E6F;margin-top:4px;letter-spacing:0.5px;">UTR: ${safeUtr}</div>
-                  <div style="font-size:14px;color:#1e3a8a;margin-top:4px;">Amount Paid: <strong>${formatCurrency(total)}</strong> (${isHyderabad ? "In Hyderabad" : "Outside Hyderabad"})</div>
+                  <div style="font-size:11px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:1px;">Payment Submitted</div>
+                  <div style="font-size:26px;font-weight:900;color:#0A2E6F;margin-top:4px;letter-spacing:0.5px;">${formatCurrency(total)}</div>
+                  <div style="font-size:14px;color:#1e3a8a;margin-top:4px;">Region: <strong>${isHyderabad ? "In Hyderabad" : "Outside Hyderabad"}</strong></div>
                 </div>
 
                 <h3 style="margin:0 0 12px;color:#0A2E6F;font-size:14px;text-transform:uppercase;">Customer & Site Details</h3>
@@ -964,7 +942,6 @@ SERVICES:
 ${serviceText}
 
 TOTAL PAID: ${formatCurrency(total)}
-PAYMENT UTR: ${utr}
 
 ${locationText}
 

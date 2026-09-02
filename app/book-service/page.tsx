@@ -58,7 +58,7 @@ export const SERVICE_BASE_CONFIG = [
     id: "repair-maintenance",
     name: "Site Visit for Repair and Maintenance",
     hydAmount: 500,
-    outsideAmount: 3500,
+    outsideAmount: 5000,
   },
 ];
 
@@ -112,7 +112,6 @@ type BookingFormData = {
   locationLink: string;
 
   paymentScreenshot: File | null;
-  utr: string;
 };
 
 type BookingApiResponse = {
@@ -140,7 +139,6 @@ const initialBookingForm: BookingFormData = {
   locationLink: "",
 
   paymentScreenshot: null,
-  utr: "",
 };
 
 function formatCurrency(amount: number) {
@@ -638,16 +636,6 @@ export default function BookServicePage() {
         color: navy,
       });
 
-      if (bookingForm.utr) {
-        page.drawText(`VERIFIED PAYMENT UTR: ${bookingForm.utr}`, {
-          x: leftColX,
-          y: totalDividerY - 52,
-          size: 8,
-          font: fontBold,
-          color: navy,
-        });
-      }
-
       const footerHeight = 88;
       const footerY = cardY;
 
@@ -753,10 +741,7 @@ export default function BookServicePage() {
       setBookingError("Payment screenshot must be below 10MB.");
       return;
     }
-    if (!bookingForm.utr.trim()) {
-      setBookingError("Please enter the UTR / transaction reference number.");
-      return;
-    }
+
     if (!hasDownloadedSlip) {
       setBookingError("Please download or confirm you have saved the Service Booking Slip before submitting.");
       return;
@@ -779,14 +764,12 @@ export default function BookServicePage() {
       form.append("services", JSON.stringify(selectedServices));
       form.append("total", String(bookingTotal));
       
-      // New Location Fields
+      // Location Fields
       form.append("locationMode", bookingForm.locationMode);
       form.append("locationLink", bookingForm.locationLink.trim());
       form.append("latitude", bookingForm.latitude || "");
       form.append("longitude", bookingForm.longitude || "");
       form.append("locationAccuracy", bookingForm.locationAccuracy || "");
-
-      form.append("utr", bookingForm.utr.trim());
 
       if (bookingForm.issuePhoto) {
         form.append("issuePhoto", bookingForm.issuePhoto);
@@ -1069,7 +1052,7 @@ export default function BookServicePage() {
               <div className="mt-5">
                 <label className="mb-2 flex items-center gap-2 text-xs font-bold text-[#071224]">
                   <ImageIcon className="h-3.5 w-3.5 shrink-0 text-[#0A2E6F]" />
-                  <span>Upload Photo of the Issue</span>
+                  <span>Upload Photo of the Issue/Site</span>
                   <span className="text-xs font-normal text-slate-400">(Optional)</span>
                 </label>
 
@@ -1161,9 +1144,7 @@ export default function BookServicePage() {
                 </div>
               </div>
 
-              {/* =========================================================
-                 SITE LOCATION
-              ========================================================= */}
+              {/* SITE LOCATION */}
               <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#0A2E6F]">
@@ -1270,9 +1251,7 @@ export default function BookServicePage() {
                       </button>
                     </div>
 
-                    {/* =====================================================
-                        AT SITE
-                    ===================================================== */}
+                    {/* AT SITE OPTIONS */}
                     {bookingForm.locationMode === "at-site" && (
                       <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/60 p-3">
                         <div className="flex items-start gap-3">
@@ -1322,9 +1301,7 @@ export default function BookServicePage() {
                       </div>
                     )}
 
-                    {/* =====================================================
-                        AWAY FROM SITE
-                    ===================================================== */}
+                    {/* AWAY FROM SITE OPTIONS */}
                     {bookingForm.locationMode === "away-from-site" && (
                       <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/70 p-3">
                         <div className="flex items-start gap-3">
@@ -1415,7 +1392,6 @@ export default function BookServicePage() {
               
               {/* LEFT: SLIP PREVIEW (DESKTOP) AND PRINT VIEW */}
               <div className="hidden h-full overflow-y-auto border-r border-slate-200 bg-slate-100 p-5 sm:p-8 lg:block print:block print:w-full print:bg-white print:p-0 print:border-none print:overflow-visible">
-                {/* Ensure the receipt only is fully visible on print via class mapping */}
                 <div className="mx-auto max-w-lg print-receipt-only">
                   <div className="mb-4 flex items-center justify-between print:hidden">
                     <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -1544,24 +1520,6 @@ export default function BookServicePage() {
                           const file = e.target.files?.[0] ?? null;
                           updateBookingField("paymentScreenshot", file);
                         }}
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="utr"
-                        className="mb-1.5 block text-xs font-bold text-slate-700"
-                      >
-                        UTR / Reference Number <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        id="utr"
-                        type="text"
-                        value={bookingForm.utr}
-                        onChange={(e) => updateBookingField("utr", e.target.value)}
-                        placeholder="e.g., 423456789012"
-                        autoComplete="off"
-                        className={quoteInputStyles}
                       />
                     </div>
                   </div>
