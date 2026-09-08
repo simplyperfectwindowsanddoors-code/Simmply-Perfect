@@ -46,6 +46,13 @@ async function getLogoBytes(): Promise<Buffer | null> {
    PRICING TIER CATALOG
 ========================================================= */
 
+const TIME_SLOTS = [
+  "10 AM - 1 PM",
+  "2 PM - 5 PM",
+  "5 PM - 8 PM",
+  "8 PM - 11 PM",
+];
+
 const SERVICE_BASE_CONFIG = [
   {
     id: "window-measurement",
@@ -56,14 +63,20 @@ const SERVICE_BASE_CONFIG = [
   {
     id: "door-measurement",
     name: "Site Visit for Door Measurement",
-    hydAmount: 500,
-    outsideAmount: 3000,
+    hydAmount: 700,
+    outsideAmount: 5000,
   },
   {
     id: "repair-maintenance",
     name: "Site Visit for Repair and Maintenance",
     hydAmount: 500,
-    outsideAmount: 3500,
+    outsideAmount: 5000,
+  },
+  {
+    id: "wooden-interior-work",
+    name: "Site Visit for Wooden and Interior Work",
+    hydAmount: 700,
+    outsideAmount: 5000,
   },
 ];
 
@@ -193,6 +206,7 @@ async function generateBookingSlipPdf({
   problemStatement,
   remarks,
   plannedDateFormatted,
+  timeSlot,
   services,
   total,
   date,
@@ -208,6 +222,7 @@ async function generateBookingSlipPdf({
   problemStatement: string;
   remarks: string;
   plannedDateFormatted: string;
+  timeSlot: string;
   services: NormalizedService[];
   total: number;
   date: string;
@@ -406,7 +421,7 @@ async function generateBookingSlipPdf({
 
   // Problem Statement / Planned Visit Date (DD-MM-YYYY)
   if (plannedDateFormatted || problemStatement || remarks) {
-    const boxHeight = 62;
+    const boxHeight = timeSlot ? 76 : 62;
     page.drawRectangle({
       x: leftColX,
       y: cursorY - boxHeight,
@@ -427,11 +442,21 @@ async function generateBookingSlipPdf({
       });
     }
 
+    if (timeSlot) {
+      page.drawText(`Preferred Time Slot: ${timeSlot}`, {
+        x: leftColX + 12,
+        y: cursorY - 32,
+        size: 8.5,
+        font: fontBold,
+        color: navy,
+      });
+    }
+
     if (problemStatement) {
       const pLine = wrapText(`Problem: ${problemStatement}`, 75)[0] || "";
       page.drawText(pLine, {
         x: leftColX + 12,
-        y: cursorY - 32,
+        y: cursorY - 46,
         size: 8.5,
         font: fontRegular,
         color: slateText,
@@ -442,7 +467,7 @@ async function generateBookingSlipPdf({
       const rLine = wrapText(`Remarks: ${remarks}`, 75)[0] || "";
       page.drawText(rLine, {
         x: leftColX + 12,
-        y: cursorY - 48,
+        y: cursorY - 62,
         size: 8,
         font: fontRegular,
         color: muted,
@@ -633,6 +658,7 @@ export async function POST(req: Request) {
     const problemStatement = String(formData.get("problemStatement") || "").trim();
     const remarks = String(formData.get("remarks") || "").trim();
     const plannedDate = String(formData.get("plannedDate") || "").trim();
+    const timeSlot = String(formData.get("timeSlot") || "").trim();
     const rawServices = safeJson(String(formData.get("services") || "[]"));
 
     // New Location Fields
@@ -646,12 +672,27 @@ export async function POST(req: Request) {
     const paymentScreenshot = formData.get("paymentScreenshot");
 
     /* Validation */
-    if (!fullName || !phone || !address || !problemStatement || !plannedDate || !rawServices.length) {
+    if (
+      !fullName ||
+      !phone ||
+      !address ||
+      !problemStatement ||
+      !plannedDate ||
+      !timeSlot ||
+      !rawServices.length
+    ) {
       return NextResponse.json(
         {
           success: false,
-          message: "Please complete all required fields (Name, Mobile, Postal Address, Problem Statement, Planned Date, and Service Category).",
+          message: "Please complete all required fields (Name, Mobile, Postal Address, Problem Statement, Planned Date, Time Slot, and Service Category).",
         },
+        { status: 400 },
+      );
+    }
+
+    if (!TIME_SLOTS.includes(timeSlot)) {
+      return NextResponse.json(
+        { success: false, message: "Please select a valid site visit time slot." },
         { status: 400 },
       );
     }
@@ -750,6 +791,7 @@ export async function POST(req: Request) {
         problemStatement,
         remarks,
         plannedDateFormatted,
+        timeSlot,
         services,
         total,
         date: submittedDate,
@@ -889,6 +931,7 @@ export async function POST(req: Request) {
                   <tr><td style="color:#64748b;font-weight:600;">Location Region:</td><td><strong>${isHyderabad ? "In Hyderabad" : "Outside Hyderabad"}</strong></td></tr>
                   <tr><td style="color:#64748b;font-weight:600;">Postal Address:</td><td><strong>${safeAddress}</strong></td></tr>
                   <tr><td style="color:#64748b;font-weight:600;">Planned Site Visit Date:</td><td><strong style="color:#0A2E6F;font-size:15px;">${plannedDateFormatted}</strong></td></tr>
+                  <tr><td style="color:#64748b;font-weight:600;">Preferred Time Slot:</td><td><strong style="color:#0A2E6F;">${escapeHtml(timeSlot)}</strong></td></tr>
                 </table>
 
                 <h3 style="margin:20px 0 8px;color:#0A2E6F;font-size:14px;text-transform:uppercase;">Problem Statement</h3>
@@ -931,6 +974,7 @@ Mobile: ${phone}
 Location Region: ${isHyderabad ? "In Hyderabad" : "Outside Hyderabad"}
 Postal Address: ${address}
 Planned Site Visit Date (DD-MM-YYYY): ${plannedDateFormatted}
+Preferred Time Slot: ${timeSlot}
 
 Problem Statement:
 ${problemStatement}
