@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Keep tracing inside this checkout when a parent directory has a lockfile.
+  outputFileTracingRoot: process.cwd(),
   images: {
     remotePatterns: [
       {

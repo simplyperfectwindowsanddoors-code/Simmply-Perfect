@@ -46,7 +46,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
    SERVICE CATALOG
 ========================================================= */
 
-export const SERVICE_BASE_CONFIG = [
+const SERVICE_BASE_CONFIG = [
   {
     id: "window-measurement",
     name: "Site visit for Window Measurement",
@@ -77,7 +77,7 @@ export const SERVICE_BASE_CONFIG = [
    TIME SLOT CATALOG
 ========================================================= */
 
-export const TIME_SLOTS = [
+const TIME_SLOTS = [
   "10 AM - 1 PM",
   "2 PM - 5 PM",
   "5 PM - 8 PM",
@@ -90,7 +90,7 @@ type TimeSlot = (typeof TIME_SLOTS)[number];
    HELPERS
 ========================================================= */
 
-export function formatToDDMMYYYY(dateString: string): string {
+function formatToDDMMYYYY(dateString: string): string {
   if (!dateString) return "";
 
   const parts = dateString.split("-");
@@ -117,7 +117,7 @@ export function formatToDDMMYYYY(dateString: string): string {
   return `${day}-${month}-${year}`;
 }
 
-export function extractCoordinatesFromMapsLink(
+function extractCoordinatesFromMapsLink(
   url: string,
 ): { latitude: string; longitude: string } | null {
   if (!url) return null;
