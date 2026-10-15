@@ -71,3 +71,35 @@ After an authorized release, verify the deployed Next version/build, main landin
 - [Hostinger redeployment](https://www.hostinger.com/support/how-to-redeploy-a-node-js-application/)
 - [tinyglobby upstream](https://github.com/SuperchupuDev/tinyglobby)
 - [Unpatched braces advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)
+
+## Search Console release review — 2026-10-15
+
+This later task explicitly authorizes a reviewed commit and push, superseding the earlier request to keep the patch local. At this task's start, the working tree was clean on `seo-backup`; local HEAD and remote `newrepo/main` both pointed to the existing security commit `565459250234188f65df48b882d146e139ad2eab`. The active GitHub API account was verified as `simplyperfectwindowsanddoors-code`. Authentication credentials were not printed or modified.
+
+### Review findings and current changes
+
+- Added the supplied Google verification value through the existing root metadata `verification.google` field in `app/layout.tsx`. The value is deliberately not repeated in this report. Existing metadata, JSON-LD, UI and root layout structure are preserved.
+- Reproduced a previously missed runtime incompatibility: the lockfile resolved React 19.2.7 while React DOM was 19.2.4. Direct React DOM server rendering failed with an incompatible-version error. Pinned React to the existing renderer's 19.2.4 version in `package.json` and `package-lock.json`.
+- The current lockfile change is limited to the direct React specification and React package's version/download integrity record. npm lockfile format 3 is unchanged. The earlier large lockfile change in the existing security commit is intentional: it removes unused CLI dependency chains and records the reviewed security fixes. It was not discarded or regenerated blindly.
+- Added a React/renderer version and render regression check to `tests/dependency-compatibility.test.mjs`. Existing glob and in-memory mail/PDF checks remain.
+- Reviewed the existing Next.js 16.4.1 / matching ESLint configuration, Nodemailer 10.1.1, PDF libraries, preserved stylesheet/license and glob override. No further production-library upgrade or removal was needed.
+- The only five files changed in this task are `app/layout.tsx`, `package.json`, `package-lock.json`, `tests/dependency-compatibility.test.mjs`, and this report. No API, form, booking, payment, location, time-slot, pricing, email handler, PDF implementation or public asset was edited in this task.
+
+### Current validation results
+
+| Check | Actual result |
+| --- | --- |
+| Clean lockfile install | PASS using cached packages (`npm ci --offline --no-audit`); an independent network audit was then run. |
+| npm audit --json | PASS: 0 known vulnerabilities across all severities. This is an advisory snapshot, not a guarantee of absence of every security issue. |
+| npm run test | PASS: three tests, including a real React DOM static render and in-memory email/PDF attachment checks. |
+| Clean .next and npm run build | PASS: Next.js 16.4.1 / Webpack, TypeScript and all generated routes. |
+| npm run seo | PASS. |
+| Generated verification metadata | PASS: exactly one matching Google verification meta tag in the head of each of the 13 public pages. |
+| Generated metadata and schema | PASS: unique titles/descriptions, correct canonicals/social metadata, parseable JSON-LD, 12 intended sitemap URLs, API exclusion and booking noindex preserved. |
+| Local production HTTP checks | PASS: all 13 public pages, robots, sitemap, llms.txt, logo, repaired Articles image and sampled CSS/JS return 200. |
+| npm run lint | Existing 39 errors and 74 warnings; no new errors. No rule was disabled and no unrelated workflow was changed to silence them. |
+| Source review | Only relevant changes; no tracked .env files, node_modules or .next output included. |
+
+Before the push, real public GET checks returned 200 for the homepage, Windows & Doors, Metal Works, Interiors, Renovation, Contact, robots.txt, sitemap.xml and llms.txt. The homepage had no Google verification tag at that observation. Those checks establish the pre-release state, not deployment of the new tag. Browser/mobile, real SMTP delivery and real payment/booking transactions were not tested.
+
+The current request authorizes pushing `seo-backup:main` after the final remote ancestry check. Record the actual resulting commit hash and push result in the handoff. A GitHub push is not proof of a successful Hostinger deployment. Hostinger's authenticated deployment status is not available through the configured tools; its hPanel status must be checked. Once the public homepage serves the matching verification tag, use the same Search Console property/account to click Verify. No Google ownership-verification success is claimed here.

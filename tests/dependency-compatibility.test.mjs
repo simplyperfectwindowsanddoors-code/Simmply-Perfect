@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 import { mkdtemp, mkdir, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import React from "react";
 import nodemailer from "nodemailer";
 import { PDFDocument } from "pdf-lib";
 
@@ -14,6 +15,12 @@ const { getRootDirs } = nextPluginRequire("./utils/get-root-dirs.js");
 
 // Next resolves these as filesystem directories; relative paths/trailing slashes are equivalent.
 const resolveDirectories = (directories) => directories.map((directory) => path.resolve(directory)).sort();
+
+test("React and its DOM renderer have matching versions and render successfully", async () => {
+  assert.equal(React.version, require("react-dom/package.json").version);
+  const { renderToStaticMarkup } = await import("react-dom/server");
+  assert.equal(renderToStaticMarkup(React.createElement("p", null, "Compatibility check")), "<p>Compatibility check</p>");
+});
 
 test("the replacement glob engine preserves Next.js lint root discovery", async () => {
   const directory = await mkdtemp(path.join(os.tmpdir(), "simmply-glob-"));

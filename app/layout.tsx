@@ -13,6 +13,10 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
+  verification: {
+    google: "h9ZTlQkYarasltTZbMFhQHWFIMg-UBZBCKQVuE4HDJA",
+  },
+
   title: {
     default:
       "Simmply Perfect Group | Windows, Doors, Interiors & Architectural Solutions",
