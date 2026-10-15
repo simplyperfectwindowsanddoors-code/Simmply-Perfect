@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
+import PageStructuredData from "@/components/seo/PageStructuredData";
 import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = createPageMetadata({
-  title: "Luxury Interior Solutions in Hyderabad",
+const page = {
+  title: "Interior Works in Hyderabad",
   description: "Explore Simmply Perfect Group interior solutions for living spaces, bedrooms, kitchens, wardrobes, offices and false ceilings.",
   path: "/interiors",
-});
+};
+
+export const metadata: Metadata = createPageMetadata(page);
 
 export default function InteriorsLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <PageStructuredData {...page} serviceName="Interiors" />
+      {children}
+    </>
+  );
 }

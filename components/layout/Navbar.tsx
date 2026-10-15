@@ -535,9 +535,9 @@ export default function Navbar() {
               />
 
               <div className="ml-2.5 min-w-0">
-                <h1 className="truncate text-base font-bold leading-none tracking-wide text-[#0A2E6F] sm:text-xl">
+                <p className="truncate text-base font-bold leading-none tracking-wide text-[#0A2E6F] sm:text-xl">
                   SIMMPLY PERFECT
-                </h1>
+                </p>
 
                 <span className="block text-[9px] tracking-[4px] text-slate-500 sm:text-[10px] sm:tracking-[5px]">
                   GROUP

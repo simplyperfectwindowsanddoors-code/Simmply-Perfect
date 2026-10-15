@@ -197,7 +197,7 @@ const articlesData: Article[] = [
   {
     title: "How Simmply Perfect Products are Unique",
     category: "Corporate Log",
-    image: "/services/iron-gates.jpg",
+    image: "/services/iron-gates%2012.32.14%E2%80%AFPM.jpg",
     date: "June 25, 2026",
     time: "6 min read",
     excerpt: "An inside look at our proprietary material formulations, multi-chamber uPVC profiles, and heavy steel fabrication tolerances.",
@@ -363,7 +363,7 @@ export default function ArticlesPage() {
 
             <motion.div {...smoothFadeUp} className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
               <div className="lg:col-span-6 relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-100 group">
-                <img src="/articles/featured-glazing.jpg" alt={featuredArticle.title} className="w-full h-[380px] sm:h-[450px] object-cover" />
+                <img loading="lazy" decoding="async" src="/articles/featured-glazing.jpg" alt={featuredArticle.title} className="w-full h-[380px] sm:h-[450px] object-cover" />
               </div>
 
               <div className="lg:col-span-6 space-y-6">
@@ -419,12 +419,21 @@ export default function ArticlesPage() {
                   key={index}
                   variants={cardAnimation}
                   whileHover={{ y: -6 }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Read ${article.title}`}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setSelectedArticle(article);
+                    }
+                  }}
                   onClick={() => setSelectedArticle(article)}
                   className="bg-white rounded-3xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer"
                 >
                   <div className="space-y-6">
                     <div className="h-56 overflow-hidden relative border-b border-slate-100 bg-slate-100">
-                      <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={article.image} alt={article.title} className="w-full h-full object-cover" />
                     </div>
                     
                     <div className="px-6 sm:px-8 space-y-3">
@@ -508,9 +517,9 @@ export default function ArticlesPage() {
 
             <div className="grid lg:grid-cols-3 gap-6">
               {[
-                { name: "Luxury Villa Structural Glazing Transformation", tag: "Fenestration Log", img: "/articles/luxury-villa.jpg" },
-                { name: "Complete Turnkey Apartment Restructuring", tag: "Whole Remodel", img: "/articles/apartment-renovation.jpg" },
-                { name: "Premium Executive Workspace Fitout", tag: "Interior System", img: "/articles/office-fitout.jpg" }
+                { name: "Luxury Villa Structural Glazing Transformation", tag: "Fenestration Log", img: "/articles/luxury-villa.jpg", href: "/windows-doors" },
+                { name: "Complete Turnkey Apartment Restructuring", tag: "Whole Remodel", img: "/articles/apartment-renovation.jpg", href: "/renovation" },
+                { name: "Premium Executive Workspace Fitout", tag: "Interior System", img: "/articles/office-fitout.jpg", href: "/interiors" }
               ].map((proj, idx) => (
                 <motion.div
                   key={idx}
@@ -520,7 +529,7 @@ export default function ArticlesPage() {
                   viewport={{ once: true }}
                   className="relative h-[420px] rounded-[2rem] overflow-hidden group border border-slate-100"
                 >
-                  <img src={proj.img} alt={proj.name} className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-101 transition-transform duration-700" />
+                  <img loading="lazy" decoding="async" src={proj.img} alt={proj.name} className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-101 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent z-10" />
                   
                   <div className="absolute bottom-8 inset-x-8 text-white z-20 space-y-4">
@@ -528,7 +537,7 @@ export default function ArticlesPage() {
                       <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 block">{proj.tag}</span>
                       <h3 className="text-xl font-black tracking-tight leading-tight">{proj.name}</h3>
                     </div>
-                    <Link href="/contact" className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-200 group-hover:text-white transition-colors">
+                    <Link href={proj.href} aria-label={`View services for ${proj.name}`} className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-200 group-hover:text-white transition-colors">
                       <span>View Specifications</span>
                       <ArrowUpRight size={14} className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </Link>

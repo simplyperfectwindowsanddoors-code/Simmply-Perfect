@@ -810,9 +810,7 @@ export default function Services() {
         name: service.title,
         description: service.desc,
         provider: {
-          "@type": "Organization",
-          name: "Simmply Perfect Group",
-          url: "https://simmplyperfect.com",
+          "@id": "https://simmplyperfect.com/#organization",
         },
         areaServed: {
           "@type": "City",
@@ -833,7 +831,7 @@ export default function Services() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             faqSchema
-          ),
+          ).replace(/</g, "\\u003c"),
         }}
       />
 
@@ -842,7 +840,7 @@ export default function Services() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             serviceSchema
-          ),
+          ).replace(/</g, "\\u003c"),
         }}
       />
 

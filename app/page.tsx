@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { createPageMetadata } from "@/lib/seo";
+import PageStructuredData from "@/components/seo/PageStructuredData";
 
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/home/Hero";
@@ -8,60 +10,28 @@ import WhyChooseUs from "@/components/home/WhyChooseUs";
 import Stats from "@/components/home/stats";
 import Footer from "@/components/home/Footer";
 
-export const metadata: Metadata = {
-  title:
-    "Windows & Doors, Interiors, Renovation & Metal Works in Hyderabad",
-
+const page = {
+  title: "Windows, Doors & Home Services in Hyderabad",
   description:
-    "Simmply Perfect Group provides premium aluminium and UPVC windows and doors, luxury interiors, home and commercial renovation, custom metal fabrication, and complete architectural solutions in Hyderabad.",
-
-  alternates: {
-    canonical: "https://simmplyperfect.com/",
-  },
-
-  openGraph: {
-    title:
-      "Simmply Perfect Group | Windows, Doors, Interiors & Architectural Solutions",
-    description:
-      "Premium aluminium and UPVC windows and doors, luxury interiors, renovation, custom metal works and architectural solutions in Hyderabad.",
-    url: "https://simmplyperfect.com/",
-    siteName: "Simmply Perfect Group",
-    type: "website",
-    locale: "en_IN",
-    images: [
-      {
-        url: "/logo.png",
-        width: 1618,
-        height: 972,
-        alt: "Simmply Perfect Group",
-      },
-    ],
-  },
-
-  twitter: {
-    card: "summary_large_image",
-    title:
-      "Simmply Perfect Group | Windows, Doors, Interiors & Architectural Solutions",
-    description:
-      "Premium windows and doors, luxury interiors, renovation, metal works and architectural solutions in Hyderabad.",
-    images: ["/logo.png"],
-  },
+    "Explore Simmply Perfect Group windows and doors, interiors, home and commercial renovation, and custom metal fabrication in Hyderabad.",
+  path: "/",
 };
+
+export const metadata: Metadata = createPageMetadata(page);
 
 export default function Home() {
   return (
     <>
+      <PageStructuredData {...page} />
       <Navbar />
 
-      <Hero />
-
-      <Companies />
-
-      <Services />
-
-      <WhyChooseUs />
-
-      <Stats />
+      <main>
+        <Hero />
+        <Companies />
+        <Services />
+        <WhyChooseUs />
+        <Stats />
+      </main>
 
       <Footer />
     </>

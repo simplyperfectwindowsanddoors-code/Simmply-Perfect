@@ -188,12 +188,6 @@ export default function Hero() {
                 <span className="bg-gradient-to-r from-[#0A2E6F] via-[#1E4ED8] to-indigo-600 bg-clip-text text-transparent">
                   Experiences
                 </span>
-                <span className="sr-only">
-                  Simmply Perfect Group provides premium aluminium and UPVC
-                  windows and doors, luxury interior design, home and
-                  commercial renovation, custom metal fabrication, and
-                  architectural solutions in Hyderabad.
-                </span>
               </motion.h1>
 
               {/* DESCRIPTION */}
@@ -507,6 +501,7 @@ export default function Hero() {
                 tabIndex={0}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
                     setActiveEmbedId(youtubeVideos[0].embedId);
                   }
                 }}
@@ -559,6 +554,7 @@ export default function Hero() {
                   tabIndex={0}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
                       setActiveEmbedId(video.embedId);
                     }
                   }}

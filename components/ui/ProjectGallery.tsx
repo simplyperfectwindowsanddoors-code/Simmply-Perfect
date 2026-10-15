@@ -39,6 +39,7 @@ export default function ProjectGallery() {
             >
               <img
                 src={img}
+                alt=""
                 className="
                   w-full
                   h-full

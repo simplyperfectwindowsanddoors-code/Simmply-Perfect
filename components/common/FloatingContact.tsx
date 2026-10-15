@@ -256,6 +256,7 @@ export default function FloatingContact() {
                   <button
                     type="button"
                     onClick={closeTicketModal}
+                    aria-label="Close ticket dialog"
                     disabled={isSubmittingTicket}
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-50"
                   >
